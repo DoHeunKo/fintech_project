@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
+	  layout:decorate="~{thymeleaf/layouts/default_layout}">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script type="text/javascript">
+	
+	$(function(){
+		
+		$("input[name=address]").on("focus", function() {    
+// 			addrSearch();
+			if($("input[name=address]").val()!=null){
+				$(".btn").focus();
+			}
+		})
+	})
+	
+	function addrSearch(){
+	    new daum.Postcode({
+	        oncomplete: function(data) {
+	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+	            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+	            var roadAddress=data.roadAddress;
+	            $("input[name=address]").val(roadAddress);
+	        }
+	    }).open();
+	    
+	}
+
+</script>
+
+<style type="text/css">
+	
+	input[type="button"] {
+	  width: 100%;
+	  border-radius: 10px;
+		background-color: #000099;
+		margin-top:10px;
+		margin-bottom:10px;
+	}
+	
+	.idGender > div{
+		
+		display : inline-block;
+		margin-right : 30px;
+	}
+	
+	.idMarried > div{
+	
+		display : inline-block;
+		margin-right : 30px;
+	}
+	.idGender,.idMarried{
+		text-align:center;
+	}
+	input[type="radio"] {
+        display: none;
+    }
+
+    /* Style the custom radio buttons like buttons */
+    .radio_bt {
+        
+        padding: 8px 16px;
+        background-color: #ccc;
+        border:1px #000099;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    /* Style the selected radio button */
+    .radio_bt:checked {
+        background-color: #000099;
+    }
+</style>
+
+</head>
+<body>
+<div layout:fragment="content">
+<!-- Main Content-->
+	<main class="mb-4">
+	    <div class="container px-4 px-lg-5">
+	        <div class="row gx-4 gx-lg-5 justify-content-center">
+	            <div class="col-md-10 col-lg-8 col-xl-5">
+	        		<h1 style="text-align:center;">미세小비</h1>
+	        		<form th:action="@{/regist}" method="post" th:object="${registCommand}">
+						<fieldset>
+							<label for="email">이메일</label><br/>
+							<input type="text" class="form-control" name="email" id="email" th:field="*{email}"/>
+							<input type="button" class="btn btn-dark" value="중복확인" onclick="authorization()" />
+							<span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+							<span style="font-size:13px;" id="emailChk"></span>
+							<br/>
+			
+							<label for="password1">비밀번호</label><br/>
+							<input type="password" class="form-control" id="password1" th:field="*{password}"/>
+							<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+							<br/>
+					
+							<label for="password2">비밀번호 확인</label><br/>
+							<input type="password" class="form-control" id="password2"/>
+							<span id="passwordChk"></span>
+							<br/>
+							
+						</fieldset>
+						
+						<fieldset>
+							<label for="name">이름</label><br/>
+							<input type="text" class="form-control" name="name" th:field="*{name}"/>
+							<span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+							<br/>
+							<label for="phone">휴대폰번호</label><br/>
+							<input type="text" class="form-control" name="phone" id="phone" th:field="*{phone}"/>
+							<input type="button" class="btn btn-dark" value="본인 인증" onclick="authorization()" />
+							<span th:if="${#fields.hasErrors('phone')}" th:errors="phone"></span>
+							<br/>
+							<label for="address">주소</label><br/>
+							<input type="text" class="form-control" name="address" th:field="*{address}"
+								onclick="addrSearch()"/>
+							<span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+						</fieldset>
+						<br/>
+						<fieldset>
+							<div class="idGender">
+								<div>
+									
+							        <input type="radio"  id="male" name="gender" value="male" th:checked="${gender == 'male'}">
+							        <label for="male" class="radio_bt">남자</label>
+						    	</div>
+							    <div>
+							    	
+							        <input type="radio"   id="female" name="gender" value="female" th:checked="${gender == 'female'}">
+							        <label for="female" class="radio_bt">여자</label>
+							    </div>
+							</div>
+							<br/>
+							<div class="idMarried">		
+								<div>
+									
+							        <input type="radio"   id="married" name="maritalStatus" value="married" th:checked="${maritalStatus == 'married'}">
+							    	<label for="married" class="radio_bt">기혼</label>
+							    </div>
+							    <div>
+							    	
+							        <input type="radio"   id="single" name="maritalStatus" value="single" th:checked="${maritalStatus == 'single'}">
+							    	<label for="single" class="radio_bt">미혼</label>
+							    </div>
+							</div>
+							<br/>
+							
+							<select name="age" class="form-control" th:field="*{age}">
+							<option value="">연령대</option>
+						    <option value="10">10대</option>
+						    <option value="20">20대</option>
+						    <option value="30">30대</option>
+						    <option value="40">40대</option>
+						    <option value="50">50대</option>
+							</select>
+							<span th:if="${#fields.hasErrors('age')}" th:classappend="${'invalid-feedback'}" th:errors="*{age}"></span><br/>
+							<br/>
+							
+							<select name="job" class="form-control" th:field="*{job}">
+								<option value="">직업분류</option>
+							    <option value="manage">경영,사무직</option>
+							    <option value="tech">연구,기술</option>
+							    <option value="edu">교육,법률</option>
+							    <option value="medical">보건,의료</option>
+							    <option value="entertainment">예술,스포츠</option>
+							</select>
+							<span th:if="${#fields.hasErrors('job')}" th:classappend="${'invalid-feedback'}" th:errors="*{job}"></span><br/>
+							
+						</fieldset>
+						
+						
+						
+						<button type="button" id="idchk" class="btn" onclick="idChk()">중복확인</button>
+						<button type="submit"  id="button" class="btn">가입완료</button>
+					</form>
+	            </div>
+	        </div>
+	    </div>
+	</main>
+</div>
+
+</body>
+</html>
