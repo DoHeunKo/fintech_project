@@ -1,6 +1,9 @@
 package com.ms.fintech.dtos;
 
+import java.util.List;
+
 import org.apache.ibatis.type.Alias;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +33,6 @@ public class UserDto {
 	private String client_use_code;
 	private String pattern_chk;
 	private String card_password;
-	
-
+	private String role;
+	private List<UserTokenDto> userTokenDto;
 }

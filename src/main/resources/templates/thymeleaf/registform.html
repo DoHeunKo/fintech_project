@@ -16,9 +16,85 @@
 			if($("input[name=address]").val()!=null){
 				$(".btn").focus();
 			}
+		});
+		$("#password2").on("focus", function() {    
+			if ($("#password1").val() == "") {
+				alert("먼저 비밀번호를 입력하세요.");
+		      $("#password1").focus();
+		    }
+		});
+		$("#password2").on("keyup",function(){
+			if($("#password1").val() != $("#password2").val()){
+				$("#passwordChk").css("color","red");
+				$("#passwordChk").text("비밀번호가 일치하지 않습니다");
+			}else{
+				$("#passwordChk").css("color","green");
+				$("#passwordChk").text("비밀번호가 일치");
+			}
+		});
+		
+		var checkedValue = $('input[name="gender"]:checked').val;
+		console.log(checkedValue);
+		
+		$('input[name="gender"]').on('click',function(){
+			if ($(this).is(':checked')) {
+			      var value = $(this).val();
+			      console.log(value);
+			    }
 		})
+		$('input[name="maritalStatus"]').on('click',function(){
+			if ($(this).is(':checked')) {
+			      var value = $(this).val();
+			      console.log(value);
+			    }
+		})
+		$('select[name="age"]').on('change', function() {
+		    var selectedValue = $(this).val();
+		    console.log(selectedValue);
+		  });
+		
+		$('select[name="job"]').on('change', function() {
+		    var selectedValue = $(this).val();
+		    console.log(selectedValue);
+		  });
+		
+		
+		
+		
 	})
-	
+	function emailChk(){
+		
+		var email=$("#email").val();
+		if(email==""||email==null || email== undefined){
+			$("#emailChk").css("color","red");
+			$("#emailChk").text("이메일 :필수정보");
+		}
+		else{
+			console.log(email);
+			$.ajax({
+				url:"/emailChk",
+				method: "get",
+				dataType:"json",
+				async:false,
+				data:{"email":email},
+				success:function(data){
+					console.log(data.email);
+					if(data.email!=null){
+						$("#emailChk").css("color","red");
+						$("#emailChk").text("이메일 중복");
+					}else{
+						$("#emailChk").css("color","green");
+						$("#emailChk").text("이메일 사용가능");
+						
+					}
+				},
+				error:function(e){
+					console.log(e);
+				}
+			});
+		}
+		
+	}
 	function addrSearch(){
 	    new daum.Postcode({
 	        oncomplete: function(data) {
@@ -30,23 +106,38 @@
 	    }).open();
 	    
 	}
-	function activateRadio(value) {
-        const radioInput = document.querySelector(`input[value="${value}"]`);
-        radioInput.checked = true;
-    }
+	//사용자 인증 요청하기
+	function authorization(){
+		var url="https://testapi.openbanking.or.kr/oauth/2.0/authorize?"
+			   +"response_type=code&"  //고정값: 인증요청시 반환되는 값의 타입을 의미
+			   +"client_id=4987e938-f84b-4e23-b0a2-3b15b00f4ffd&"  //이용기관 ID
+			   +"redirect_uri=http://localhost:8070/authresult&" //응답URI
+			   +"scope=login inquiry transfer&"  // 토큰의 권한
+			   +"state=12345678123456781234567812345678&" // 32자리 난수 설정
+			   +"auth_type=0"; //0:최초 한번 인증, 2:인증생략
+			   
+		window.open(url,"사용자인증","width=400px,height=600px");
+		
+	}
+	
+	
 
 </script>
 
 <style type="text/css">
 	
-	input[type="button"] {
+	input[type="button"],input[type="submit"] {
 	  width: 100%;
 	  border-radius: 10px;
 		background-color: #000099;
 		margin-top:10px;
 		margin-bottom:10px;
 	}
-	
+	input+span{
+		font-size:13px;
+		font-weight:bold;
+		color: red;
+	}
 	.idGender > div{
 		
 		display : inline-block;
@@ -92,13 +183,15 @@
 	        <div class="row gx-4 gx-lg-5 justify-content-center">
 	            <div class="col-md-10 col-lg-8 col-xl-5">
 	        		<h1 style="text-align:center;">미세小비</h1>
+	        		
 	        		<form th:action="@{/regist}" method="post" th:object="${registCommand}">
 						<fieldset>
 							<label for="email">이메일</label><br/>
 							<input type="text" class="form-control" name="email" id="email" th:field="*{email}"/>
-							<input type="button" class="btn btn-dark" value="중복확인" onclick="authorization()" />
-							<span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 							<span style="font-size:13px;" id="emailChk"></span>
+							<input type="button" class="btn btn-dark" value="중복확인" onclick="emailChk()" />
+							<span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+							
 							<br/>
 			
 							<label for="password1">비밀번호</label><br/>
@@ -108,7 +201,7 @@
 					
 							<label for="password2">비밀번호 확인</label><br/>
 							<input type="password" class="form-control" id="password2"/>
-							<span id="passwordChk"></span>
+							<span style="font-size:13px;" id="passwordChk"></span>
 							<br/>
 							
 						</fieldset>
@@ -121,7 +214,7 @@
 							<label for="phone">휴대폰번호</label><br/>
 							<input type="text" class="form-control" name="phone" id="phone" th:field="*{phone}"/>
 							<input type="button" class="btn btn-dark" value="본인 인증" onclick="authorization()" />
-							<span th:if="${#fields.hasErrors('phone')}" th:errors="phone"></span>
+							<span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
 							<br/>
 							<label for="address">주소</label><br/>
 							<input type="text" class="form-control" name="address" th:field="*{address}"
@@ -130,35 +223,51 @@
 						</fieldset>
 						<br/>
 						<fieldset>
-							<div class="idGender">
-								<div>
+<!-- 							<div class="idGender"> -->
+<!-- 								<div> -->
 									
-							        <input type="radio"  id="male" name="gender" value="male" th:checked="${gender == 'male'}">
-							        <label for="male" class="radio-button">남자</label>
-						    	</div>
-							    <div>
+<!-- 							        <input type="radio"  id="male" name="gender" value="male" th:checked="${gender == null ? '' : gender == 'male'}" > -->
+<!-- 							        <label for="male" class="radio-button">남자</label> -->
+<!-- 						    	</div> -->
+<!-- 							    <div> -->
 							    	
-							        <input type="radio"   id="female" name="gender" value="female" th:checked="${gender == 'female'}">
-							        <label for="female" class="radio-button">여자</label>
-							    </div>
-							</div>
-							<br/>
-							<div class="idMarried">		
-								<div>
-									
-							        <input type="radio"   id="married" name="maritalStatus" value="married" th:checked="${maritalStatus == 'married'}">
-							    	<label for="married" class="radio-button" >기혼</label>
-							    </div>
-							    <div>
-							    	
-							        <input type="radio"   id="single" name="maritalStatus" value="single" th:checked="${maritalStatus == 'single'}">
-							    	<label for="single" class="radio-button" >미혼</label>
-							    </div>
-							</div>
-							<br/>
+<!-- 							        <input type="radio"  id="female" name="gender" value="female" th:checked="${gender == null ? '' : gender == 'female'}" > -->
+<!-- 							        <label for="female" class="radio-button">여자</label> -->
+<!-- 							    </div> -->
+<!-- 							</div> -->
+<!-- 							<br/> -->
 							
-							<select name="age" class="form-control" th:field="*{age}">
-							<option value="">연령대</option>
+<!-- 							<div class="idMarried">		 -->
+<!-- 								<div>									 -->
+<!-- 							        <input type="radio"   id="married" name="maritalStatus" value="married" th:checked="${maritalStatus == null?'': maritalStatus=='married'}" > -->
+<!-- 							    	<label for="married" class="radio-button" >기혼</label> -->
+<!-- 							    </div> -->
+<!-- 							    <div> -->
+							    	
+<!-- 							        <input type="radio"   id="single" name="maritalStatus" value="single" th:checked="${maritalStatus == null?'': maritalStatus=='single'}" > -->
+<!-- 							    	<label for="single" class="radio-button" >미혼</label> -->
+<!-- 							    </div> -->
+<!-- 							</div> -->
+<!-- 							<br/> -->
+							<label for="sex">성별</label><br/>
+							<select name="sex" class="form-control" th:field="*{sex}" required>
+							<option value="">-----성별-----</option>
+						    <option value="male">남자</option>
+						    <option value="female">여자</option>						   
+							</select>
+							<span th:if="${#fields.hasErrors('sex')}" th:classappend="${'invalid-feedback'}" th:errors="*{sex}"></span><br/>
+							
+							<label for="is_married">결혼여부</label><br/>
+							<select name="is_married" class="form-control" th:field="*{is_married}" required>
+							<option value="">-----결혼여부-----</option>
+						    <option value="married">기혼</option>
+						    <option value="single">미혼</option>						   
+							</select>
+							<span th:if="${#fields.hasErrors('is_married')}" th:classappend="${'invalid-feedback'}" th:errors="*{is_married}"></span><br/>
+							
+							<label for="age">나이</label><br/>
+							<select name="age" class="form-control" th:field="*{age}" required>
+							<option value="">-----연령대-----</option>
 						    <option value="10">10대</option>
 						    <option value="20">20대</option>
 						    <option value="30">30대</option>
@@ -166,10 +275,10 @@
 						    <option value="50">50대</option>
 							</select>
 							<span th:if="${#fields.hasErrors('age')}" th:classappend="${'invalid-feedback'}" th:errors="*{age}"></span><br/>
-							<br/>
 							
-							<select name="job" class="form-control" th:field="*{job}">
-								<option value="">직업분류</option>
+							<label for="job">직업</label><br/>
+							<select name="job" class="form-control" th:field="*{job}" required>
+								<option value="">-----직업분류-----</option>
 							    <option value="manage">경영,사무직</option>
 							    <option value="tech">연구,기술</option>
 							    <option value="edu">교육,법률</option>
@@ -181,8 +290,10 @@
 						</fieldset>
 						
 						
-						
-						<input type="button" class="btn btn-dark" value="가입완료" onclick="authorization()" />
+						<input type="submit" class="btn btn-dark" value="가입완료"/>
+						<input type="hidden" name="token"><br/>				
+						<input type="hidden" name="user_seq_no"><br/>
+						<input type="hidden" name="scope"><br/>
 						
 					</form>
 	            </div>

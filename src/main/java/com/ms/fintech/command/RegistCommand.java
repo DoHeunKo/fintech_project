@@ -3,6 +3,7 @@ package com.ms.fintech.command;
 import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -19,12 +20,15 @@ public class RegistCommand {
 	private String phone;
 	@NotBlank(message="주소 : 필수정보입니다")
 	private String address;
-//	@NotBlank(message="성별 : 필수정보입니다")
-//	private String sex;
-//	@NotBlank(message="결혼여부 : 필수정보입니다")
-//	private String is_married;
-	@NotBlank(message="연령대 : 필수정보입니다")
+	@NotBlank(message="성별 : 필수정보입니다")
+	private String sex;
+	@NotBlank(message="결혼여부 : 필수정보입니다")
+	private String is_married;
+	@NotNull(message="연령대 : 필수정보입니다")
 	private Integer age;
 	@NotBlank(message="직업 : 필수정보입니다")
 	private String job;
+	private String user_seq_no;
+	private String token;
+	private String scope;
 }

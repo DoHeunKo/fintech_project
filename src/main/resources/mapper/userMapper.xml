@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.fintech.mapper.UserMapper">
+	<resultMap type="UserDto" id="UserDtoMap">
+		<id property="user_seq" column="USER_SEQ"/>
+		<result property="name" column="NAME"/>
+		<result property="email" column="EMAIL"/>
+		<result property="password" column="PASSWORD"/>
+		<result property="phone" column="PHONE"/>
+		<result property="sex" column="SEX"/>
+		<result property="is_married" column="IS_MARRIED"/>
+		<result property="is_join" column="IS_JOIN"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="age" column="AGE"/>
+		<result property="job" column="JOB"/>
+		<result property="role" column="ROLE"/>
+		<collection property="userTokenDto" resultMap="UserTokenDtoMap"/>
+	</resultMap>
+	
+	<resultMap type="UserTokenDto" id="UserTokenDtoMap">
+		<result property="user_seq" column="USER_SEQ"/>
+		<result property="scope" column="SCOPE"/>
+		<result property="token" column="TOKEN"/>
+		
+	</resultMap>
+	
+	<select id="userLogin" resultMap="UserDtoMap" parameterType="String">
+		SELECT UI.USER_SEQ,PASSWORD,NAME,EMAIL,PHONE,SEX,IS_MARRIED,IS_JOIN,ADDRESS,AGE,JOB,
+		ROLE,SCOPE,TOKEN
+		FROM USER_INFO UI RIGHT OUTER JOIN USER_TOKEN UT
+		ON UI.USER_SEQ=UT.USER_SEQ
+		WHERE EMAIL=#{email}
+		
+	</select>
+    <insert id="userRegist" parameterType="UserDto" useGeneratedKeys="true"
+    						keyProperty="user_seq">
+        INSERT INTO USER_INFO VALUES
+        (NULL,#{name},#{email},#{password},#{phone},
+        #{sex},#{is_married},'N',#{address},#{age},#{job},#{user_seq_no},'M202201886','N',NULL,'USER');
+    </insert>
+    <insert id="tokenRegist" parameterType="UserTokenDto">
+    	INSERT INTO USER_TOKEN VALUES
+    	(#{user_seq},#{scope},#{token})
+    </insert>
+<!--     <insert id="userRoomRegist" parameterType="UserRoomDto"> -->
+<!--     	INSERT INTO USER_ROOM VALUES -->
+<!--     	(NULL,#{user_no},NULL) -->
+<!--     </insert> -->
+    
+    
+	
+	
+	<select id="emailChk" resultType="String" parameterType="String">
+		SELECT EMAIL FROM USER_INFO WHERE EMAIL=#{email}
+	</select>
+<!-- 	<select id="emailChk" resultType="String" parameterType="String"> -->
+<!-- 		SELECT USER_EMAIL FROM USER WHERE USER_EMAIL=#{user_email} -->
+<!-- 	</select> -->
+	
+	
+	
+<!--     <select id="idChk" parameterType="String" resultType="String"> -->
+<!--         SELECT ID FROM MEMBER WHERE ID=#{id} -->
+<!--     </select> -->
+
+<!--     <select id="loginUser" parameterType="String" resultType="MemberDto"> -->
+<!--         SELECT MEMBERID,ID,NAME,PASSWORD,EMAIL,ADDRESS,ROLE  -->
+<!--         FROM MEMBER -->
+<!--         WHERE ID=#{id} -->
+<!--     </select> -->
+</mapper>
