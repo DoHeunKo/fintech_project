@@ -182,7 +182,7 @@ public class GuestController {
 	@GetMapping("comunity")
 	public String comunity(Model model) {
 		var roomList = new ArrayList<RoomDto>();
-		//TODO 관리자 페이지 만들때 확인
+		//TODO 관리자 페이지에서 추가 및 삭제 기능 구현
 		roomList.add(RoomDto.builder().roomNo(1).roomTitle("거지방 1호").build());
 		roomList.add(RoomDto.builder().roomNo(2).roomTitle("거지방 2호").build());
 		roomList.add(RoomDto.builder().roomNo(3).roomTitle("거지방 3호").build());
@@ -193,7 +193,11 @@ public class GuestController {
 	@GetMapping("comunity/chatroom")
 	public String chatRoom(Model model, @RequestParam("roomno") int roomNo, @ModelAttribute LoginCommand command) {
 		model.addAttribute("roomNo", roomNo);
-		model.addAttribute("userId", userDto.getName());
+		if (userDto == null) {
+			model.addAttribute("userId", "unknown");
+		} else {
+			model.addAttribute("userId", userDto.getName());
+		}
 		return "thymeleaf/chatroom";
 	}
 	
