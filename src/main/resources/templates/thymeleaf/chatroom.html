@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
+	  layout:decorate="~{thymeleaf/layouts/default_layout}">
+<head>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+	var ws;
+	window.addEventListener("load", (event) => {
+		
+		ws = new WebSocket("ws://" + location.host + "/chatting/" + $("#roomNo").val());
+		wsEvt();
+		
+// 		$("#chating").append("<p>" + $("#userid").val() + "님 환영합니다. </p>");	
+	});
+	function wsEvt() {
+		ws.onopen = function(data){
+			var option ={
+				type : "wellcom",
+	 			userId: $("#userId").val(),
+	 			roomNo : $("#roomNo").val(),
+	 			msg : $("#userId").val() + "님이 입장하셨습니다."
+		 	}
+			ws.send(JSON.stringify(option));
+		}
+		
+		ws.onmessage = function(data) {
+			//메시지를 받으면 동작
+			var msg = data.data;
+			var json = JSON.parse(msg);
+			if (json.type == "wellcom") {
+				$("#chatting").append("<p> System : " + json.msg + "</p>");	
+			} else {
+				$("#chatting").append("<p>" + json.userId + " : " + json.msg + "</p>");	
+			}
+		}
+
+		document.addEventListener("keypress", function(e){
+			if(e.keyCode == 13){ //enter press
+				send();
+			}
+		});
+	}
+
+	function send() {
+		var option ={
+			type : "msg",
+			userId: $("#userId").val(),
+ 			roomNo : $("#roomNo").val(),
+ 			msg : $("#chat").val()
+		}
+		ws.send(JSON.stringify(option));
+		$('#chat').val("");
+	}
+	
+		
+	
+</script>
+<style type="text/css">
+	#chatting {
+		background-color: gray;
+	
+	}
+
+</style>
+<meta charset="utf-8" />
+</head>
+
+<body>
+<div layout:fragment="content">
+      <!-- Main Content-->
+    <main class="mb-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+               	<input type="hidden" id="roomNo" th:value="${roomNo}">
+               	<input type="hidden" id="userId" th:value="${userId}">
+                <div id="chatting">
+                
+                </div>
+                	<input id="chat" type="text">
+                   	<button onclick="send()">전송</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    </div>
+
+</body>
+</html>

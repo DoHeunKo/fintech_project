@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+  // 팝업 창이 로드된 후 3초(3000ms) 후에 자동으로 닫기
+//   var accessToken = $("#accessToken").text();
+//   var refreshToken = $("#refreshToken").text();
+//   var userSeqNo = $("#userSeqNo").text();
+
+//   // 부모 페이지의 특정 요소에 값 할당
+//   opener.$("input[name='useraccesstoken']").val(accessToken);
+//   opener.$("input[name='userrefreshtoken']").val(refreshToken);
+//   opener.$("input[name='userseqno']").val(userSeqNo);
+
+  
+//   setTimeout(function() {
+//     window.close();
+//   }, 1000);
+  $(document).ready(function() {
+    // 값을 가져와서 부모 페이지의 특정 요소에 할당
+    var token = $("#token").text();
+    var user_seq_no= $("#user_seq_no").text();
+    var scope = $("#scope").text();
+
+    // 부모 페이지의 특정 요소에 값 할당
+    opener.$("input[name='token']").val(token);
+    opener.$("input[name='user_seq_no']").val(user_seq_no);
+    opener.$("input[name='scope']").val(scope);
+
+    // 팝업 닫기
+    setTimeout(function() {
+        window.close();
+      }, 1000);
+  });
+  
+</script>
+</head>
+<body>
+
+<p id="token" th:text="${token}"></p>
+<p id="user_seq_no" th:text="${user_seq_no}"></p>
+<p id="scope" th:text="${scope}"></p>
+</body>
+</html>
