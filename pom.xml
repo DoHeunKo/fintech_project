@@ -114,6 +114,11 @@
 		    <artifactId>selenium-java</artifactId>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-edge-driver -->
+		<dependency>
+		    <groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-starter-openfeign</artifactId>
+		    <version>4.0.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

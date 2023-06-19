@@ -7,6 +7,7 @@
 		<result property="name" column="NAME"/>
 		<result property="email" column="EMAIL"/>
 		<result property="password" column="PASSWORD"/>
+		<result property="user_seq_no" column="USER_SEQ_NO"/>
 		<result property="phone" column="PHONE"/>
 		<result property="sex" column="SEX"/>
 		<result property="is_married" column="IS_MARRIED"/>
@@ -26,7 +27,7 @@
 	</resultMap>
 	
 	<select id="userLogin" resultMap="UserDtoMap" parameterType="String">
-		SELECT UI.USER_SEQ,PASSWORD,NAME,EMAIL,PHONE,SEX,IS_MARRIED,IS_JOIN,ADDRESS,AGE,JOB,
+		SELECT UI.USER_SEQ,PASSWORD,NAME,USER_SEQ_NO,EMAIL,PHONE,SEX,IS_MARRIED,IS_JOIN,ADDRESS,AGE,JOB,
 		ROLE,SCOPE,TOKEN
 		FROM USER_INFO UI RIGHT OUTER JOIN USER_TOKEN UT
 		ON UI.USER_SEQ=UT.USER_SEQ
