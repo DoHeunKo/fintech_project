@@ -49,7 +49,6 @@
     
     
 	
-	
 	<select id="emailChk" resultType="String" parameterType="String">
 		SELECT EMAIL FROM USER_INFO WHERE EMAIL=#{email}
 	</select>
