@@ -1,6 +1,7 @@
 package com.ms.fintech.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -14,11 +15,15 @@ import com.ms.fintech.mapper.UserMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+
 @Service
 public class UserService implements IUserService{
 	
 	@Autowired
 	private UserMapper userMapper;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Override
 	public String emailChk(String email) {	
@@ -30,7 +35,7 @@ public class UserService implements IUserService{
 	public void userRegist(RegistCommand registCommand) {
 		UserDto dto =new UserDto();
 		dto.setEmail(registCommand.getEmail());
-		dto.setPassword(registCommand.getPassword());
+		dto.setPassword(passwordEncoder.encode(registCommand.getPassword()));
 		dto.setName(registCommand.getName());
 		dto.setPhone(registCommand.getPhone());
 		dto.setAddress(registCommand.getAddress());
