@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
+	  layout:decorate="~{thymeleaf/layouts/default_layout}">
+<head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+	var ws;
+	window.addEventListener("load", (event) => {
+		if ($("#userId").val() == "unknown") {
+			alert("권한이 없습니다.");
+			location.href="/comunity";
+		}
+		ws = new WebSocket("ws://" + location.host + "/chatting/" + $("#roomNo").val());
+		wsEvt();
+		
+// 		$("#chating").append("<p>" + $("#userid").val() + "님 환영합니다. </p>");	
+	});
+	function wsEvt() {
+		ws.onopen = function(data){
+			var option ={
+				type : "wellcom",
+	 			userId: $("#userId").val(),
+	 			roomNo : $("#roomNo").val(),
+	 			msg : $("#userId").val() + "님이 입장하셨습니다."
+		 	}
+			ws.send(JSON.stringify(option));
+		}
+		
+		ws.onmessage = function(data) {
+			//메시지를 받으면 동작
+			var msg = data.data;
+			var json = JSON.parse(msg);
+			if (json.type == "wellcom") {
+				$("#chatting").append("<p> System : " + json.msg + "</p>");	
+			} else {
+				$("#chatting").append("<p>" + json.userId + " : " + json.msg + "</p>");	
+			}
+			var chatting = $('#card');
+	 		chatting.scrollTop(chatting.prop('scrollHeight'));
+		}
+
+		document.addEventListener("keypress", function(e){
+			if(e.keyCode == 13){ //enter press
+				send();
+			}
+		});
+	}
+
+	function send() {
+		var option ={
+			type : "msg",
+			userId: $("#userId").val(),
+ 			roomNo : $("#roomNo").val(),
+ 			msg : $("#chat").val()
+		}
+		ws.send(JSON.stringify(option));
+		var chat = $('#chat'); 
+		chat.val("");
+// 		alert(chatting.prop('scrollHeight'));
+	}
+	
+		
+	
+</script>
+<style type="text/css">
+#chatting {
+	background-color: gray;
+}
+.card{
+	width: 900px;
+	height: 400px;
+	border: none;
+	border-radius: 15px;
+	background-color: gray;
+	overflow: auto;
+}
+.input-group{
+	width: 950px;
+	border: none;
+	border-radius: 15px;
+	align-content: flex-end;
+}
+#chat {
+	border-radius: 15px;
+}
+#chatting > p{
+	padding: 0px;
+	margin: 5px;
+}
+</style>
+<meta charset="utf-8" />
+</head>
+
+<body>
+<div layout:fragment="content">
+      <!-- Main Content-->
+   	<input type="hidden" id="roomNo" th:value="${roomNo}">
+  	<input type="hidden" id="userId" th:value="${userId}">
+    <main class="mb-4">
+   		<div class="row gx-4 gx-lg-5 d-flex justify-content-center">
+	    	<div id="card" class="card mt-10 d-flex justfiy-content-center">
+    			<div id="chatting" class="text-white">
+    			
+	    		</div>
+    		</div>
+	    		<div class="input-group mb-3">
+					<input id="chat" type="text" class="form-control" placeholder="메세지를 입력하세요" aria-label="Recipient's username" aria-describedby="basic-addon2">
+					<div class="input-group-append">
+					 <button style="border-radius: 10px;" "btn btn-outline-secondary" onclick="send()" type="button">전송</button>
+					</div>
+				</div>
+    	</div>
+    </main>
+</div>
+
+</body>
+</html>

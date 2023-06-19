@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +29,6 @@ import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
 import com.ms.fintech.mapper.UserMapper;
 import com.ms.fintech.service.IUserService;
-import com.ms.fintech.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -142,7 +140,6 @@ public class GuestController {
 		}
 		System.out.println(loginCommand.getEmail());
 		session.setAttribute("email", loginCommand.getEmail());
-		userDto = userMapper.userLogin(loginCommand.getEmail());
 		return userService.userLogin(loginCommand, request,model);
 	}
 //	
@@ -179,26 +176,26 @@ public class GuestController {
 //		model.addAttribute(model);
 //	}
 	
-	@GetMapping("comunity")
-	public String comunity(Model model) {
-		var roomList = new ArrayList<RoomDto>();
-		//TODO 관리자 페이지에서 추가 및 삭제 기능 구현
-		roomList.add(RoomDto.builder().roomNo(1).roomTitle("거지방 1호").build());
-		roomList.add(RoomDto.builder().roomNo(2).roomTitle("거지방 2호").build());
-		roomList.add(RoomDto.builder().roomNo(3).roomTitle("거지방 3호").build());
-		
-		model.addAttribute("dtos", roomList);
-		return "thymeleaf/comunity";
-	}
-	@GetMapping("comunity/chatroom")
-	public String chatRoom(Model model, @RequestParam("roomno") int roomNo, @ModelAttribute LoginCommand command) {
-		model.addAttribute("roomNo", roomNo);
-		if (userDto == null) {
-			model.addAttribute("userId", "unknown");
-		} else {
-			model.addAttribute("userId", userDto.getName());
-		}
-		return "thymeleaf/chatroom";
-	}
-	
+//	@GetMapping("comunity")
+//	public String comunity(Model model) {
+//		var roomList = new ArrayList<RoomDto>();
+//		//TODO 관리자 페이지에서 추가 및 삭제 기능 구현
+//		roomList.add(RoomDto.builder().roomNo(1).roomTitle("거지방 1호").build());
+//		roomList.add(RoomDto.builder().roomNo(2).roomTitle("거지방 2호").build());
+//		roomList.add(RoomDto.builder().roomNo(3).roomTitle("거지방 3호").build());
+//		
+//		model.addAttribute("dtos", roomList);
+//		return "thymeleaf/comunity";
+//	}
+//	@GetMapping("comunity/chatroom")
+//	public String chatRoom(HttpSession session, Model model, @RequestParam("roomno") int roomNo, @ModelAttribute LoginCommand command) {
+//		model.addAttribute("roomNo", roomNo);
+//		UserDto dto = (UserDto)session.getAttribute("dto");
+//		if (dto == null) {
+//			model.addAttribute("userId", "unknown");
+//		} else {
+//			model.addAttribute("userId", dto.getEmail().split("@")[0]);
+//		}
+//		return "thymeleaf/chatroom";
+//	}	
 }

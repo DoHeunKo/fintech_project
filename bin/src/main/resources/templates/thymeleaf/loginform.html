@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
+	  layout:decorate="~{thymeleaf/layouts/default_layout}">
+<head>
+<meta charset="UTF-8">
+<title>미세小비 로그인</title>
+<style type="text/css">
+	#button1,#button2{
+			width:100%;
+			font-size:18px;
+			display: inline-block;
+			border-radius: 10px;
+			background-color: #000099;
+			color: #ffffff;
+		}
+	input+span{
+		font-size:13px;
+		font-weight:bold;
+		color: red;
+	}
+</style>
+</head>
+
+
+<body>
+<div layout:fragment="content">
+<!-- Main Content-->
+	<main class="mb-4">
+	    <div class="container px-4 px-lg-5">
+	        <div class="row gx-4 gx-lg-5 justify-content-center">
+	            <div class="col-md-10 col-lg-8 col-xl-4">
+	        		<h1 style="text-align:center;">미세小비</h1>
+	        		<form th:action="@{/login}" method="post" th:object="${loginCommand}">	
+								<table class="table">
+									<tr>						
+										<td><input placeholder="이메일" class="form-control" type="email" name="email" th:field="*{email}"/>
+											<span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+										</td>
+									</tr>
+									<tr>
+										<td><input placeholder="비밀번호"  class="form-control" type="password" name="password" th:field="*{password}"/>
+											<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;" >								
+										<button id="button1"  type="submit" class="btn">로그인</button>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align:center;" >
+										<button id="button2"  type="button" class="btn" th:onclick="|location.href='@{/registform}'|">회원가입</button>	
+										</td>
+									</tr>
+								</table>	
+					</form>
+	            </div>
+	        </div>
+	    </div>
+	</main>
+</div>
+
+</body>
+</html>

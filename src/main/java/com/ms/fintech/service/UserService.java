@@ -60,7 +60,7 @@ public class UserService implements IUserService{
 			if(dto !=null) {
 				if(loginCommand.getPassword().equals(dto.getPassword())) {
 					request.getSession().setAttribute("dto", dto);
-					return "thymeleaf/user/userMain";
+					return "redirect:/user/userMain";
 				}
 				else {
 					System.out.println("비밀번호오류");
