@@ -150,10 +150,13 @@ public class GuestController {
 						Model model) {
 		//유효값 처리
 //		System.out.println(registCommand.getSex());
-		System.out.println(registCommand.getAge());
-		System.out.println(registCommand.getUser_seq_no());
-		System.out.println(registCommand.getToken());
-		System.out.println(registCommand.getScope());
+//		System.out.println(registCommand.getAge());
+//		System.out.println(registCommand.getUser_seq_no());
+//		System.out.println(registCommand.getToken());
+//		System.out.println(registCommand.getScope());
+		if(registCommand.getToken()==""||registCommand.getScope()=="") {
+			return "thymeleaf/registform";
+		}
 		if(result.hasErrors()) {
 			System.out.println("유효값처리 오류");
 			model.addAttribute("registCommand", registCommand);
