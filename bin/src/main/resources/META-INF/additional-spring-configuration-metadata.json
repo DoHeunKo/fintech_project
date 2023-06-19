@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "security",
+    "type": "java.lang.String",
+    "description": "A description for 'security'"
+  },
+  {
+    "name": "user",
+    "type": "java.lang.String",
+    "description": "A description for 'user'"
+  },
+  {
+    "name": "name",
+    "type": "java.lang.String",
+    "description": "A description for 'name'"
+  },
+  {
+    "name": "spring",
+    "type": "java.lang.String",
+    "description": "A description for 'spring'"
+  },
+  {
+    "name": "password",
+    "type": "java.lang.String",
+    "description": "A description for 'password'"
+  }
+]}
