@@ -40,7 +40,8 @@ import jakarta.servlet.http.HttpSession;
 public class UserController {
 
 	@Autowired
-	IUserService userService;
+	private IUserService userService;
+	@Autowired
 	private AccountFeign accountFeign;
 	
 	
@@ -98,6 +99,7 @@ public class UserController {
 		
 		UserMeDto userMeDto= accountFeign
 				.requestUserMe("Bearer "+dto.getUserTokenDto().get(0).getToken(), dto.getUser_seq_no()+"");
+		System.out.println(userMeDto);
 		List<UserMeAccountDto> adto=userMeDto.getRes_list();
 		List<BalanceCommand> balanceCommands=new ArrayList<>();
 		for(int i=0;i<adto.size();i++) {
