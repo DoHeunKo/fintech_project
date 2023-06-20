@@ -46,24 +46,25 @@
 		})
 })
 	
-// 	})
-// 	$(function(){
-// 		$.ajax({
-// 			url:"/user/balance",
-// 			method:"get",
-// 			async:"false",
-// 			dataType:"json",
-// 			success:function(data){
-// 				console.log(data);
-// 			},
-// 			error:function(xhr, status, error){
-// 				console.log(xhr.responseText);
-// 			}
-// 		})
-// 	})
+	function myPattern(){
+		$.ajax({
+			url:"/user/pattern",
+			method:"get",
+			async:"false",
+			dataType:"json",
+			success:function(data){
+				console.log(data);
 
+			},
+			error:function(xhr,status,error){
+				console.log(xhr.responseText);
+			}
+		})
+		
+}
 
 </script>
+  
 <style type="text/css">
 
 	input[type="button"]{
@@ -93,10 +94,13 @@
 					<p>참여하고 무료 기프티콘 받아가세요!!</p>
 					
                 </div>
-                <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" class="btn btn-dark" value="소비패턴분석하기" onclick="myInfo()" />
+                <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
             	<div id="list">
 <!--                 <p th:text="${userMeDto}"></p>	 -->
                 </div>
+                <div class="container"> 
+         			<canvas id="myChart" width="400" height="60"></canvas> 
+      			</div>
             </div>
             
         </div>

@@ -20,7 +20,8 @@ public interface AccountFeign {
 	
 	@GetMapping(path = "/v2.0/account/transaction_list/fin_num")
 	public AccountTransactionListDto requestAccountTransactionList(
-			  @RequestParam("bank_tran_id") String bank_tran_id, 
+			@RequestHeader("Authorization") String access_token,  
+			@RequestParam("bank_tran_id") String bank_tran_id, 
 			  @RequestParam("fintech_use_num") String fintech_use_num, 
 			  @RequestParam("inquiry_type") String inquiry_type, 
 			  @RequestParam("inquiry_base") String inquiry_base, 
