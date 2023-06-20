@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="text/javascript">
 //나의 정보조회
 // function myInfo(){
@@ -53,8 +53,36 @@
 			async:"false",
 			dataType:"json",
 			success:function(data){
-				console.log(data);
-
+				var graphData1 =data.category_labels;
+				var graphData2 =data.category_data;
+				var ctx = document.getElementById('myChart').getContext('2d');
+		        var myChart = new Chart(ctx, {
+		            type: 'bar',
+		            data: {
+		                labels: graphData1,
+		                datasets: [{
+		                    label: 'Graph Data',
+		                    data: graphData2,
+		                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+		                    borderColor: 'rgba(75, 192, 192, 1)',
+		                    borderWidth: 1,
+		                    barPercentage: 1.0, // Adjust the width of the bars (80% of available space)
+		                    categoryPercentage: 1.0, // Adjust the spacing between the bars (90% of available space)
+		                    barSpacing: '10px'
+		                }]
+		            },
+		            options: {
+		                responsive: true,
+		                scales: {
+		                    y: {
+		                        beginAtZero: true
+		                    }
+		                   
+		            
+		                    
+		                }
+		            }
+		        });
 			},
 			error:function(xhr,status,error){
 				console.log(xhr.responseText);
@@ -99,7 +127,7 @@
 <!--                 <p th:text="${userMeDto}"></p>	 -->
                 </div>
                 <div class="container"> 
-         			<canvas id="myChart" width="400" height="60"></canvas> 
+         			<canvas id="myChart" height="300"></canvas> 
       			</div>
             </div>
             
