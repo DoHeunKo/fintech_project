@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ms.fintech.apidtos.AccountBalanceDto;
 import com.ms.fintech.apidtos.AccountTransactionListDto;
 import com.ms.fintech.apidtos.UserMeDto;
 
@@ -27,4 +28,12 @@ public interface AccountFeign {
 			  @RequestParam("to_date") String to_date, 
 			  @RequestParam("sort_order") String sort_order, 
 			  @RequestParam("tran_dtime") String tran_dtime);
+	
+	@GetMapping(path="/v2.0/account/balance/fin_num")
+	public AccountBalanceDto requestAccountBalanceList(
+			@RequestHeader("Authorization") String access_token,
+			@RequestParam("bank_tran_id") String bank_tran_id, 
+			  @RequestParam("fintech_use_num") String fintech_use_num,
+			  @RequestParam("tran_dtime") String tran_dtime
+			  );
 }

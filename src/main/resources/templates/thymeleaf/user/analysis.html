@@ -6,48 +6,62 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+
 <script type="text/javascript">
 //나의 정보조회
-function myInfo(){
+// function myInfo(){
+	$(function(){
+		$.ajax({
+			url:"/user/info_balance",
+			method:'get',
+			dataType:'json',
+			success:function(data){
+				var response=data;
+				console.log(response);
+// 				var res_list=data['res_list'];
+// 				console.log(res_list);
+				$("#list").empty();//화면 초기화
+				
+//	 				급여계좌
+//	     		83764585969076959 [국민은행]
+				for(var i=0;i<response.length;i++){
+					$("#list").append(
+						'<div class="box container" style="border:1px solid #009999">'+
+	            		'	<div>'+
+	            		'		<p>'+response[i].bank_name+'  '+
+// 	            		response[i].fintech_use_num+
+	            		'<br/>'+response[i].balance_amt+'원</p>'+
+// 	            		'		<h4>'+response[i].fintech_use_num+'</h4>'+
+	            			
+	            		'	</div>'+
+	            		'</div>'	
+					)                         
+				}                      
+			},
+			error:function(xhr, status, error){
+//	 			location.reload();//페이지 새로고침
+				console.log(xhr.responseText);
+//	 				alert("통신실패");
+			}
+		})
+})
 	
-	$.ajax({
-		url:"/user/allmyinfo",
-//			url:"https://testapi.openbanking.or.kr/v2.0/user/me",
-//			headers:{"Authorization":"Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIxMTAxMDEzMzQ4Iiwic2NvcGUiOlsiaW5xdWlyeSIsImxvZ2luIiwidHJhbnNmZXIiXSwiaXNzIjoiaHR0cHM6Ly93d3cub3BlbmJhbmtpbmcub3Iua3IiLCJleHAiOjE2OTI2OTQ3NTgsImp0aSI6IjhhYWIyODNkLTljYjEtNGNkNS1iN2FmLTAzZTA5ZDBkNDRlYSJ9.BefjiG6pniEbFzcQmfr9vyhdBeR7ctY6i-OxATg5Jh4"},
-//			data:{'user_seq_no':'1101013348'},
-		method:'get',
-		dataType:'json',
-		success:function(data){
-//				console.log(data['res_list'].length);
-			
-			var res_list=data['res_list'];
-			console.log(res_list);
-			$("#list").empty();//화면 초기화
-			
-//				급여계좌
-//     		83764585969076959 [국민은행]
-			for(var i=0;i<res_list.length;i++){
-				$("#list").append(
-					'<div class="box container">'+
-            		'	<div>'+
-            		'		<h1>'+res_list[i]['account_alias']+'</h1>'+
-            		'		<p>'+res_list[i]['fintech_use_num']+' ['+res_list[i]['bank_name']+']</p>'+
-            		'	</div>'+
-            		'	<div class="sub_menu">'+
-            		'		<a onclick="balance(\''+res_list[i]['fintech_use_num']+'\',this)" class="balance">잔액조회</a> | '+
-            		'		<a>QR생성</a>'+
-            		'	</div>'+
-            		'	<div class="balance_amt"></div>'+
-            		'</div>'	
-				)                         
-			}                      
-		},
-		error:function(){
-			location.reload();//페이지 새로고침
-//				alert("통신실패");
-		}
-	})
-}
+// 	})
+// 	$(function(){
+// 		$.ajax({
+// 			url:"/user/balance",
+// 			method:"get",
+// 			async:"false",
+// 			dataType:"json",
+// 			success:function(data){
+// 				console.log(data);
+// 			},
+// 			error:function(xhr, status, error){
+// 				console.log(xhr.responseText);
+// 			}
+// 		})
+// 	})
+
 
 </script>
 <style type="text/css">
@@ -81,7 +95,7 @@ function myInfo(){
                 </div>
                 <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" class="btn btn-dark" value="소비패턴분석하기" onclick="myInfo()" />
             	<div id="list">
-                		
+<!--                 <p th:text="${userMeDto}"></p>	 -->
                 </div>
             </div>
             
