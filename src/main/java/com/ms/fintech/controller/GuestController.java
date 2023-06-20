@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,15 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
-import com.ms.fintech.dtos.RoomDto;
-import com.ms.fintech.dtos.UserDto;
+import com.ms.fintech.crawling.Crawler;
 import com.ms.fintech.service.IUserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +34,8 @@ public class GuestController {
 	@Autowired 
 	private IUserService userService;
 
-	private UserDto userDto;
+	@Autowired
+	private Crawler crawler;
 	
 	@GetMapping("/")
 	public String main() {
@@ -168,6 +165,19 @@ public class GuestController {
 			return "redirect:/registform";
 		}
 	}
+	@GetMapping("/mznews")
+	public void mznews() {
+		HashMap<String, String> map = new HashMap<>();
+		try {
+			crawler.process();
+			
+		}catch (InterruptedException e) {
+			// TODO: handle exception
+		}
+		
+	}
+	
+	
 	
 //	
 //	@ModelAttribute
