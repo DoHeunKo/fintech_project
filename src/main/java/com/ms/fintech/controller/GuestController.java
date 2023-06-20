@@ -27,7 +27,6 @@ import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
-import com.ms.fintech.mapper.UserMapper;
 import com.ms.fintech.service.IUserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,8 +39,6 @@ public class GuestController {
 	private IUserService userService;
 
 	private UserDto userDto;
-	@Autowired 
-	private UserMapper userMapper; 
 	
 	@GetMapping("/")
 	public String main() {
@@ -179,26 +176,4 @@ public class GuestController {
 //		model.addAttribute(model);
 //	}
 	
-//	@GetMapping("comunity")
-//	public String comunity(Model model) {
-//		var roomList = new ArrayList<RoomDto>();
-//		//TODO 관리자 페이지에서 추가 및 삭제 기능 구현
-//		roomList.add(RoomDto.builder().roomNo(1).roomTitle("거지방 1호").build());
-//		roomList.add(RoomDto.builder().roomNo(2).roomTitle("거지방 2호").build());
-//		roomList.add(RoomDto.builder().roomNo(3).roomTitle("거지방 3호").build());
-//		
-//		model.addAttribute("dtos", roomList);
-//		return "thymeleaf/comunity";
-//	}
-//	@GetMapping("comunity/chatroom")
-//	public String chatRoom(HttpSession session, Model model, @RequestParam("roomno") int roomNo, @ModelAttribute LoginCommand command) {
-//		model.addAttribute("roomNo", roomNo);
-//		UserDto dto = (UserDto)session.getAttribute("dto");
-//		if (dto == null) {
-//			model.addAttribute("userId", "unknown");
-//		} else {
-//			model.addAttribute("userId", dto.getEmail().split("@")[0]);
-//		}
-//		return "thymeleaf/chatroom";
-//	}	
 }

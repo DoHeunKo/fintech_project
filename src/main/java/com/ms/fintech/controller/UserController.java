@@ -2,6 +2,7 @@ package com.ms.fintech.controller;
 
 import java.util.ArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
+import com.ms.fintech.service.IUserService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -19,6 +21,9 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/user")
 public class UserController {
 
+	@Autowired
+	IUserService userService;
+	
 	@GetMapping("/userMain")
 	public String userMain() {
 		return "thymeleaf/user/userMain";
@@ -42,7 +47,7 @@ public class UserController {
 		roomList.add(RoomDto.builder().roomNo(3).roomTitle("거지방 3호").build());
 		
 		model.addAttribute("dtos", roomList);
-		return "thymeleaf/community";
+		return "thymeleaf/user/community";
 	}
 	@GetMapping("community/chatroom")
 	public String chatRoom(HttpSession session, Model model, @RequestParam("roomno") int roomNo, @ModelAttribute LoginCommand command) {
@@ -53,6 +58,13 @@ public class UserController {
 		} else {
 			model.addAttribute("userId", dto.getEmail().split("@")[0]);
 		}
-		return "thymeleaf/chatroom";
+		return "thymeleaf/user/chatroom";
 	}
+	@GetMapping("withdraw")
+	public String withdraw(HttpSession session) {
+		int user_seq = ((UserDto)session.getAttribute("dto")).getUser_seq();
+		return userService.withdraw(user_seq) > 0 ? "redirect:/" : "redirect:/error";
+	}
+	
+	
 }

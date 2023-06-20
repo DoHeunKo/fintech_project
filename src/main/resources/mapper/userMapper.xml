@@ -47,7 +47,12 @@
 <!--     	(NULL,#{user_no},NULL) -->
 <!--     </insert> -->
     
-    
+    <delete id="withdraw">
+    	DELETE FROM user_token where user_seq = #{user_seq};
+    	DELETE FROM user_info where user_seq = #{user_seq};
+    </delete>
+	
+	
 	
 	<select id="emailChk" resultType="String" parameterType="String">
 		SELECT EMAIL FROM USER_INFO WHERE EMAIL=#{email}

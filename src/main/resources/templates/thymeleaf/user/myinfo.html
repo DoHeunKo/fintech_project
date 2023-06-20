@@ -3,13 +3,17 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
 	  layout:decorate="~{thymeleaf/layouts/user_layout}">
 <head>
-    <meta charset="utf-8" />
-    <script type="text/javascript">
-    	function withdraw() {
-    		
+<meta charset="utf-8" />
+<script type="text/javascript">
+	function withdraw() {
+		var answer = confirm("정말 탈퇴하시겠습니까 ?");
+		if (answer){
+			location.href="/user/withdraw"
+		} else {
+			location.href="/user/userMain"
 		}
-    
-    </script>
+	}
+</script>
 </head>
 
 <body>
@@ -54,8 +58,8 @@
                                  <td class="field">성별</td>
 <!--                                  <td><span  th:text="${session.dto.sex}">여성</span> </td> -->
                                  <td>
-                                 <span  th:if="${session.dto.sex == 'female'}">남성</span> 
-                                 <span  th:unless="${session.dto.sex == 'female'}">여성</span> 
+                                 <span  th:if="${session.dto.sex == 'female'}">여성</span> 
+                                 <span  th:unless="${session.dto.sex == 'female'}">남성</span> 
                                  </td>
                               </tr>
                               <tr>

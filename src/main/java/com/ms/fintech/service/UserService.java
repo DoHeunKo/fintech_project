@@ -74,6 +74,10 @@ public class UserService implements IUserService{
 			}
 		
 	}
+	@Override
+	public int withdraw(int user_seq) {
+		return userMapper.withdraw(user_seq);
+	}
 	
 
 	

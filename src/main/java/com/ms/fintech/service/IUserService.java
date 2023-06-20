@@ -14,4 +14,6 @@ public interface IUserService {
 	public void userRegist(RegistCommand registCommand);
 	
 	public String userLogin(LoginCommand loginCommand,HttpServletRequest request,Model model);
+	
+	public int withdraw(int userSeq);
 }

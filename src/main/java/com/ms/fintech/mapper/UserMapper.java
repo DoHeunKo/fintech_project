@@ -15,4 +15,6 @@ public interface UserMapper {
 	
 	public UserDto userLogin(String email);
 	
+	public int withdraw(int user_seq);
+	
 }
