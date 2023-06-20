@@ -29,6 +29,7 @@ import com.ms.fintech.command.BalanceCommand;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
+import com.ms.fintech.service.IUserService;
 import com.ms.fintech.feign.AccountFeign;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +40,7 @@ import jakarta.servlet.http.HttpSession;
 public class UserController {
 
 	@Autowired
+	IUserService userService;
 	private AccountFeign accountFeign;
 	
 	
@@ -65,7 +67,7 @@ public class UserController {
 		roomList.add(RoomDto.builder().roomNo(3).roomTitle("거지방 3호").build());
 		
 		model.addAttribute("dtos", roomList);
-		return "thymeleaf/community";
+		return "thymeleaf/user/community";
 	}
 	@GetMapping("community/chatroom")
 	public String chatRoom(HttpSession session, Model model, @RequestParam("roomno") int roomNo, @ModelAttribute LoginCommand command) {
@@ -76,7 +78,7 @@ public class UserController {
 		} else {
 			model.addAttribute("userId", dto.getEmail().split("@")[0]);
 		}
-		return "thymeleaf/chatroom";
+		return "thymeleaf/user/chatroom";
 	}
 	
 	@GetMapping("/analysis")
@@ -137,5 +139,12 @@ public class UserController {
 			
 			return formatNow;
 		}
+		
+		@GetMapping("withdraw")
+		public String withdraw(HttpSession session) {
+			int user_seq = ((UserDto)session.getAttribute("dto")).getUser_seq();
+			return userService.withdraw(user_seq) > 0 ? "redirect:/" : "redirect:/error";
+		}
 
+		
 }

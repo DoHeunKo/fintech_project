@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,16 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
-import com.ms.fintech.dtos.RoomDto;
-import com.ms.fintech.dtos.UserDto;
-import com.ms.fintech.mapper.UserMapper;
+import com.ms.fintech.crawling.Crawler;
 import com.ms.fintech.service.IUserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,9 +34,8 @@ public class GuestController {
 	@Autowired 
 	private IUserService userService;
 
-	private UserDto userDto;
-	@Autowired 
-	private UserMapper userMapper; 
+	@Autowired
+	private Crawler crawler;
 	
 	@GetMapping("/")
 	public String main() {
@@ -171,6 +165,19 @@ public class GuestController {
 			return "redirect:/registform";
 		}
 	}
+	@GetMapping("/mznews")
+	public void mznews() {
+		HashMap<String, String> map = new HashMap<>();
+		try {
+			crawler.process();
+			
+		}catch (InterruptedException e) {
+			// TODO: handle exception
+		}
+		
+	}
+	
+	
 	
 //	
 //	@ModelAttribute
@@ -179,26 +186,4 @@ public class GuestController {
 //		model.addAttribute(model);
 //	}
 	
-//	@GetMapping("comunity")
-//	public String comunity(Model model) {
-//		var roomList = new ArrayList<RoomDto>();
-//		//TODO 관리자 페이지에서 추가 및 삭제 기능 구현
-//		roomList.add(RoomDto.builder().roomNo(1).roomTitle("거지방 1호").build());
-//		roomList.add(RoomDto.builder().roomNo(2).roomTitle("거지방 2호").build());
-//		roomList.add(RoomDto.builder().roomNo(3).roomTitle("거지방 3호").build());
-//		
-//		model.addAttribute("dtos", roomList);
-//		return "thymeleaf/comunity";
-//	}
-//	@GetMapping("comunity/chatroom")
-//	public String chatRoom(HttpSession session, Model model, @RequestParam("roomno") int roomNo, @ModelAttribute LoginCommand command) {
-//		model.addAttribute("roomNo", roomNo);
-//		UserDto dto = (UserDto)session.getAttribute("dto");
-//		if (dto == null) {
-//			model.addAttribute("userId", "unknown");
-//		} else {
-//			model.addAttribute("userId", dto.getEmail().split("@")[0]);
-//		}
-//		return "thymeleaf/chatroom";
-//	}	
 }
