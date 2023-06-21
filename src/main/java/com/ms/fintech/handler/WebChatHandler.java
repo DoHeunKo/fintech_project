@@ -14,7 +14,7 @@ public class WebChatHandler extends TextWebSocketHandler {
 //	private final List<HashMap<String, WebSocketSession>> roomList = new ArrayList<>();
 	
 	private final HashMap<String, WebSocketSession> sessions = new HashMap<>();
-	private HashMap<String, WebSocketSession> rooms[] = new HashMap[5];
+	private HashMap<String, WebSocketSession> rooms[] = new HashMap[10];
 	private int roomNo;
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {

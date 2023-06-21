@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
 import com.ms.fintech.crawling.Crawler;
+import com.ms.fintech.dtos.CrawlerDto;
 import com.ms.fintech.service.IUserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -166,24 +168,20 @@ public class GuestController {
 		}
 	}
 	@GetMapping("/mznews")
-	public void mznews() {
-		HashMap<String, String> map = new HashMap<>();
+	public String mznews(Model model) {
+		List<CrawlerDto> list;
 		try {
-			crawler.process();
-			
-		}catch (InterruptedException e) {
-			// TODO: handle exception
+			list = crawler.process();
+			model.addAttribute("crawlerDto", list);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
+		return "thymeleaf/mznews";
 	}
 	
-	
-	
-//	
-//	@ModelAttribute
-//	public void addAttributes(Model model) {
-//		
-//		model.addAttribute(model);
-//	}
-	
+	@GetMapping("/error")
+	public String error() {
+		return "thymeleaf/error";
+	}
 }
