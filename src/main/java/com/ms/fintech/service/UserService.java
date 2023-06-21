@@ -1,5 +1,7 @@
 package com.ms.fintech.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +9,7 @@ import org.springframework.ui.Model;
 
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
+import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
 import com.ms.fintech.dtos.UserTokenDto;
 import com.ms.fintech.mapper.UserMapper;
@@ -51,29 +54,27 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public String userLogin(LoginCommand loginCommand,HttpServletRequest request,
-			Model model) {
-			UserDto dto=userMapper.userLogin(loginCommand.getEmail());
-//			System.out.println("화면비밀번호"+loginCommand.getPassword());
-//			System.out.println(dto.getAddress());
-//			System.out.println("DB비밀번호" +dto.getPassword());
-			if(dto !=null) {
-				if(loginCommand.getPassword().equals(dto.getPassword())) {
-					request.getSession().setAttribute("dto", dto);
-					return "redirect:/user/userMain";
-				}
-				else {
-					System.out.println("비밀번호오류");
-					return "thymeleaf/loginform";
-				}
-			}
-			else {
-				
-				System.out.println("회원정보없음");
-				return "thymeleaf/loginform";
-			}
-		
-	}
+	public String userLogin(LoginCommand loginCommand, HttpServletRequest request,
+	         Model model) {
+	      UserDto dto=userMapper.userLogin(loginCommand.getEmail());
+	      if(dto != null) {
+	         if(loginCommand.getPassword().equals(dto.getPassword())) {
+	            request.getSession().setAttribute("dto", dto);
+	            if(dto.getRole().equals("MANAGER")){
+	               return "redirect:/manager/managerMain";
+	            } else {
+	            	return "redirect:/user/userMain";
+	            }
+	            
+	         }else {
+	            System.out.println("비밀번호 틀림");
+	            return "thymeleaf/user/loginForm";
+	         }
+	      }else {
+	         System.out.println("회원 정보 없음, 회원가입 필요");
+	         return "thymeleaf/user/loginForm";
+	      }
+	   }
 	@Override
 	public int withdraw(int user_seq) {
 		return userMapper.withdraw(user_seq);
