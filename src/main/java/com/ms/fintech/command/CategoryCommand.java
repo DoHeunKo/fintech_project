@@ -12,5 +12,7 @@ public class CategoryCommand {
 	private int cafe;
 	private int hobby;
 	private int etc;
+	private int plus;
+	private int total;
 	
 }

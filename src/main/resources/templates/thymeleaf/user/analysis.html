@@ -7,10 +7,16 @@
 <title>Insert title here</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script type="text/javascript">
 //나의 정보조회
 // function myInfo(){
 	$(function(){
+		
+})
+	
+	function myPattern(){
+		
 		$.ajax({
 			url:"/user/info_balance",
 			method:'get',
@@ -43,46 +49,66 @@
 				console.log(xhr.responseText);
 //	 				alert("통신실패");
 			}
-		})
-})
-	
-	function myPattern(){
+		});
+		
 		$.ajax({
 			url:"/user/pattern",
 			method:"get",
 			async:"false",
 			dataType:"json",
 			success:function(data){
-				var graphData1 =data.category_labels;
-				var graphData2 =data.category_data;
-				var ctx = document.getElementById('myChart').getContext('2d');
-		        var myChart = new Chart(ctx, {
-		            type: 'bar',
-		            data: {
-		                labels: graphData1,
-		                datasets: [{
-		                    label: 'Graph Data',
-		                    data: graphData2,
-		                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-		                    borderColor: 'rgba(75, 192, 192, 1)',
-		                    borderWidth: 1,
-		                    barPercentage: 1.0, // Adjust the width of the bars (80% of available space)
-		                    categoryPercentage: 1.0, // Adjust the spacing between the bars (90% of available space)
-		                    barSpacing: '10px'
-		                }]
-		            },
-		            options: {
-		                responsive: true,
-		                scales: {
-		                    y: {
-		                        beginAtZero: true
-		                    }
-		                   
-		            
-		                    
-		                }
-		            }
-		        });
+				
+				console.log(data.categoryCommand);
+				var size=data.categoryCommand.length;
+				//전체소비
+				var total_cs=[];
+				var total_plus=[];
+				var per_month=[];
+				for(var i=0;i<size;i++){
+					per_month.push(i+1+"월");
+					total_cs.push(data.categoryCommand[i].total);	
+					total_plus.push(data.categoryCommand[i].plus);
+				}
+				createChart('chart1',per_month,total_cs,'전체 소비');
+				createChart('chart2',per_month,total_plus,'전체 수입');
+				//카테고리별 소비(전체,5월)
+				var category_key=Object.keys(data.categoryCommand[0]);
+				category_key.pop();
+				category_key.pop();
+// 				console.log(category_key);
+				var category_latest=Object.values(data.categoryCommand[4]);
+				category_latest.pop();
+				category_latest.pop();
+// 				console.log(category_latest);
+				
+				createChart('chart4',category_key,category_latest,'이번달 카테고리별 소비');
+				var category_total=[];
+// 				for(var i=0;i<8;i++){
+// 					console.log(category_key[i]);
+// 				}
+				for(var i=0;i<8;i++){
+					var ck=category_key[i];
+					
+					var category_sum=data.categoryCommand.map(row=>row[ck]);
+					category_total.push(category_sum.reduce((accumulator, current) => 
+                          accumulator + current, 0));
+				}
+				console.log(category_total);
+				createChart('chart3',category_key,category_total,'전체 카테고리별 소비');
+				
+				console.log(total_cs);
+				
+				//이번달 예측 소비
+				const avg = total_cs.reduce((accumulator, current, index, array) => {
+				    if(index == array.length-1) {
+				        return (accumulator + current) / array.length;
+				    }
+				    return accumulator + current;
+				}, 0);
+				console.log(avg);
+				per_month.push("이번달");
+				total_cs.push(avg);
+				createChart('chart5',per_month,total_cs,'이번달 예상 소비 금액');
 			},
 			error:function(xhr,status,error){
 				console.log(xhr.responseText);
@@ -90,20 +116,69 @@
 		})
 		
 }
+	function createChart(chartId, h_data, v_data, name) {
+		  var ctx = document.getElementById(chartId).getContext('2d');
+		  var backgroundColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(75, 192, 192, 0.8)' : 'rgba(75, 192, 192, 0.2)');
+		  var borderColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(75, 192, 192, 1)' : 'rgba(75, 192, 192, 1)');
 
+		  var myChart = new Chart(ctx, {
+		    type: 'bar',
+		    data: {
+		      labels: h_data,
+		      datasets: [{
+		        label: name,
+		        data: v_data,
+		        backgroundColor: backgroundColors,
+		        borderColor: borderColors,
+		        borderWidth: 1,
+		        barPercentage: 1.0,
+		        categoryPercentage: 1.0,
+		        barSpacing: '10px'
+		      }]
+		    },
+		    options: {
+		      responsive: true,
+		      maintainAspectRatio: false,
+		      scales: {
+		        y: {
+		          beginAtZero: true
+		        }
+		      }
+		    }
+		  });
+		}
+	
 </script>
-  
+
 <style type="text/css">
 
 	input[type="button"]{
 		text-align:center;
-	  	
-	  	
-		
 		margin-top:10px;
 		margin-bottom:10px;
 	}
+	.charts-wrapper {
+	  overflow-x: auto;
+	  max-width: 100%;
+	}
+	.charts-container {
+	max-width: 100%;
+	width: 600px;
+ 	 height: 450px;
+	  display: flex;
+	}
 	
+	#chart1, #chart2 {
+
+	  flex: 1;
+	  margin-right: 10px; /* Adjust the margin as needed */
+	}
+	
+	#chart3, #chart4 {
+
+	  flex: 1;
+	  margin-right: 10px; /* Adjust the margin as needed */
+	}
 </style>
 </head>
 
@@ -123,12 +198,27 @@
 					
                 </div>
                 <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
+            	
             	<div id="list">
-<!--                 <p th:text="${userMeDto}"></p>	 -->
+
                 </div>
-                <div class="container"> 
-         			<canvas id="myChart" height="300"></canvas> 
+                
+                <div class="charts-wrapper"> 
+<!--                 	<label for="plus_minus">소비/수입</label><br/> -->
+                	<div class="charts-container">
+	         			<canvas id="chart1" width= 400px;></canvas> 
+	         			<canvas id="chart2" width= 400px;></canvas>
+	         		</div>
+<!-- 	         		<label for="category">카테고리별 소비</label><br/> -->
+	         		<div class="charts-container">
+	         			<canvas id="chart3"></canvas>
+	         			<canvas id="chart4"></canvas>
+         			</div>
+         			<div class="charts-container">
+         			<canvas id="chart5"></canvas>
+         			</div>
       			</div>
+
             </div>
             
         </div>

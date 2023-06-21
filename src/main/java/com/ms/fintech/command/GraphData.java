@@ -11,5 +11,5 @@ import lombok.RequiredArgsConstructor;
 public class GraphData {
 	
 	private List<String> category_labels;
-    private List<Double> category_data;
+    private List<Integer> category_data;
 }
