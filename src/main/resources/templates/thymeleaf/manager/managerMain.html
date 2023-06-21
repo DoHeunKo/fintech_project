@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
+  layout:decorate="~{thymeleaf/layouts/user_layout}"
+>
+  <head>
+    <meta charset="utf-8" />
+    <style type="text/css">
+
+      #member-list, .management {
+      	display: inline-block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div layout:fragment="content">
+      <!-- Main Content-->
+      <div class="mb-4">
+        <div id="member-list" style="display: inline-block;">
+          <ul class="list-group">
+            <li class="list-group-item active">Cras justo odio</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+          </ul>
+        </div>
+        <div class="management" style="display: inline-block;">
+          <table class="list-group">
+            <tr>
+              <th>Column 1 Heading</th>
+              <th>Column 2 Heading</th>
+            </tr>
+            <tr>
+              <td>Row 1: Col 1</td>
+              <td>Row 1: Col 2</td>
+            </tr>
+          </table>
+          <table class="mt-5">
+            <tr>
+              <th>Column 1 Heading</th>
+              <th>Column 2 Heading</th>
+            </tr>
+            <tr>
+              <td>Row 1: Col 1</td>
+              <td>Row 1: Col 2</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
