@@ -18,31 +18,31 @@
     <div layout:fragment="content">
       <!-- Main Content-->
       <div class="mb-4">
-        <div id="member-list" style="display: inline-block;">
+        <div class="mr-4-sm-2" id="member-list" style="display: inline-block;">
           <ul class="list-group">
             <li class="list-group-item active">회원 명단</li>
-            <li th:each="dto : ${dtos}"></li>
+            <th:block th:each="dto : ${userDto}">
+            <li><a href="#" th:text="${dto.name}"></a></li>
+            </th:block>
           </ul>
         </div>
+        
+        
         <div class="management" style="display: inline-block;">
-          <table class="list-group">
+          <table class="list-group" >
             <tr>
               <th>Column 1 Heading</th>
-              <th>Column 2 Heading</th>
             </tr>
-            <tr>
-              <td>Row 1: Col 1</td>
-              <td>Row 1: Col 2</td>
+            <tr th:each="dto : ${roomDto}">
+              <td th:text="${dto.roomTitle}">Row 1: Col 1</td>
             </tr>
           </table>
           <table class="mt-5">
             <tr>
               <th>Column 1 Heading</th>
-              <th>Column 2 Heading</th>
             </tr>
-            <tr>
-              <td>Row 1: Col 1</td>
-              <td>Row 1: Col 2</td>
+            <tr th:each="dto : ${newsDto}">
+              <td th:text="${dto.title}">Row 1: Col 1</td>
             </tr>
           </table>
         </div>

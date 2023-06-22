@@ -39,6 +39,7 @@ import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
 import com.ms.fintech.service.IUserService;
 import com.ms.fintech.feign.AccountFeign;
+import com.ms.fintech.mapper.UserMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -51,13 +52,8 @@ public class UserController {
 	private IUserService userService;
 	@Autowired
 	private AccountFeign accountFeign;
-	
-	@ModelAttribute
-	public void initDto(Model model) {
-		model.addAttribute("role", "guest");
-	}
-	
-	
+	@Autowired
+	private UserMapper mapper;
 //	static int entertainment;
 //	static int transportation;
 //	static int convenience;
@@ -71,7 +67,7 @@ public class UserController {
 	static int plus_cnt;
 	static int [] month_plus=new int[12];
 	static int [] month_minus=new int[12];
-
+	
 	@GetMapping("/userMain")
 	public String userMain() {
 		return "thymeleaf/user/userMain";
@@ -86,19 +82,14 @@ public class UserController {
 		return "thymeleaf/user/myinfo";
 	}
 	
-	@GetMapping("community")
+	@GetMapping("/community")
 	public String comunity(Model model) {
-		var roomList = new ArrayList<RoomDto>();
-		//TODO 관리자 페이지에서 추가 및 삭제 기능 구현
-		roomList.add(RoomDto.builder().roomNo(1).roomTitle("거지방 1호").build());
-		roomList.add(RoomDto.builder().roomNo(2).roomTitle("거지방 2호").build());
-		roomList.add(RoomDto.builder().roomNo(3).roomTitle("거지방 3호").build());
-		
-		model.addAttribute("dtos", roomList);
+		model.addAttribute("roomDtos", mapper.getRoomList());
+		System.out.println(mapper.getRoomList().get(0).getRoomTitle());
 		return "thymeleaf/user/community";
 	}
-	@GetMapping("community/chatroom")
-	public String chatRoom(HttpSession session, Model model, @RequestParam("roomno") int roomNo, @ModelAttribute LoginCommand command) {
+	@GetMapping("/community/chatroom")
+	public String chatRoom(HttpSession session, Model model, @RequestParam("roomno") int roomNo) {
 		model.addAttribute("roomNo", roomNo);
 		UserDto dto = (UserDto)session.getAttribute("dto");
 		if (dto == null) {
@@ -393,6 +384,5 @@ public class UserController {
 			int user_seq = ((UserDto)session.getAttribute("dto")).getUser_seq();
 			return userService.withdraw(user_seq) > 0 ? "redirect:/" : "redirect:/error";
 		}
-
 		
 }

@@ -41,12 +41,6 @@ public class GuestController {
 	@Autowired
 	private UserMapper mapper;
 	
-	@ModelAttribute
-	public void initDto(Model model, HttpSession session) {
-//		session.setAttribute("dto", "guest");
-		model.addAttribute("dto", "guest");
-	}
-	
 	@GetMapping("/")
 	public String main() {
 		return "thymeleaf/main";
