@@ -18,9 +18,9 @@
 <span><b style="font-size: 25px;">MZ세대 최근 소식</b><br></br></span>
 <th:block th:each="dto : ${crawlerDto}">
   <div class="card">
-    <img class="card-img-top" th:src="${dto.img}" alt="Card image cap">
+    <img class="card-img-top" th:src="${dto.src}" alt="Card image cap">
     <div class="card-body">
-      <p class="card-text"  th:text="${dto.title}">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      <a th:href="${dto.href}" class="card-text"  th:text="${dto.title}"></a>
     </div>
   </div>
 </th:block>

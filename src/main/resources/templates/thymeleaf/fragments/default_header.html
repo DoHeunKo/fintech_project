@@ -7,26 +7,55 @@
 
 <div th:fragment="header" >
          <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+<div th:each="dto : ${dto}">
+<th:block th:if="${#strings.equals(dto, 'guest')}">
+    <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="/" th:text="${dto}">미세小비</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" onclick="noPermission()" href="#">소비패턴분석</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" onclick="noPermission()" href="#">간편송금</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" onclick="noPermission()" href="#">커뮤니티</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="#">순위</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/mznews">MZ소식</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/loginform">로그인</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/registform">회원가입</a></li>
+                    <li class="nav-item" th:text="${dto}"></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+ </th:block>
+ <th:block th:unless="${#strings.equals(dto, 'guest')}">
+		<nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="/">미세小비</a>
+                <a class="navbar-brand" href="/user/userMain" th:text="${dto}">미세小비</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
+                <div class="collapse navbar-collapse" id="navbarResponsive" >
                     <ul class="navbar-nav ms-auto py-4 py-lg-0">
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" onclick="noPermission()" href="#">소비패턴분석</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" onclick="noPermission()" href="#">간편송금</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" onclick="noPermission()" href="#">커뮤니티</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="#">순위</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/mznews">MZ소식</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/loginform">로그인</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/registform">회원가입</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/user/analysis">소비패턴분석</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="#">간편송금</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/user/community">커뮤니티</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/ranking">순위</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/mznews">mz소식</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/user/myinfo">내정보</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/user/logout">로그아웃</a></li>
+						<li class="nav-item" th:text="${dto}"></li>
                     </ul>
                 </div>
             </div>
-        </nav>
+        </nav> 	
+</th:block>
+</div>
+        
         <!-- Page Header-->
         <header class="masthead" style="background-image: url('/assets/background.png'); height:400px">
             <div class="container position-relative px-4 px-lg-5">

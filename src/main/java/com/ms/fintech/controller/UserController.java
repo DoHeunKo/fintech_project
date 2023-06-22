@@ -52,6 +52,12 @@ public class UserController {
 	@Autowired
 	private AccountFeign accountFeign;
 	
+	@ModelAttribute
+	public void initDto(Model model) {
+		model.addAttribute("role", "guest");
+	}
+	
+	
 //	static int entertainment;
 //	static int transportation;
 //	static int convenience;
