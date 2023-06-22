@@ -68,11 +68,11 @@ public class UserService implements IUserService{
 	            
 	         }else {
 	            System.out.println("비밀번호 틀림");
-	            return "thymeleaf/user/loginForm";
+	            return "thymeleaf/loginForm";
 	         }
 	      }else {
 	         System.out.println("회원 정보 없음, 회원가입 필요");
-	         return "thymeleaf/user/loginForm";
+	         return "thymeleaf/loginForm";	
 	      }
 	   }
 	@Override

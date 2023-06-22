@@ -32,7 +32,7 @@
 			var msg = data.data;
 			var json = JSON.parse(msg);
 			if (json.type == "wellcom") {
-				$("#chatting").append("<p> System : " + json.msg + "</p>");	
+				$("#chatting").append("<p class='text-warning'> System : " + json.msg + "</p>");	
 			} else {
 				$("#chatting").append("<p>" + json.userId + " : " + json.msg + "</p>");	
 			}
