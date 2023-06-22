@@ -1,7 +1,11 @@
 package com.ms.fintech.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
+import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import com.ms.fintech.dtos.CrawlerDto;
 import com.ms.fintech.dtos.UserDto;
 import com.ms.fintech.dtos.UserTokenDto;
 
@@ -17,4 +21,6 @@ public interface UserMapper {
 	
 	public int withdraw(int user_seq);
 	
+	@Select("select title, src, href from mz_info")
+	public List<CrawlerDto> getNewsList();
 }

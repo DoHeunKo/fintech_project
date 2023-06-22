@@ -37,7 +37,6 @@ public class Crawler {
         .scrollByAmount(0, 50000)
         .perform();
         var str = ele.getText();
-        var size = str.length();
 //        var strr = str.subSequence(7, size).toString();
         var strr2 = str.split("\\R");
 //        System.out.println(strr);
@@ -46,7 +45,9 @@ public class Crawler {
         for (int i = 2; i < 9; ++i) {
         	for (int j = 1; j < 7; ++j) {
         		var img = driver.findElement(By.cssSelector("#contentArea > div:nth-child("+i+") > ul > li:nth-child("+j+") > a > div.list-thumb > img"));
-        		list.add(new CrawlerDto(strr2[k++], img.getAttribute("src")));
+        		var src = driver.findElement(By.cssSelector("#contentArea > div:nth-child("+i+") > ul > li:nth-child("+j+") > a"));
+        		
+        		list.add(new CrawlerDto(strr2[k++], img.getAttribute("src"), src.getAttribute("href")));
 //        		System.out.println(img.getAttribute("src"));
         	}
         }

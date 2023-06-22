@@ -80,7 +80,7 @@ public class UserService implements IUserService{
 		return userMapper.withdraw(user_seq);
 	}
 	
-
+	
 	
 	
 }

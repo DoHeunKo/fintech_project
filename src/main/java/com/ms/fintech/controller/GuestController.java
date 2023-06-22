@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -25,6 +26,7 @@ import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
 import com.ms.fintech.crawling.Crawler;
 import com.ms.fintech.dtos.CrawlerDto;
+import com.ms.fintech.mapper.UserMapper;
 import com.ms.fintech.service.IUserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +39,13 @@ public class GuestController {
 	private IUserService userService;
 
 	@Autowired
-	private Crawler crawler;
+	private UserMapper mapper;
+	
+	@ModelAttribute
+	public void initDto(Model model, HttpSession session) {
+//		session.setAttribute("dto", "guest");
+		model.addAttribute("dto", "guest");
+	}
 	
 	@GetMapping("/")
 	public String main() {
@@ -170,13 +178,9 @@ public class GuestController {
 	@GetMapping("/mznews")
 	public String mznews(Model model) {
 		List<CrawlerDto> list;
-		try {
-			list = crawler.process();
-			model.addAttribute("crawlerDto", list);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		list = mapper.getNewsList();
+		model.addAttribute("crawlerDto", list);
+		
 		return "thymeleaf/mznews";
 	}
 	

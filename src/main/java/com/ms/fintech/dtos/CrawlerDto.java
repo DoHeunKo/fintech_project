@@ -7,5 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class CrawlerDto {
 	private String title;
-	private String img;
+	private String src;
+	private String href;
 }
