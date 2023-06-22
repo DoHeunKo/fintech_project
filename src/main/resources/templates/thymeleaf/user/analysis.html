@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script type="text/javascript">
 //나의 정보조회
 // function myInfo(){
@@ -26,21 +26,29 @@
 				console.log(response);
 // 				var res_list=data['res_list'];
 // 				console.log(res_list);
-				$("#list").empty();//화면 초기화
+				var balance_list=response.map(row=>Number(row.balance_amt));
+				console.log(balance_list);
+				var balance_sum=balance_list.reduce((accumulator, current) => accumulator + current, 0);
+				console.log(balance_sum);
 				
+				$("#list").empty();//화면 초기화
+				$("#list").append(
+						'<br/><div class="charts-wrapper">'+ 
+						'<h2 class="title">자산</h2>'+
+						'<p>총자산</p>'+
+						'<h2>'+balance_sum+'원</h2>'	+
+						'</div>'
+				);
 //	 				급여계좌
 //	     		83764585969076959 [국민은행]
 				for(var i=0;i<response.length;i++){
 					$("#list").append(
-						'<div class="box container" style="border:1px solid #009999">'+
-	            		'	<div>'+
-	            		'		<p>'+response[i].bank_name+'  '+
-// 	            		response[i].fintech_use_num+
-	            		'<br/>'+response[i].balance_amt+'원</p>'+
-// 	            		'		<h4>'+response[i].fintech_use_num+'</h4>'+
-	            			
-	            		'	</div>'+
-	            		'</div>'	
+						
+						'<div class="box container" >'+
+	            		'		<p>'+response[i].bank_name+'</p>'+
+	            		'<h3>'+response[i].balance_amt+'원</h3>'+
+	            		'</div>'
+	            		
 					)                         
 				}                      
 			},
@@ -57,6 +65,32 @@
 			async:"false",
 			dataType:"json",
 			success:function(data){
+				$("#list2").append(
+						'<br/><div class="charts-wrapper">'+ 
+						'<br/><h2 class="title">소비·수입</h2>'+
+	                	'<div class="charts-container1">'+
+		         			'<canvas id="chart1" width= 400px;></canvas>'+
+		         		'</div>'+
+		         		'<div class="charts-container">'+
+		         			'<canvas id="chart3"></canvas>'+
+	         			'</div>'+
+	         			'<div class="charts-container">'+
+	         			'<canvas id="chart4"></canvas>'+
+	         			'</div>'+
+	         			'<br/><h2 class="title">예측</h2>'+
+	         			'<div class="charts-container1">'+
+	         			'<canvas id="chart5"></canvas>'+
+	         			'<h3 id="exp"></h3><br/>'+
+	         			'</div>'+
+	         			'<br/><br/><h2 class="title">추천카드</h2>'+
+	         			'<div id="cardOne"></div>'+
+	         			'<div id="cardTwo"></div>'+
+	         			'<div id="cardThree"></div>'+
+	         			'<div id="card1">'+
+	            		'<a><img src="/assets/mz_img.jpg"></a> '+
+	            		'</div>'+
+	      			'</div>'
+				);
 				
 				console.log(data.categoryCommand);
 				var size=data.categoryCommand.length;
@@ -69,8 +103,8 @@
 					total_cs.push(data.categoryCommand[i].total);	
 					total_plus.push(data.categoryCommand[i].plus);
 				}
-				createChart('chart1',per_month,total_cs,'전체 소비');
-				createChart('chart2',per_month,total_plus,'전체 수입');
+				createChart2('chart1',per_month,total_plus,total_cs,'전체 소비·수입');
+				
 				//카테고리별 소비(전체,5월)
 				var category_key=Object.keys(data.categoryCommand[0]);
 				category_key.pop();
@@ -81,7 +115,7 @@
 				category_latest.pop();
 // 				console.log(category_latest);
 				
-				createChart('chart4',category_key,category_latest,'이번달 카테고리별 소비');
+				createChart1('chart4',category_key,category_latest,'이번달 카테고리별 소비');
 				var category_total=[];
 // 				for(var i=0;i<8;i++){
 // 					console.log(category_key[i]);
@@ -94,7 +128,7 @@
                           accumulator + current, 0));
 				}
 				console.log(category_total);
-				createChart('chart3',category_key,category_total,'전체 카테고리별 소비');
+				createChart1('chart3',category_key,category_total,'전체 카테고리별 소비');
 				
 				console.log(total_cs);
 				
@@ -106,9 +140,14 @@
 				    return accumulator + current;
 				}, 0);
 				console.log(avg);
-				per_month.push("이번달");
+				var exp_cs=per_month;
+				exp_cs.push("이번달")
 				total_cs.push(avg);
-				createChart('chart5',per_month,total_cs,'이번달 예상 소비 금액');
+				
+				createChart('chart5',exp_cs,total_cs,'이번달 예상 소비 금액');
+				$("#exp").text('이번달 예상 지출액은'+avg+'원 입니다');
+				
+				
 			},
 			error:function(xhr,status,error){
 				console.log(xhr.responseText);
@@ -116,10 +155,51 @@
 		})
 		
 }
+	function createChart2(chartId,h_data,in_v_data,ex_v_data,name) {
+		  var ctx = document.getElementById(chartId).getContext('2d');
+		  var backgroundColors = ['rgba(0, 207, 255, 0.2)', 'rgba(255, 99, 132, 0.2)'];
+		  var borderColors = ['rgba(0, 207, 255, 1)', 'rgba(255, 99, 132, 1)'];
+
+		  var myChart = new Chart(ctx, {
+			    type: 'bar',
+			    data: {
+			      labels: h_data,
+			      datasets: [{
+			        label: '수입',
+			        data: in_v_data,
+			        backgroundColor: backgroundColors[0],
+			        borderColor: borderColors[0],
+			        borderWidth: 1,
+			        barPercentage: 1.0, // Adjust the bar width as desired
+			        categoryPercentage:0.7,
+			        barSpacing: '10px'
+			      },
+			      {
+			        label: '소비',
+			        data: ex_v_data,
+			        backgroundColor: backgroundColors[1],
+			        borderColor: borderColors[1],
+			        borderWidth: 1,
+			        barPercentage: 1.0, // Adjust the bar width as desired
+			        categoryPercentage: 0.7,
+			        barSpacing: '10px'
+			      }]
+			    },
+			    options: {
+			      responsive: true,
+			      maintainAspectRatio: false,
+			      scales: {
+			        y: {
+			          beginAtZero: true
+			        }
+			      }
+			    }
+			  });		
+		}
 	function createChart(chartId, h_data, v_data, name) {
 		  var ctx = document.getElementById(chartId).getContext('2d');
-		  var backgroundColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(75, 192, 192, 0.8)' : 'rgba(75, 192, 192, 0.2)');
-		  var borderColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(75, 192, 192, 1)' : 'rgba(75, 192, 192, 1)');
+		  var backgroundColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(0, 207, 255, 0.8)' : 'rgba(0, 207, 255, 0.2)');
+		  var borderColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(0, 207, 255, 1)' : 'rgba(0, 207, 255, 1)');
 
 		  var myChart = new Chart(ctx, {
 		    type: 'bar',
@@ -147,17 +227,112 @@
 		    }
 		  });
 		}
-	
+	function createChart1(chartId, h_data, v_data, name) {
+		  var ctx = document.getElementById(chartId).getContext('2d');
+		  var total = v_data.reduce((acc, value) => acc + value, 0);
+		  var percentages = v_data.map(value => ((value / total) * 100).toFixed(2) + '%');
+
+		  var myChart = new Chart(ctx, {
+		    type: 'bar',
+		    data: {
+		      labels: h_data,
+		      datasets: [{
+		        label: name,
+		        data: v_data,
+		        backgroundColor: ['rgba(0, 207, 255, 0.8)','rgba(255, 99, 132, 0.8)',
+		        	'rgba(255, 159, 64, 0.8)','rgba(255, 205, 86, 0.8)',
+		        	'rgba(75, 192, 192, 0.8)','rgba(54, 162, 235, 0.8)',
+		        	'rgba(153, 102, 255, 0.8)','rgba(255, 0, 0, 0.8)'],
+		      }]
+		    },
+		    options: {
+		      indexAxis: 'y',
+		      responsive: true,
+		      maintainAspectRatio: false,
+		      scales: {
+		        y: {
+		          beginAtZero: true,
+		          ticks: {
+		            callback: function(value, index, values) {
+		              return value.toLocaleString();
+		            }
+		          }
+		        },
+		        x: {
+		          beginAtZero: true,
+		          ticks: {
+		            callback: function(value, index, values) {
+		              return value.toLocaleString();
+		            }
+		          }
+		        }
+		      },
+		      plugins: {
+		        tooltip: {
+		          callbacks: {
+		            label: function(context) {
+		              var value = context.dataset.data[context.dataIndex];
+		              var percentage = percentages[context.dataIndex];
+		              return 'Value: ' + value.toLocaleString() + ', Percentage: ' + percentage;
+		            }
+		          }
+		        }
+		      }
+		    }
+
+		  });
+		// Create the table container
+// 		  var tableContainer = document.createElement('div');
+// 		  tableContainer.classList.add('table-container');
+
+// 		  // Create the table rows
+// 		  var tableRows = h_data.map((category, index) => {
+			  
+// 			var row = document.createElement('div');
+// 		    var row1 = document.createElement('div');
+// 		    row1.classList.add('table-row');
+// 		    var row2 = document.createElement('div');
+// 		    row2.classList.add('table-row');
+// 		    var categoryCell = document.createElement('h4');
+// 		    categoryCell.textContent = category;
+// 		    var percentageCell = document.createElement('p');
+// 		    percentageCell.textContent =percentages[index];
+// 		    var amountCell = document.createElement('p');
+// 		    amountCell.textContent =  v_data[index].toLocaleString();
+
+// 		    row1.appendChild(categoryCell);
+// 		    row1.appendChild(percentageCell);
+// 		    row2.appendChild(amountCell);
+		    
+// 		    row.appendChild(row1);
+// 		    row.appendChild(row2);
+
+// 		    return row;
+// 		  });
+
+// 		  // Append the table rows to the table container
+// 		  tableRows.forEach(function (row) {
+// 		    tableContainer.appendChild(row);
+// 		  });
+
+// 		  var chartContainer = document.getElementById(chartId);
+
+// 		  chartContainer.insertAdjacentElement('afterend', tableContainer);
+
+		}
 </script>
 
 <style type="text/css">
-
+	.title {
+      border-bottom: 8px solid #4682B4;
+    }
 	input[type="button"]{
 		text-align:center;
 		margin-top:10px;
 		margin-bottom:10px;
 	}
 	.charts-wrapper {
+	text-align:center;
 	  overflow-x: auto;
 	  max-width: 100%;
 	}
@@ -168,7 +343,14 @@
 	  display: flex;
 	}
 	
-	#chart1, #chart2 {
+	.charts-container1 {
+		
+		max-width: 100%;
+		height: 600px;
+		width:800px;
+	}
+	
+	#chart1 {
 
 	  flex: 1;
 	  margin-right: 10px; /* Adjust the margin as needed */
@@ -178,6 +360,11 @@
 
 	  flex: 1;
 	  margin-right: 10px; /* Adjust the margin as needed */
+	}
+	
+	img{
+		width:400px;
+		height:250px;
 	}
 </style>
 </head>
@@ -199,27 +386,14 @@
                 </div>
                 <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
             	
-            	<div id="list">
-
-                </div>
-                
-                <div class="charts-wrapper"> 
-<!--                 	<label for="plus_minus">소비/수입</label><br/> -->
-                	<div class="charts-container">
-	         			<canvas id="chart1" width= 400px;></canvas> 
-	         			<canvas id="chart2" width= 400px;></canvas>
-	         		</div>
-<!-- 	         		<label for="category">카테고리별 소비</label><br/> -->
-	         		<div class="charts-container">
-	         			<canvas id="chart3"></canvas>
-	         			<canvas id="chart4"></canvas>
-         			</div>
-         			<div class="charts-container">
-         			<canvas id="chart5"></canvas>
-         			</div>
-      			</div>
-
+<!--             	<div class="card-list"> -->		
+<!--             	</div> -->
+            	
+            	
+            	<div id="list"></div>
+            	<div id="list2"></div>
             </div>
+            
             
         </div>
     </main>
