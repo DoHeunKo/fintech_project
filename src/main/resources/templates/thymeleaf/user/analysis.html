@@ -12,10 +12,46 @@
 //나의 정보조회
 // function myInfo(){
 	$(function(){
-		
+		$.ajax({
+			url:"/user/joinChk",
+			method:"get",
+			async:"false",
+			dataType:"json",
+			success:function(data){
+				console.log(data);
+				if(data.result=='Y'){
+					$("#joinChk").trigger('click');
+				
+					$("#joinChk").css("background-color","#4169E1");
+					$("#joinChk").val("분석 완료");
+					$("#joinChk").prop("disabled",true);
+					
+				}
+				
+			},
+			error:function(e){
+				console.log(e);
+			}
+		})
 })
 	
 	function myPattern(){
+		
+	
+		$.ajax({
+			url:"/user/oob_token",
+			method:"post",
+			dataType:"json",
+			async:"false",
+			success:function(data){
+				console.log("등록");
+			},
+			error:function(e){
+				alert("oob등록실패");
+			}
+		})
+		
+		
 		
 		$.ajax({
 			url:"/user/info_balance",
@@ -78,10 +114,11 @@
 	         			'<canvas id="chart4"></canvas>'+
 	         			'</div>'+
 	         			'<br/><h2 class="title">예측</h2>'+
-	         			'<div class="charts-container1">'+
+	         			'<div class="charts-container3">'+
 	         			'<canvas id="chart5"></canvas>'+
-	         			'<h3 id="exp"></h3><br/>'+
+	         			'<p id="exp"></p><br/>'+
 	         			'</div>'+
+	         			
 	         			'<br/><br/><h2 class="title">추천카드</h2>'+
 	         			'<div id="cardOne"></div>'+
 	         			'<div id="cardTwo"></div>'+
@@ -149,8 +186,8 @@
 				
 				
 			},
-			error:function(xhr,status,error){
-				console.log(xhr.responseText);
+			error:function(error){
+				console.log(error);
 			}
 		})
 		
@@ -349,6 +386,15 @@
 		height: 600px;
 		width:800px;
 	}
+	.charts-container3 {
+		max-width: 100%;
+		width:800px;
+		height: 600px;
+		
+	}
+	#chart5,#exp{
+		flex:1;
+	}
 	
 	#chart1 {
 
@@ -384,7 +430,7 @@
 					<p>참여하고 무료 기프티콘 받아가세요!!</p>
 					
                 </div>
-                <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
+                <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="joinChk" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
             	
 <!--             	<div class="card-list"> -->		
 <!--             	</div> -->

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
+import com.ms.fintech.apidtos.UserOobDto;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
 import com.ms.fintech.dtos.RoomDto;
@@ -80,7 +81,34 @@ public class UserService implements IUserService{
 		return userMapper.withdraw(user_seq);
 	}
 	
-	
+	@Override
+	@Transactional
+	public boolean join(int user_seq,UserOobDto odto) {
+		boolean isS1=userMapper.join(user_seq);
+		
+		if(isS1) {
+			System.out.println("참가완료");
+		}
+		
+		UserTokenDto dto=new UserTokenDto();
+		dto.setUser_seq(user_seq);
+		dto.setScope(odto.getScope());
+		dto.setToken(odto.getAccess_token());
+		
+		boolean isS2=userMapper.tokenRegist(dto);
+		if(isS2) {
+			System.out.println("oob토큰등록완료");
+		}
+		
+		return true;
+	}
+
+	@Override
+	public String joinChk(int user_seq) {
+		
+		return userMapper.joinChk(user_seq);
+	}
+
 	
 	
 }
