@@ -140,19 +140,34 @@ public class UserController {
 	@ResponseBody
 	@PostMapping("/oob_token")
 	public boolean oob_token(HttpServletRequest request) {
-		
-		UserOobDto odto=accountFeign.requestOobToken(
-				"4987e938-f84b-4e23-b0a2-3b15b00f4ffd", 
-				"3ff7570f-fdfb-4f9e-8f5a-7b549bf2adec", 
-				"oob", 
-				"client_credentials");
-		System.out.println(odto);
 		HttpSession session=request.getSession();
 		UserDto dto=(UserDto)session.getAttribute("dto");
-		System.out.println(dto.getUser_seq());
-		boolean isS=userService.pattern(dto.getUser_seq(),odto);
-
-		return isS;
+		
+		//분석페이지 로딩시 패턴체크와 함께 oob토큰여부도 체크(중복삽입방지)
+		//로그인시 가져온 토큰으로 확인
+		int token_count=dto.getUserTokenDto().size();
+		boolean flag=false;
+		for(int i=0;i<token_count;i++) {
+			if(dto.getUserTokenDto().get(i).getScope().equals("oob")) {
+				flag=true;
+			}
+		}
+		if(flag) {
+			return false;
+		}else {
+			UserOobDto odto=accountFeign.requestOobToken(
+					"4987e938-f84b-4e23-b0a2-3b15b00f4ffd", 
+					"3ff7570f-fdfb-4f9e-8f5a-7b549bf2adec", 
+					"oob", 
+					"client_credentials");
+			System.out.println(odto);
+			
+			System.out.println(dto.getUser_seq());
+			boolean isS=userService.pattern(dto.getUser_seq(),odto);
+			return true;
+		}
+		
+		
 	}
 
 	
@@ -318,6 +333,7 @@ public class UserController {
 		HttpSession session=request.getSession();
 		UserDto dto=(UserDto)session.getAttribute("dto");
 		String result=userService.patternChk(dto.getUser_seq());
+		
 		System.out.println(result);
 		Map<String,String> map=new HashMap<>();
 		map.put("result", result);
