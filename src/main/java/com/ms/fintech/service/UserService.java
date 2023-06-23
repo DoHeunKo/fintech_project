@@ -83,8 +83,8 @@ public class UserService implements IUserService{
 	
 	@Override
 	@Transactional
-	public boolean join(int user_seq,UserOobDto odto) {
-		boolean isS1=userMapper.join(user_seq);
+	public boolean pattern(int user_seq,UserOobDto odto) {
+		boolean isS1=userMapper.pattern(user_seq);
 		
 		if(isS1) {
 			System.out.println("참가완료");

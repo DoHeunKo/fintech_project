@@ -24,7 +24,7 @@ public interface UserMapper {
 	
 	public int withdraw(int user_seq);
 	
-	public boolean join(int user_seq);
+	public boolean pattern(int user_seq);
 
 	@Select("select * from mz_info")
 	public List<CrawlerDto> getNewsList();
