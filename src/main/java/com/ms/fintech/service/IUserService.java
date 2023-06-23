@@ -2,6 +2,7 @@ package com.ms.fintech.service;
 
 import org.springframework.ui.Model;
 
+import com.ms.fintech.apidtos.UserOobDto;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
 
@@ -16,4 +17,8 @@ public interface IUserService {
 	public String userLogin(LoginCommand loginCommand,HttpServletRequest request,Model model);
 	
 	public int withdraw(int userSeq);
+	
+	public String joinChk(int user_seq);
+	
+	public boolean join(int user_seq,UserOobDto odto);
 }

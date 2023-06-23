@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.tomcat.util.digester.ArrayStack;
 import org.json.simple.JSONObject;
@@ -21,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,6 +33,7 @@ import com.ms.fintech.apidtos.AccountTransactionDto;
 import com.ms.fintech.apidtos.AccountTransactionListDto;
 import com.ms.fintech.apidtos.UserMeAccountDto;
 import com.ms.fintech.apidtos.UserMeDto;
+import com.ms.fintech.apidtos.UserOobDto;
 import com.ms.fintech.command.BalanceCommand;
 import com.ms.fintech.command.CategoryCommand;
 import com.ms.fintech.command.GraphData;
@@ -37,6 +41,7 @@ import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.MonthCommand;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
+import com.ms.fintech.dtos.UserTokenDto;
 import com.ms.fintech.service.IUserService;
 import com.ms.fintech.feign.AccountFeign;
 import com.ms.fintech.mapper.UserMapper;
@@ -54,19 +59,10 @@ public class UserController {
 	private AccountFeign accountFeign;
 	@Autowired
 	private UserMapper mapper;
-//	static int entertainment;
-//	static int transportation;
-//	static int convenience;
-//	static int food;
-//	static int transfer;
-//	static int cafe;
-//	static int hobby;
-//	static int etc;
 	static int plus;
 	static int minus;
 	static int plus_cnt;
-	static int [] month_plus=new int[12];
-	static int [] month_minus=new int[12];
+
 	
 	@GetMapping("/userMain")
 	public String userMain() {
@@ -140,6 +136,25 @@ public class UserController {
 		return balanceCommands;
 		
 	}
+
+	@ResponseBody
+	@PostMapping("/oob_token")
+	public boolean oob_token(HttpServletRequest request) {
+		
+		UserOobDto odto=accountFeign.requestOobToken(
+				"4987e938-f84b-4e23-b0a2-3b15b00f4ffd", 
+				"3ff7570f-fdfb-4f9e-8f5a-7b549bf2adec", 
+				"oob", 
+				"client_credentials");
+		System.out.println(odto);
+		HttpSession session=request.getSession();
+		UserDto dto=(UserDto)session.getAttribute("dto");
+		System.out.println(dto.getUser_seq());
+		boolean isS=userService.join(dto.getUser_seq(),odto);
+
+		return isS;
+	}
+
 	
 	@ResponseBody
 	@GetMapping("/pattern")
@@ -148,15 +163,32 @@ public class UserController {
 		UserDto dto=(UserDto)session.getAttribute("dto");
 		System.out.println(dto);
 		MonthCommand monthCommand=new MonthCommand();
-		
-		UserMeDto userMeDto= accountFeign
-				.requestUserMe("Bearer "+dto.getUserTokenDto().get(0).getToken(), dto.getUser_seq_no()+"");
+		List<UserTokenDto> userTokenList = dto.getUserTokenDto();
+		System.out.println(userTokenList.size());
+		String getInitialScope="inquiry";
+		String token = null;
+		UserMeDto userMeDto=null;
+		for (UserTokenDto userToken : userTokenList) {
+			System.out.println(userToken);
+		    if (userToken.getScope().contains(getInitialScope)) {
+		    	System.out.println("inquiry 찾음");
+		    	
+		        token = userToken.getToken();
+		        System.out.println(token);
+		        userMeDto= accountFeign
+						.requestUserMe("Bearer "+token, dto.getUser_seq_no()+"");
+		        break;
+		    }
+		}
+
 		List<UserMeAccountDto> adto=userMeDto.getRes_list();
+		System.out.println(adto.size());
 		for(int i=0;i<adto.size();i++) {
 			String bank_tran_id=dto.getClient_use_code()+'U'+createNum();
 			String tran_dtime=getDateTime();
+			System.out.println("account들어가기전 token");
 			AccountTransactionListDto accountTransactionList=accountFeign.requestAccountTransactionList(
-					"Bearer "+dto.getUserTokenDto().get(0).getToken(),
+					"Bearer "+token,
 					bank_tran_id, 
 					adto.get(i).getFintech_use_num(), 
 					"A", 
@@ -167,24 +199,9 @@ public class UserController {
 					getDateTime());
 			System.out.println(accountTransactionList);
 			per_account(accountTransactionList,monthCommand);
-//			category(accountTransactionList);
+
 		}
-//		System.out.println("입금 : "+ plus+"원");
-//		System.out.println("출금 : "+minus+"원");
-//		System.out.println("유흥 :"+entertainment);
-//		System.out.println("교통 : "+transportation);
-//		System.out.println("편의점 :"+convenience);
-//		System.out.println("식비 : "+food);
-//		System.out.println("이체 : "+transfer);
-//		System.out.println("카페 : "+cafe);
-//		System.out.println("취미 : "+hobby);
-//		System.out.println("기타 : "+etc);
-//		int bal=plus-minus+4000000;
-//		System.out.println("잔액 : "+bal);
-//		for(int i=0;i<12;i++) {
-//			System.out.println(i+1+"월 입금 : "+month_plus[i]+" 출금 : "+month_minus[i]);
-//		}
-		
+
 		System.out.println(monthCommand.getCategoryCommand().size());
 		int month_size=monthCommand.getCategoryCommand().size();
 		for(int i=0;i<month_size;i++) {
@@ -198,23 +215,10 @@ public class UserController {
 			category_data.add(i, monthCommand.getCategoryCommand().get(i).getTotal()) ;
 			category_labels.add(i+"월");
 		}
-		graphdata.setCategory_data(category_data);
-		graphdata.setCategory_labels(category_labels);
-//		List<Double> category_data=new ArrayList<>(8);
-//		List<String> category_labels=Arrays.asList("entertainment","transportation",
-//				"convenience","food","transfer","cafe","hobby","etc");
-//		category_data.add((double) Math.round((double) ((double)entertainment/minus*100)));
-//		category_data.add((double) Math.round((double) ((double)transportation/minus*100)));
-//		category_data.add((double) Math.round((double) ((double)convenience/minus*100)));
-//		category_data.add((double) Math.round((double) ((double)food/minus*100)));
-//		category_data.add((double) Math.round((double) ((double)transfer/minus*100)));
-//		category_data.add((double) Math.round((double) ((double)cafe/minus*100)));
-//		category_data.add((double) Math.round((double) ((double)hobby/minus*100)));
-//		category_data.add((double) Math.round((double) ((double)etc/minus*100)));
-//		GraphData graphData = new GraphData(category_labels,category_data);
-//		model.addAttribute("graphData",graphData);
+
 		return monthCommand;
 	}
+
 	
 	//계좌별 거래내역조회
 	public void per_account(AccountTransactionListDto accountTransactionListDto,MonthCommand monthCommand) {
@@ -308,57 +312,18 @@ public class UserController {
 		
 	}
 	
-	//매달의 소비 카테고리, 총 소비
-//	public void per_month(AccountTransactionListDto accountTransactionList,MonthCommand monthCommand) {
-//		int tranlist_size=accountTransactionList.getRes_list().size();
-//		List<AccountTransactionDto> atdto=accountTransactionList.getRes_list();
-//		
-//			for(int j=0;j<month_plus.length;j++) {
-//				for(int i=0;i<tranlist_size;i++) {
-//					String inout_type=atdto.get(i).getInout_type();
-//					String tran_date=atdto.get(i).getTran_date();
-//					int tran_date_y=Integer.parseInt(atdto.get(i).getTran_date().substring(0, 4));
-//					int tran_date_m=Integer.parseInt(atdto.get(i).getTran_date().substring(4, 6));
-//					int tran_date_d=Integer.parseInt(atdto.get(i).getTran_date().substring(6,8));
-//					String tran_type=atdto.get(i).getTran_type();
-//					int money=Integer.parseInt(atdto.get(i).getTran_amt());
-//					
-//					if(inout_type.equals("입금")) {
-//						if(tran_date_y==2023 && tran_date_m==j+1) {
-//							
-//							month_plus[j]+=money;
-//						}
-//					}else {
-//						if(tran_date_y==2023 && tran_date_m==j+1) {
-//							
-//							category(tran_type,money);
-//							month_minus[j]+=money;
-//							
-//							
-//						}
-//					}
-//			}
-//		}
-//	}
-//	public void category(String tran_type,int money) {
-//		if(tran_type.equals("유흥")) {
-//			entertainment+=money;
-//		}else if(tran_type.equals("교통")) {
-//			transportation+=money;
-//		}else if(tran_type.equals("편의점")) {
-//			convenience+=money;
-//		}else if(tran_type.equals("식비")) {
-//			food+=money;
-//		}else if(tran_type.equals("이체")) {
-//			transfer+=money;
-//		}else if(tran_type.equals("카페")) {
-//			cafe+=money;
-//		}else if(tran_type.equals("취미")) {
-//			hobby+=money;
-//		}else {
-//			etc+=money;
-//		}	
-//	}
+	@ResponseBody
+	@GetMapping("/joinChk")
+	public Map<String,String> joinChk(HttpServletRequest request) {
+		HttpSession session=request.getSession();
+		UserDto dto=(UserDto)session.getAttribute("dto");
+		String result=userService.joinChk(dto.getUser_seq());
+		System.out.println(result);
+		Map<String,String> map=new HashMap<>();
+		map.put("result", result);
+		return map;
+	}
+
 
 	//이용기관 부여번호 9자리 생성하는 메서드
 		public String createNum() {

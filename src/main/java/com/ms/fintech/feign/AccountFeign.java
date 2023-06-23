@@ -2,12 +2,15 @@ package com.ms.fintech.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ms.fintech.apidtos.AccountBalanceDto;
 import com.ms.fintech.apidtos.AccountTransactionListDto;
 import com.ms.fintech.apidtos.UserMeDto;
+import com.ms.fintech.apidtos.UserOobDto;
 
 @FeignClient(name="feign", url="https://testapi.openbanking.or.kr")
 public interface AccountFeign {
@@ -37,4 +40,13 @@ public interface AccountFeign {
 			  @RequestParam("fintech_use_num") String fintech_use_num,
 			  @RequestParam("tran_dtime") String tran_dtime
 			  );
+	
+	@PostMapping(path="/oauth/2.0/token")
+	public UserOobDto requestOobToken(
+			@RequestParam("client_id") String client_id,
+			@RequestParam("client_secret")String client_secret,
+			@RequestParam("scope") String scope,
+			@RequestParam("grant_type") String grant_type
+			);
+	
 }

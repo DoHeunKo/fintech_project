@@ -14,6 +14,8 @@ import com.ms.fintech.dtos.UserTokenDto;
 public interface UserMapper {
 	public String emailChk(String email);
 	
+	public String joinChk(int user_seq);
+	
 	public boolean userRegist(UserDto dto);
 	
 	public boolean tokenRegist(UserTokenDto tdto);
@@ -22,6 +24,8 @@ public interface UserMapper {
 	
 	public int withdraw(int user_seq);
 	
+	public boolean join(int user_seq);
+
 	@Select("select * from mz_info")
 	public List<CrawlerDto> getNewsList();
 	
