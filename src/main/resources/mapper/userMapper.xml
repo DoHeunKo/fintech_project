@@ -60,10 +60,10 @@
 	</select>
 
 	<update id="join" parameterType="int">
-		UPDATE USER_INFO  SET IS_JOIN='Y' WHERE USER_SEQ=#{user_seq}
+		UPDATE USER_INFO  SET PATTERN_CHK='Y' WHERE USER_SEQ=#{user_seq}
 	</update>
 	
-	<select id="joinChk" parameterType="int">
+	<select id="patternChk" parameterType="int">
 		SELECT IS_JOIN FROM USER_INFO WHERE USER_SEQ=#{user_seq}
 	</select>
 </mapper>

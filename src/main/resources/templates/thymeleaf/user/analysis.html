@@ -13,18 +13,18 @@
 // function myInfo(){
 	$(function(){
 		$.ajax({
-			url:"/user/joinChk",
+			url:"/user/patternChk",
 			method:"get",
 			async:"false",
 			dataType:"json",
 			success:function(data){
 				console.log(data);
 				if(data.result=='Y'){
-					$("#joinChk").trigger('click');
+					$("#patternChk").trigger('click');
 				
-					$("#joinChk").css("background-color","#4169E1");
-					$("#joinChk").val("분석 완료");
-					$("#joinChk").prop("disabled",true);
+					$("#patternChk").css("background-color","#4169E1");
+					$("#patternChk").val("분석 완료");
+					$("#patternChk").prop("disabled",true);
 					
 				}
 				
@@ -430,7 +430,7 @@
 					<p>참여하고 무료 기프티콘 받아가세요!!</p>
 					
                 </div>
-                <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="joinChk" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
+                <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="patternChk" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
             	
 <!--             	<div class="card-list"> -->		
 <!--             	</div> -->
