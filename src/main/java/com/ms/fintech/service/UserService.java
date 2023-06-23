@@ -104,9 +104,9 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public String joinChk(int user_seq) {
+	public String patternChk(int user_seq) {
 		
-		return userMapper.joinChk(user_seq);
+		return userMapper.patternChk(user_seq);
 	}
 
 	

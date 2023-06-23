@@ -18,7 +18,7 @@ public interface IUserService {
 	
 	public int withdraw(int userSeq);
 	
-	public String joinChk(int user_seq);
+	public String patternChk(int user_seq);
 	
 	public boolean join(int user_seq,UserOobDto odto);
 }

@@ -14,7 +14,7 @@ import com.ms.fintech.dtos.UserTokenDto;
 public interface UserMapper {
 	public String emailChk(String email);
 	
-	public String joinChk(int user_seq);
+	public String patternChk(int user_seq);
 	
 	public boolean userRegist(UserDto dto);
 	

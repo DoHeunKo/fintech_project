@@ -313,11 +313,11 @@ public class UserController {
 	}
 	
 	@ResponseBody
-	@GetMapping("/joinChk")
-	public Map<String,String> joinChk(HttpServletRequest request) {
+	@GetMapping("/patternChk")
+	public Map<String,String> patternChk(HttpServletRequest request) {
 		HttpSession session=request.getSession();
 		UserDto dto=(UserDto)session.getAttribute("dto");
-		String result=userService.joinChk(dto.getUser_seq());
+		String result=userService.patternChk(dto.getUser_seq());
 		System.out.println(result);
 		Map<String,String> map=new HashMap<>();
 		map.put("result", result);
