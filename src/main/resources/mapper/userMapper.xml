@@ -59,11 +59,11 @@
 		SELECT EMAIL FROM USER_INFO WHERE EMAIL=#{email}
 	</select>
 
-	<update id="join" parameterType="int">
+	<update id="pattern" parameterType="int">
 		UPDATE USER_INFO  SET PATTERN_CHK='Y' WHERE USER_SEQ=#{user_seq}
 	</update>
 	
 	<select id="patternChk" parameterType="int">
-		SELECT IS_JOIN FROM USER_INFO WHERE USER_SEQ=#{user_seq}
+		SELECT PATTERN_CHK FROM USER_INFO WHERE USER_SEQ=#{user_seq}
 	</select>
 </mapper>

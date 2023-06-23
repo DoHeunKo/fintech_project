@@ -20,5 +20,5 @@ public interface IUserService {
 	
 	public String patternChk(int user_seq);
 	
-	public boolean join(int user_seq,UserOobDto odto);
+	public boolean pattern(int user_seq,UserOobDto odto);
 }

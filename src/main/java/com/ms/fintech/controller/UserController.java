@@ -150,7 +150,7 @@ public class UserController {
 		HttpSession session=request.getSession();
 		UserDto dto=(UserDto)session.getAttribute("dto");
 		System.out.println(dto.getUser_seq());
-		boolean isS=userService.join(dto.getUser_seq(),odto);
+		boolean isS=userService.pattern(dto.getUser_seq(),odto);
 
 		return isS;
 	}
