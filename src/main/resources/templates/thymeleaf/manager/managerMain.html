@@ -4,45 +4,62 @@
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
   layout:decorate="~{thymeleaf/layouts/user_layout}"
 >
-  <head>
-    <meta charset="utf-8" />
-    <style type="text/css">
-
-      #member-list, .management {
-      	display: inline-block;
-      }
-    </style>
+<head>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<meta charset="utf-8" />
+<style type="text/css">
+#member-list, .management {
+	display: inline-block;
+}
+#member-list {
+	height: 100%;
+}
+</style>
+<script type="text/javascript">
+	function openInfo(seq) {
+		let url = "https://www.naver.com";
+		window.open("/manager/userinfo?seq=" + seq, "_blank", "width=600, height=600");
+	}
+	function getPagedList() {
+		ajax.get("/manager/")
+	}
+</script>
   </head>
 
   <body>
     <div layout:fragment="content">
       <!-- Main Content-->
-      <div class="mb-4">
+      <div class="mb-4" >
         <div class="mr-4-sm-2" id="member-list" style="display: inline-block;">
           <ul class="list-group">
             <li class="list-group-item active">회원 명단</li>
-            <th:block th:each="dto : ${userDto}">
-            <li><a href="#" th:text="${dto.name}"></a></li>
+            <th:block th:each="dto : ${userDtos}">
+            <li><a href="#" th:onclick="openInfo([[${dto.user_seq}]])" th:text="${dto.name}"></a></li>
             </th:block>
           </ul>
         </div>
         
         
         <div class="management" style="display: inline-block;">
-          <table class="list-group" >
+          <table class="list-group table" >
             <tr>
-              <th>Column 1 Heading</th>
+              <th>방 제목</th>
             </tr>
             <tr th:each="dto : ${roomDto}">
-              <td th:text="${dto.roomTitle}">Row 1: Col 1</td>
+              <td th:text="${#lists.size(roomDto)}"></td>
+              <td th:text="${dto.roomTitle}"></td>
+              <td><button type="button">수정</button></td>
+              <td><button type="button">삭제</button></td>
             </tr>
           </table>
-          <table class="mt-5">
+          <button type="button" onclick="getPagedList()"></button>
+          <table class="mt-5 table">
             <tr>
-              <th>Column 1 Heading</th>
+              <th>소식</th>
             </tr>
             <tr th:each="dto : ${newsDto}">
-              <td th:text="${dto.title}">Row 1: Col 1</td>
+              <td th:text="${dto.title}"></td>
+              <td><button type="button">삭제</button></td>
             </tr>
           </table>
         </div>
