@@ -66,7 +66,9 @@
 	<select id="patternChk" parameterType="int">
 		SELECT PATTERN_CHK FROM USER_INFO WHERE USER_SEQ=#{user_seq}
 	</select>
-	
+	<select id="joinChk" parameterType="int">
+		SELECT IS_JOIN FROM USER_INFO WHERE USER_SEQ=#{user_seq}
+	</select>
 	
 	
 </mapper>

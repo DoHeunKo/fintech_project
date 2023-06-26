@@ -3,25 +3,177 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
 	  layout:decorate="~{thymeleaf/layouts/user_layout}">
 <head>
-    <meta charset="utf-8" />
-       
+<meta charset="utf-8" />
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+
+	$(function(){
+		$.ajax({
+			url:"/user/joinChk",
+			method:"get",
+			async:false,
+			dataType:"json",
+			success:function(data){
+				console.log(data);
+				if(data.result=='Y'){
+					$("#is_join").append(
+							'<p>발급카드(참여중)</p>'+
+							'<img id="myImage" src="/assets/new_card.png">'
+					);
+					
+				}
+				else{
+					$("#is_join").append(
+							'<input style="text-align:center; border-radius: 10px;background-color: #000099; width:150px;" type="button" id="patternChk" class="btn btn-dark" value="참여하기" onclick="myPattern()" />'		
+					);
+				}
+			}
+		})
+	})
+</script>
+<style type="text/css">
+
+
+.icon-list {
+	width: 60px;
+	height: 60px;
+	margin-bottom: 60px;
+}
+
+.carousel {
+	margin-bottom: 0;
+	padding: 0 40px 30px 40px;
+}
+
+.carousel-control {
+	left: -12px;
+}
+
+.carousel-control.right {
+	right: -12px;
+}
+
+.carousel-indicators {
+	right: 50%;
+	top: auto;
+	bottom: 0px;
+	margin-right: -19px;
+}
+
+.carousel-indicators li {
+	background: #c0c0c0;
+}
+
+.carousel-indicators .active {
+	background: #FFF;
+}
+
+.carousel-control-prev, .carousel-control-next {
+	color: #000099; 
+}
+</style>       
 </head>
+
+
 
 <body>
 
 	
 <div layout:fragment="content">
-      <!-- Main Content-->
-    <main class="mb-4">
-        <div class="container px-4 px-lg-5">
-            <div class="row gx-4 gx-lg-5 justify-content-center">
-                <div class="col-md-10 col-lg-8 col-xl-7">
-                    <p>사용자 메인</p>
-                </div>
-            </div>
-        </div>
-    </main>
-    </div>
+   <div class="container-fluid text-center">
+			<div class="row">
+				<div class="col-md-2">
+					<h3 th:text="${session.dto.name}+님"></h3>
+					<div id="is_join"></div>
+					
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/bar-chart-steps.svg">
+					<h4 class="fw-normal">패턴분석</h4>
+					<p>나의 소비패턴을 분석 후 절약 가능 카드 발급</p>
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/coin.svg">
+					<h4 class="fw-normal">간편송금</h4>
+					<p>간편비밀번호 설정 후 빠르게 송금</p>
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/chat-square-dots-fill.svg">
+					<h4 class="fw-normal">커뮤니티</h4>
+					<p>사람들과 함께 공유하는 실시간 채팅방</p>
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/123.svg">
+					<h4 class="fw-normal">순위</h4>
+					<p>다른사람들과 비교하며 나의 소비율 확인하기</p>
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/newspaper.svg">
+					<h4 class="fw-normal">MZ소식</h4>
+					<p>MZ세대들의 트렌드를 반영한 다양한 소식,정보</p>
+				</div>
+			</div>
+
+			<hr class="featurette-divider">
+			<div class="row mt-4">
+				<div class="col">
+					<p style="font-size: 36px">거지방이란?</p>
+					<img src="/assets/background3.png">
+				</div>
+			</div>
+
+			<hr class="featurette-divider">
+
+			<div class="row mt-4">
+				<div class="col">
+					<p style="font-size: 36px">소개영상</p>
+					<div id="carouselExampleControls" class="carousel slide"
+						data-bs-ride="carousel" >
+						<div class="carousel-inner">
+							<div class="carousel-item active">
+								<iframe width="750" height="421"
+									src="https://www.youtube.com/embed/UzMsFQcfETs"
+									title="YouTube video player" frameborder="0"
+									allow="accelerometer; autoplay; 
+    	clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+									allowfullscreen> </iframe>
+							</div>
+							<div class="carousel-item">
+								<iframe width="750" height="421"
+									src="https://www.youtube.com/embed/ZjU1PWYBubs"
+									title="YouTube video player" frameborder="0"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media;
+     gyroscope; picture-in-picture; web-share"
+									allowfullscreen></iframe>
+							</div>
+							<div class="carousel-item">
+								<iframe width="750" height="421"
+									src="https://www.youtube.com/embed/i-hPxOm30o0"
+									title="YouTube video player" frameborder="0"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+									allowfullscreen></iframe>
+							</div>
+							
+							<button class="carousel-control-prev" type="button"
+								data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+								<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								<span class="visually-hidden">Previous</span>
+							</button>
+							<button class="carousel-control-next" type="button"
+								data-bs-target="#carouselExampleControls" data-bs-slide="next" >
+								<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								<span class="visually-hidden">Next</span>
+							</button>
+					
+						</div>
+						
+					</div>
+				</div>
+
+			</div>
+			
+		</div>
+</div>
 
 </body>
 </html>

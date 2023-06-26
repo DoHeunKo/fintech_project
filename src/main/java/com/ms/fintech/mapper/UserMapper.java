@@ -17,6 +17,8 @@ public interface UserMapper {
 	
 	public String patternChk(int user_seq);
 	
+	public String joinChk(int user_seq);
+
 	public boolean userRegist(UserDto dto);
 	
 	public boolean tokenRegist(UserTokenDto tdto);
