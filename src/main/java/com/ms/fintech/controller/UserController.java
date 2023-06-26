@@ -339,7 +339,18 @@ public class UserController {
 		map.put("result", result);
 		return map;
 	}
-
+	@ResponseBody
+	@GetMapping("/joinChk")
+	public Map<String,String> joinChk(HttpServletRequest request) {
+		HttpSession session=request.getSession();
+		UserDto dto=(UserDto)session.getAttribute("dto");
+		String result=userService.joinChk(dto.getUser_seq());
+		
+		System.out.println(result);
+		Map<String,String> map=new HashMap<>();
+		map.put("result", result);
+		return map;
+	}
 
 	//이용기관 부여번호 9자리 생성하는 메서드
 		public String createNum() {

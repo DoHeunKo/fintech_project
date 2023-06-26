@@ -20,5 +20,7 @@ public interface IUserService {
 	
 	public String patternChk(int user_seq);
 	
+	public String joinChk(int user_seq);
+	
 	public boolean pattern(int user_seq,UserOobDto odto);
 }

@@ -13,7 +13,7 @@
 //나의 정보조회
 // function myInfo(){
 	$(function(){
-		
+
 		$.ajax({
 			url:"/user/patternChk",
 			method:"get",
@@ -24,8 +24,31 @@
 				if(data.result=='Y'){
 					$("#patternChk").trigger('click');
 					$("#patternChk").prop("disabled",true);
+					$("#patternChk").css("border","#4169E1");
 					$("#patternChk").css("background-color","#4169E1");
 					$("#patternChk").val("분석 완료");
+					
+				}	
+				
+			},
+			error:function(e){
+				console.log(e);
+			}
+		})
+		
+		$.ajax({
+			url:"/user/joinChk",
+			method:"get",
+			async:"false",
+			dataType:"json",
+			success:function(data){
+				console.log(data);
+				if(data.result=='Y'){
+					$("#joinbtn").trigger('click');
+					$("#joinbtn").prop("disabled",true);
+					$("#joinbtn").css("border","#4169E1");
+					$("#joinbtn").css("background-color","#4169E1");
+					$("#joinbtn").val("참여완료");
 					
 				}	
 				
@@ -48,7 +71,6 @@
     }
 	function myPattern(){
 		
-	
 		$.ajax({
 			url:"/user/oob_token",
 			method:"post",
@@ -70,6 +92,7 @@
 		$.ajax({
 			url:"/user/info_balance",
 			method:'get',
+			async:"false",
 			dataType:'json',
 			success:function(data){
 				var response=data;
@@ -116,21 +139,23 @@
 			dataType:"json",
 			success:function(data){
 				$("#list2").append(
-						'<br/><div class="charts-wrapper">'+ 
+						'<br/><div class="charts-wrapper" >'+ 
 						'<br/><h2 class="title">소비·수입</h2>'+
-	                	'<div class="charts-container1">'+
+	                	'<div class="charts-container1" >'+
 		         			'<canvas id="chart1" width= 400px;></canvas>'+
 		         		'</div>'+
+		         		'<br/><h2 class="title">카테고리별 소비</h2>'+
 		         		'<div class="charts-container">'+
+
 		         			'<canvas id="chart3"></canvas>'+
+
+		         			'<canvas id="chart4"></canvas>'+
 	         			'</div>'+
-	         			'<div class="charts-container">'+
-	         			'<canvas id="chart4"></canvas>'+
-	         			'</div>'+
+       			
 	         			'<br/><h2 class="title">예측</h2>'+
-	         			'<div class="charts-container3">'+
+	         			'<div class="charts-container2">'+
 	         			'<canvas id="chart5"></canvas>'+
-	         			'<p id="exp"></p><br/>'+
+	         			'<p style="font-size:36px;" id="exp"></p><br/>'+
 	         			'</div>'+
 	         			'<br/><br/><h2 class="title">추천카드</h2>'+
 	         			'<div style="text-align:center;" id="card1">'+
@@ -140,8 +165,8 @@
 			            		'</br><h3 id="percent_plus_minus"></h3>'+
 			            		'<h3 id="five_percent"></h3>'+
 			            	'</div>'+
-			            	'<div>'+
-			            		'<button id="joinbtn" class="btn">카드발급</button>'+
+ 			            	'<div>'+
+ 			            		'<button id="up_btn" class="btn" onclick="scroll_up()">올라가서 카드발급</button>'+
 			            	'</div>'+
 		            	'</div>'+
 	            		'</div>'+
@@ -311,7 +336,7 @@
 		  var percentages = v_data.map(value => ((value / total) * 100).toFixed(2) + '%');
 
 		  var myChart = new Chart(ctx, {
-		    type: 'bar',
+		    type: 'pie',
 		    data: {
 		      labels: h_data,
 		      datasets: [{
@@ -324,27 +349,10 @@
 		      }]
 		    },
 		    options: {
-		      indexAxis: 'y',
+
 		      responsive: true,
 		      maintainAspectRatio: false,
-		      scales: {
-		        y: {
-		          beginAtZero: true,
-		          ticks: {
-		            callback: function(value, index, values) {
-		              return value.toLocaleString();
-		            }
-		          }
-		        },
-		        x: {
-		          beginAtZero: true,
-		          ticks: {
-		            callback: function(value, index, values) {
-		              return value.toLocaleString();
-		            }
-		          }
-		        }
-		      },
+		      
 		      plugins: {
 		        tooltip: {
 		          callbacks: {
@@ -398,16 +406,29 @@
 // 		  chartContainer.insertAdjacentElement('afterend', tableContainer);
 
 		}
+	function make_card(){
+		console.log('참여전');
+		
+	}
+	function scroll_up(){
+			
+			
+		console.log("스크롤올리기");
+		$('html,body').animate({scrollTop:0},'fast');
+	}
 </script>
 
 <style type="text/css">
+	.box > .sub_menu{text-align: right;}
 	.title {
       border-bottom: 8px solid #4682B4;
     }
 	input[type="button"]{
 		text-align:center;
+		height:100px;
 		margin-top:10px;
 		margin-bottom:10px;
+		margin :30px;
 	}
 	.charts-wrapper {
 	text-align:center;
@@ -415,10 +436,15 @@
 	  max-width: 100%;
 	}
 	.charts-container {
-	max-width: 100%;
+	max-width: 90%;
 	width: 600px;
  	 height: 450px;
 	  display: flex;
+	}
+	#chart3, #chart4 {
+
+	  flex: 1;
+	  margin-right: 10px; /* Adjust the margin as needed */
 	}
 	
 	.charts-container1 {
@@ -427,15 +453,19 @@
 		height: 600px;
 		width:800px;
 	}
-	.charts-container3 {
-		max-width: 100%;
-		width:800px;
-		height: 600px;
+	.charts-container2 {
 		
+		max-width: 100%;
+ 		width: 800px; 
+		height: 500px;
+		margin-bottom:100px;
+
 	}
-	#chart5,#exp{
-		flex:1;
+	#exp {
+		margin-bottom:100px;
 	}
+
+	
 	
 	#chart1 {
 
@@ -443,19 +473,15 @@
 	  margin-right: 10px; /* Adjust the margin as needed */
 	}
 	
-	#chart3, #chart4 {
-
-	  flex: 1;
-	  margin-right: 10px; /* Adjust the margin as needed */
-	}
 	
-	#joinbtn{
-		background-color: #000099;
-		color: white;
-		border-radius: 10px;
-		width:200px;
-		height:80px;
-	}
+	
+ 	#up_btn{ 
+ 		background-color: #000099; 
+ 		color: white; 
+ 		border-radius: 10px; 
+		width:200px; 
+ 		height:80px; 
+ 	} 
 	
 	img{
 		border: 1px solid  #000099;
@@ -464,6 +490,9 @@
 		height:250px;
 	}
 	
+	.pattern_join_btn{
+		text-align:center;
+	}
 	
 </style>
 </head>
@@ -484,11 +513,16 @@
 					<p>참여하고 무료 기프티콘 받아가세요!!</p>
 					
                 </div>
-                
-                <input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="patternChk" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
+                <div class="pattern_join_btn">
+                	
+                	<input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="patternChk" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
+                	<input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="joinbtn" class="btn btn-dark" value="카드발급하고 참여하기" onclick="make_card()" />
             	
+                </div>
+                
 <!--             	<div class="card-list"> -->		
 <!--             	</div> -->
+            	
             	
             	
             	
