@@ -22,10 +22,22 @@ public class ManagerController {
 	private ManagerMapper managerMapper;
 	
 	@ModelAttribute
-	public void getUserList(Model model) {
+	public void getUserList(Model model,
+			@RequestParam(required = false, name = "page") Integer page,
+			@RequestParam(defaultValue = "0", name = "n") int n) {
 		model.addAttribute("userDtos",mapper.getUserList());
 		model.addAttribute("roomDto",mapper.getRoomList());
-		model.addAttribute("newsDto",mapper.getNewsList());
+		
+		int size = mapper.getNewsList().size();
+		int pageNumber = size % 6 == 0 ? size : size + 1; 
+//		int n = pageNumber % 6;
+		model.addAttribute("pageNumber", pageNumber);
+		if (page == null || page <= 0) {
+			model.addAttribute("newsDto", managerMapper.getPagedList(0));
+		} else {
+			model.addAttribute("newsDto", managerMapper.getPagedList(page * 6));
+		}
+		
 	}
 	
 	@GetMapping("/managerMain")
@@ -44,10 +56,10 @@ public class ManagerController {
 	public void withdraw(@RequestParam int seq) {
 		mapper.withdraw(seq);
 	}
-	
-	
-	@GetMapping("/getpagedList")
-	public void getPagedList(@RequestParam("page") int page, Model model) {
-		model.addAttribute("pagedNewsList",managerMapper.getPagedList(page));
+
+	@GetMapping("/deleteNews")
+	public void deleteNews(@RequestParam int seq) {
+		managerMapper.deleteNews(seq);
 	}
+	
 }

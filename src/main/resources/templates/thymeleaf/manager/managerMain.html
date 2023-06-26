@@ -1,69 +1,117 @@
 <!DOCTYPE html>
-<html
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
-  layout:decorate="~{thymeleaf/layouts/user_layout}"
->
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
+	layout:decorate="~{thymeleaf/layouts/user_layout}">
 <head>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <meta charset="utf-8" />
 <style type="text/css">
-#member-list, .management {
-	display: inline-block;
-}
 #member-list {
-	height: 100%;
+	width: 170px;
+	height: 850px;
+	text-align: center;
+}
+#member-list > ul > li {
+	margin: 10px;
+}
+ul {
+	list-style-type: none;
+}
+#management {
+	width: 700px;
+	margin: 0 auto;
+}
+
+#member-list, #management {
+	float: left;
+}
+th {
+	text-align: center;
+	height: 30px;
+}
+#container {
+	overflow: hidden;
+	width: 870px;
+	margin: 0 auto;
+	
 }
 </style>
 <script type="text/javascript">
 	function openInfo(seq) {
-		let url = "https://www.naver.com";
 		window.open("/manager/userinfo?seq=" + seq, "_blank", "width=600, height=600");
 	}
-	function getPagedList() {
-		ajax.get("/manager/")
+	function deleteNews(seq) {
+		let ans = confirm("삭제하시겠습니까");
+		if (ans) {
+			$.ajax({
+			    url: "/manager/deleteNews?seq=" + seq, // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
+			    method: "GET",   // HTTP 요청 메소드(GET, POST 등)
+			    dataType: "json"
+			})
+		}
+		location.reload();
 	}
-</script>
-  </head>
 
-  <body>
-    <div layout:fragment="content">
-      <!-- Main Content-->
-      <div class="mb-4" >
-        <div class="mr-4-sm-2" id="member-list" style="display: inline-block;">
-          <ul class="list-group">
-            <li class="list-group-item active">회원 명단</li>
-            <th:block th:each="dto : ${userDtos}">
-            <li><a href="#" th:onclick="openInfo([[${dto.user_seq}]])" th:text="${dto.name}"></a></li>
-            </th:block>
-          </ul>
-        </div>
-        
-        
-        <div class="management" style="display: inline-block;">
-          <table class="list-group table" >
-            <tr>
-              <th>방 제목</th>
-            </tr>
-            <tr th:each="dto : ${roomDto}">
-              <td th:text="${#lists.size(roomDto)}"></td>
-              <td th:text="${dto.roomTitle}"></td>
-              <td><button type="button">수정</button></td>
-              <td><button type="button">삭제</button></td>
-            </tr>
-          </table>
-          <button type="button" onclick="getPagedList()"></button>
-          <table class="mt-5 table">
-            <tr>
-              <th>소식</th>
-            </tr>
-            <tr th:each="dto : ${newsDto}">
-              <td th:text="${dto.title}"></td>
-              <td><button type="button">삭제</button></td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div>
-  </body>
+</script>
+</head>
+
+<body>
+	<div layout:fragment="content">
+		<!-- Main Content-->
+		<div id="container">
+			<div id="member-list">
+				<ul class="list-group">
+					<li class="list-group-item active">회원 명단</li>
+					<th:block th:each="dto : ${userDtos}">
+						<li><a href="#" th:onclick="openInfo([[${dto.user_seq}]])"
+							th:text="${dto.name}"></a></li>
+					</th:block>
+				</ul>
+			</div>
+
+			<div id="management">
+				<table class="table">
+					<tr>
+						<th>NO</th>
+						<th colspan="2">제목</th>
+					</tr>
+					<tr th:each="dto : ${roomDto}">
+						<td th:text="${dto.roomNo}"></td>
+						<td style="width: 80%; text-align: center;" th:text="${dto.roomTitle}"></td>
+						<td><button class="btn btn btn-outline-primary" type="button">삭제</button></td>
+					</tr>
+				</table>
+				<nav aria-label="Page navigation example">
+					<ul class="pagination" style="width: 38px;">
+						<li class="page-item"><a class="page-link" href="#">Previous</a></li>
+						<th:block>
+							<li class="page-item"><a class="page-link" href="#">1</a></li>
+						</th:block>
+						<li class="page-item"><a class="page-link" href="#">Next</a></li>
+					</ul>
+				</nav>
+				
+				
+				<table class="mt-5 table">
+					<tr>
+						<th colspan="2">소식</th>
+					</tr>
+					<tr th:each="dto : ${newsDto}">
+						<td th:text="${dto.title}"></td>
+						<td><button th:onclick="deleteNews([[${dto.seq}]])" class="btn btn btn-outline-primary" type="button">삭제</button></td>
+					</tr>
+				</table>
+				<nav aria-label="Page navigation example">
+					<ul class="pagination" style="width: 38px;">
+						<li class="page-item"><a class="page-link" href="#">Previous</a></li>
+						<th:block th:each="pageNum : ${#numbers.sequence(1 , 6)}">
+							<li class="page-item"><a class="page-link" th:text="${pageNum}" th:href="@{/manager/managerMain(page = ${pageNum}-1)}"></a></li>
+						</th:block>
+						<li class="page-item"><a class="page-link" href="#">Next</a></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+</body>
 </html>
