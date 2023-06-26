@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
-import com.ms.fintech.crawling.Crawler;
 import com.ms.fintech.dtos.CrawlerDto;
 import com.ms.fintech.mapper.UserMapper;
 import com.ms.fintech.service.IUserService;

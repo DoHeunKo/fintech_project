@@ -2,6 +2,7 @@ package com.ms.fintech.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -37,7 +38,4 @@ public interface UserMapper {
 	
 	@Select("select * from user_info where user_seq = #{user_seq}")
 	public UserDto getUser(int userSeq);
-	
-	
-
 }
