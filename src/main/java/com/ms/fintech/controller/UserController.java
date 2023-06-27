@@ -265,7 +265,6 @@ public class UserController {
 
 	@GetMapping("/transfer")
 	public String transfer() {
-		
 		return "thymeleaf/user/transfer";
 	}
 	//계좌별 거래내역조회

@@ -9,6 +9,7 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script> -->
 <script src="/js/analysis.js"></script>
 <link href="/css/analysis.css" rel="stylesheet" />
 <script type="text/javascript">
@@ -71,7 +72,10 @@
       }
     }
 	function myPattern(){
-		
+		$("#patternChk").prop("disabled",true);
+		$("#patternChk").css("border","#4169E1");
+		$("#patternChk").css("background-color","#4169E1");
+		$("#patternChk").val("분석 완료");
 		$.ajax({
 			url:"/user/oob_token",
 			method:"post",
@@ -107,7 +111,7 @@
 				
 				$("#list").empty();//화면 초기화
 				$("#list").append(
-						'<br/><div class="charts-wrapper">'+ 
+						'<br/><div class="charts-wrapper1">'+ 
 						'<h2 class="title">자산</h2>'+
 						'<p>총자산</p>'+
 						'<h2>'+balance_sum+'원</h2>'	+
@@ -142,22 +146,39 @@
 				$("#list2").append(
 						'<br/><div class="charts-wrapper" >'+ 
 						'<br/><h2 class="title">소비·수입</h2>'+
-	                	'<div class="charts-container1" >'+
-		         			'<canvas id="chart1" width= 400px;></canvas>'+
+	                	'<div class="charts-container" >'+
+		         			'<canvas id="chart1"></canvas>'+
 		         		'</div>'+
+		         		'<div class="charts-wrapper" >'+ 
 		         		'<br/><h2 class="title">카테고리별 소비</h2>'+
-		         		'<div class="charts-container">'+
-
+		         		'<div class="charts-container1">'+
 		         			'<canvas id="chart3"></canvas>'+
-
 		         			'<canvas id="chart4"></canvas>'+
 	         			'</div>'+
-       			
-	         			'<br/><h2 class="title">예측</h2>'+
+	         			'</div>'+
+	         			'<br/><h2 class="title">분석</h2>'+
+
 	         			'<div class="charts-container">'+
 	         			'<canvas id="chart6"></canvas>'+
-	         			'<canvas id="chart5"></canvas>'+
 	         			
+	         			'</div>'+
+	         			'<div class="chart-info">'+
+	         			'<h3 id="avg_plus"></h3>'+
+	         			'<h3 id="avg_cs"></h3>'+
+	         			'</div>'+
+	         			
+	         			'<div class="charts-container">'+
+	         			'<canvas id="chart7"></canvas>'+
+	         			'</div>'+
+	         			'<div class="charts-container">'+
+	         			'<canvas id="chart8"></canvas>'+
+	         			'</div>'+
+	         			'<div class="charts-container">'+
+	         			'<canvas id="chart9"></canvas>'+
+	         			'</div>'+
+	         			'<br/><h2 class="title">예측</h2>'+
+	         			'<div class="charts-container">'+
+	         			'<canvas id="chart5"></canvas>'+
 	         			'</div>'+
 	         			'<p th:text="${session.dto.name}"></p>'+
 	         			'<p style="font-size:36px;" id="exp"></p><br/>'+
@@ -189,6 +210,7 @@
 				}
 				console.log("전체수입리스트"+total_plus);
 				console.log("전체소비리스트"+total_cs);
+				
 				//전체수입합
 				var sum_total_plus=total_plus.reduce((accumulator, current) => accumulator + current, 0);
 				var sum_total_minus=total_cs.reduce((accumulator, current) => accumulator + current, 0);
@@ -201,6 +223,27 @@
 				$("#five_percent").text('이 카드를 사용할 경우 전달 대비'+five_percent+'원(5%)을 줄일수있습니다.');
                 //전체소비합
 				createChart2('chart1',per_month,total_plus,total_cs,'전체 소비·수입');
+				
+                //평균수입
+				const avg_plus =total_plus.reduce((accumulator, current, index, array) => {
+				    if(index == array.length-1) {
+				        return (accumulator + current) / array.length;
+				    }
+				    return accumulator + current;
+				}, 0);
+                
+                //평균소비
+				const avg_minus =total_cs.reduce((accumulator, current, index, array) => {
+				    if(index == array.length-1) {
+				        return (accumulator + current) / array.length;
+				    }
+				    return accumulator + current;
+				}, 0);
+				
+				console.log("평균수입"+avg_plus);
+				console.log("평균소비"+avg_minus);
+				$("#avg_plus").text('평균 수입'+avg_plus+'원');
+				$("#avg_cs").text('평균 소비'+avg_minus+'원');
 				
 				//카테고리별 소비(전체,5월)
 				var category_key=Object.keys(data.categoryCommand[0]);
@@ -233,11 +276,29 @@
 				createChart1('chart3',category_key,category_total,'전체 카테고리별 소비');
 				
 				console.log(total_cs);
-				//연령별 평균 소비
-				var age_avg=['20-29','30-39','40-49','50-59'];
-				var min_cs=[127,230,268,223];
-				var avg_cs=[136,246,286,244];
-				createChart3('chart6',age_avg,min_cs,avg_cs,'연령별 최소·평균 소비');
+				
+				//분석
+				//연령별 
+				var age_list=['20-29','30-39','40-49','50-59'];
+				var min_cs=[1270000,2300000,2680000,2230000];
+				var age_avg_cs=[1360000,2460000,2860000,2440000];
+				createChart3('chart6',age_list,min_cs,age_avg_cs,'연령별 최소·평균 소비');
+				
+				//직업별
+				
+				var job_avg=['보건·의료직','사무직','연구·기술직','교육·법률직','예술·스포츠'];
+				var job_avg_cs=[3500000,2500000,3000000,2000000,2200000];
+				createChart('chart7',job_avg,job_avg_cs,'직업별 월평균 소비');
+	
+				//성별
+				var sex_list=['남자','여자'];
+				var sex_avg_cs=[2650000,2200000];
+				createChart4('chart8',sex_list,sex_avg_cs,'성별 월평균 소비');
+				
+				//지역별
+				var city_list=['서울','경기','인천','강원','충북','충남','전북','전남','경북','경남'];
+				var city_avg_cs=[3000000,2900000,2600000,2300000,2400000,2300000,2000000,2200000,2400000,2300000];
+				createChart('chart9',city_list,city_avg_cs,'지역별 월평균 소비');
 				//이번달 예측 소비
 				const avg = total_cs.reduce((accumulator, current, index, array) => {
 				    if(index == array.length-1) {
@@ -250,7 +311,7 @@
 				exp_cs.push("이번달")
 				total_cs.push(avg);
 				
-				createChart('chart5',exp_cs,total_cs,'이번달 예상 소비 금액');
+				createChart5('chart5',exp_cs,total_cs,'이번달 예상 소비 금액');
 				$("#exp").text('이번달 예상 지출액은'+avg+'원 입니다');
 				
 				
@@ -262,7 +323,7 @@
 				// Slowly scroll to the bottom
 			    $('html, body').animate({ scrollTop: $(document).height() }, 100);
 				});
-			
+
 			},
 			error:function(error){
 				console.log(error);
@@ -273,7 +334,9 @@
 }
 	
 	function card_token(){
-
+		
+		
+		
 		var url="https://testapi.openbanking.or.kr/oauth/2.0/authorize?"
 			+"response_type=code&"//고정값 : 인증요청시 반환되는 값의 타입
 			+"client_id=4987e938-f84b-4e23-b0a2-3b15b00f4ffd&"//이용기관 ID
@@ -282,8 +345,8 @@
 			+"state=12345678123456781234567812345678&"//32자리 난수 설정
 			+"auth_type=0";//0: 최초한번인즈, 2: 인증 생략
 
-	window.open(url,"인증하기","width:400px;height60px;");
-
+		window.open(url,"인증하기","width:400px;height60px;");
+		
 	}
 	function scroll_up(){
 		console.log("스크롤올리기");
