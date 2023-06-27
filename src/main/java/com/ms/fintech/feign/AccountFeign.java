@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ms.fintech.apidtos.AccountBalanceDto;
 import com.ms.fintech.apidtos.AccountTransactionListDto;
+import com.ms.fintech.apidtos.UserCardinfoDto;
 import com.ms.fintech.apidtos.UserMeDto;
 import com.ms.fintech.apidtos.UserOobDto;
 
@@ -46,6 +47,14 @@ public interface AccountFeign {
 			@RequestParam("client_id") String client_id,
 			@RequestParam("client_secret")String client_secret,
 			@RequestParam("scope") String scope,
+			@RequestParam("grant_type") String grant_type
+			);
+	@PostMapping(path="/oauth/2.0/token")
+	public UserCardinfoDto requestCardToken(
+			@RequestParam("code") String code,
+			@RequestParam("client_id") String client_id,
+			@RequestParam("client_secret")String client_secret,
+			@RequestParam("redirect_uri") String redirect_uri,
 			@RequestParam("grant_type") String grant_type
 			);
 	

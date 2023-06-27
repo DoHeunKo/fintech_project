@@ -62,7 +62,9 @@
 	<update id="pattern" parameterType="int">
 		UPDATE USER_INFO  SET PATTERN_CHK='Y' WHERE USER_SEQ=#{user_seq}
 	</update>
-	
+	<update id="join" parameterType="int">
+		UPDATE USER_INFO  SET IS_JOIN='Y' WHERE USER_SEQ=#{user_seq}
+	</update>
 	<select id="patternChk" parameterType="int">
 		SELECT PATTERN_CHK FROM USER_INFO WHERE USER_SEQ=#{user_seq}
 	</select>

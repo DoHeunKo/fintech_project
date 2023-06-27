@@ -9,6 +9,8 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="/js/analysis.js"></script>
+<link href="/css/analysis.css" rel="stylesheet" />
 <script type="text/javascript">
 //나의 정보조회
 // function myInfo(){
@@ -44,7 +46,6 @@
 			success:function(data){
 				console.log(data);
 				if(data.result=='Y'){
-					$("#joinbtn").trigger('click');
 					$("#joinbtn").prop("disabled",true);
 					$("#joinbtn").css("border","#4169E1");
 					$("#joinbtn").css("background-color","#4169E1");
@@ -66,7 +67,7 @@
       } else {
     	  
     	image.onclick = null;      
-//         image.src = '/assets/question.png';
+
       }
     }
 	function myPattern(){
@@ -153,10 +154,13 @@
 	         			'</div>'+
        			
 	         			'<br/><h2 class="title">예측</h2>'+
-	         			'<div class="charts-container2">'+
+	         			'<div class="charts-container">'+
+	         			'<canvas id="chart6"></canvas>'+
 	         			'<canvas id="chart5"></canvas>'+
-	         			'<p style="font-size:36px;" id="exp"></p><br/>'+
+	         			
 	         			'</div>'+
+	         			'<p th:text="${session.dto.name}"></p>'+
+	         			'<p style="font-size:36px;" id="exp"></p><br/>'+
 	         			'<br/><br/><h2 class="title">추천카드</h2>'+
 	         			'<div style="text-align:center;" id="card1">'+
 	            		'<a><img id="myImage" src="/assets/question_mark.png" onclick="swapImage()" alt="Question Mark"></a> '+
@@ -194,7 +198,7 @@
 				$("#percent_plus_minus").text("현재 당신의 수입에 대한 소비는"+percent_plus_minus+"%입니다.");
 				
 				var five_percent=Math.round(sum_total_plus*5/100);
-				$("#five_percent").text('이카드를 사용할 경우 전달 대비'+five_percent+'원을 줄일수있습니다.');
+				$("#five_percent").text('이 카드를 사용할 경우 전달 대비'+five_percent+'원(5%)을 줄일수있습니다.');
                 //전체소비합
 				createChart2('chart1',per_month,total_plus,total_cs,'전체 소비·수입');
 				
@@ -202,17 +206,18 @@
 				var category_key=Object.keys(data.categoryCommand[0]);
 				category_key.pop();
 				category_key.pop();
-// 				console.log(category_key);
+				
 				var category_latest=Object.values(data.categoryCommand[4]);
 				category_latest.pop();
 				category_latest.pop();
-// 				console.log(category_latest);
+				//정렬
+				category_latest.sort(function(a,b){
+					return b-a;
+				})
 				
 				createChart1('chart4',category_key,category_latest,'이번달 카테고리별 소비');
 				var category_total=[];
-// 				for(var i=0;i<8;i++){
-// 					console.log(category_key[i]);
-// 				}
+
 				for(var i=0;i<8;i++){
 					var ck=category_key[i];
 					
@@ -220,11 +225,19 @@
 					category_total.push(category_sum.reduce((accumulator, current) => 
                           accumulator + current, 0));
 				}
+				//정렬
+				category_total.sort(function(a,b){
+					return b-a;
+				})
 				console.log(category_total);
 				createChart1('chart3',category_key,category_total,'전체 카테고리별 소비');
 				
 				console.log(total_cs);
-				
+				//연령별 평균 소비
+				var age_avg=['20-29','30-39','40-49','50-59'];
+				var min_cs=[127,230,268,223];
+				var avg_cs=[136,246,286,244];
+				createChart3('chart6',age_avg,min_cs,avg_cs,'연령별 최소·평균 소비');
 				//이번달 예측 소비
 				const avg = total_cs.reduce((accumulator, current, index, array) => {
 				    if(index == array.length-1) {
@@ -242,12 +255,12 @@
 				
 				
 				var joinBtnOffset = $('#joinbtn').offset().top;
-				$('html, body').animate({ scrollTop: joinBtnOffset }, 500, function() {
+				$('html, body').animate({ scrollTop: joinBtnOffset }, 100, function() {
 				  // Scroll animation completed
 				// Show loading indicator and apply blur effect
 				
 				// Slowly scroll to the bottom
-			    $('html, body').animate({ scrollTop: $(document).height() }, 500);
+			    $('html, body').animate({ scrollTop: $(document).height() }, 100);
 				});
 			
 			},
@@ -258,265 +271,55 @@
 		
 		
 }
-	function createChart2(chartId,h_data,in_v_data,ex_v_data,name) {
-		  var ctx = document.getElementById(chartId).getContext('2d');
-		  var backgroundColors = ['rgba(0, 207, 255, 0.2)', 'rgba(255, 99, 132, 0.2)'];
-		  var borderColors = ['rgba(0, 207, 255, 1)', 'rgba(255, 99, 132, 1)'];
+	
+	function card_token(){
 
-		  var myChart = new Chart(ctx, {
-			    type: 'bar',
-			    data: {
-			      labels: h_data,
-			      datasets: [{
-			        label: '수입',
-			        data: in_v_data,
-			        backgroundColor: backgroundColors[0],
-			        borderColor: borderColors[0],
-			        borderWidth: 1,
-			        barPercentage: 1.0, // Adjust the bar width as desired
-			        categoryPercentage:0.7,
-			        barSpacing: '10px'
-			      },
-			      {
-			        label: '소비',
-			        data: ex_v_data,
-			        backgroundColor: backgroundColors[1],
-			        borderColor: borderColors[1],
-			        borderWidth: 1,
-			        barPercentage: 1.0, // Adjust the bar width as desired
-			        categoryPercentage: 0.7,
-			        barSpacing: '10px'
-			      }]
-			    },
-			    options: {
-			      responsive: true,
-			      maintainAspectRatio: false,
-			      scales: {
-			        y: {
-			          beginAtZero: true
-			        }
-			      }
-			    }
-			  });		
-		}
-	function createChart(chartId, h_data, v_data, name) {
-		  var ctx = document.getElementById(chartId).getContext('2d');
-		  var backgroundColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(0, 207, 255, 0.8)' : 'rgba(0, 207, 255, 0.2)');
-		  var borderColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(0, 207, 255, 1)' : 'rgba(0, 207, 255, 1)');
+		var url="https://testapi.openbanking.or.kr/oauth/2.0/authorize?"
+			+"response_type=code&"//고정값 : 인증요청시 반환되는 값의 타입
+			+"client_id=4987e938-f84b-4e23-b0a2-3b15b00f4ffd&"//이용기관 ID
+			+"redirect_uri=http://localhost:8070/user/card_token&"//응답 URI
+			+"scope=login cardinfo&"//토큰의 권한
+			+"state=12345678123456781234567812345678&"//32자리 난수 설정
+			+"auth_type=0";//0: 최초한번인즈, 2: 인증 생략
 
-		  var myChart = new Chart(ctx, {
-		    type: 'bar',
-		    data: {
-		      labels: h_data,
-		      datasets: [{
-		        label: name,
-		        data: v_data,
-		        backgroundColor: backgroundColors,
-		        borderColor: borderColors,
-		        borderWidth: 1,
-		        barPercentage: 1.0,
-		        categoryPercentage: 1.0,
-		        barSpacing: '10px'
-		      }]
-		    },
-		    options: {
-		      responsive: true,
-		      maintainAspectRatio: false,
-		      scales: {
-		        y: {
-		          beginAtZero: true
-		        }
-		      }
-		    }
-		  });
-		}
-	function createChart1(chartId, h_data, v_data, name) {
-		  var ctx = document.getElementById(chartId).getContext('2d');
-		  var total = v_data.reduce((acc, value) => acc + value, 0);
-		  var percentages = v_data.map(value => ((value / total) * 100).toFixed(2) + '%');
+	window.open(url,"인증하기","width:400px;height60px;");
 
-		  var myChart = new Chart(ctx, {
-		    type: 'pie',
-		    data: {
-		      labels: h_data,
-		      datasets: [{
-		        label: name,
-		        data: v_data,
-		        backgroundColor: ['rgba(0, 207, 255, 0.8)','rgba(255, 99, 132, 0.8)',
-		        	'rgba(255, 159, 64, 0.8)','rgba(255, 205, 86, 0.8)',
-		        	'rgba(75, 192, 192, 0.8)','rgba(54, 162, 235, 0.8)',
-		        	'rgba(153, 102, 255, 0.8)','rgba(255, 0, 0, 0.8)'],
-		      }]
-		    },
-		    options: {
-
-		      responsive: true,
-		      maintainAspectRatio: false,
-		      
-		      plugins: {
-		        tooltip: {
-		          callbacks: {
-		            label: function(context) {
-		              var value = context.dataset.data[context.dataIndex];
-		              var percentage = percentages[context.dataIndex];
-		              return 'Value: ' + value.toLocaleString() + ', Percentage: ' + percentage;
-		            }
-		          }
-		        }
-		      }
-		    }
-
-		  });
-		// Create the table container
-// 		  var tableContainer = document.createElement('div');
-// 		  tableContainer.classList.add('table-container');
-
-// 		  // Create the table rows
-// 		  var tableRows = h_data.map((category, index) => {
-			  
-// 			var row = document.createElement('div');
-// 		    var row1 = document.createElement('div');
-// 		    row1.classList.add('table-row');
-// 		    var row2 = document.createElement('div');
-// 		    row2.classList.add('table-row');
-// 		    var categoryCell = document.createElement('h4');
-// 		    categoryCell.textContent = category;
-// 		    var percentageCell = document.createElement('p');
-// 		    percentageCell.textContent =percentages[index];
-// 		    var amountCell = document.createElement('p');
-// 		    amountCell.textContent =  v_data[index].toLocaleString();
-
-// 		    row1.appendChild(categoryCell);
-// 		    row1.appendChild(percentageCell);
-// 		    row2.appendChild(amountCell);
-		    
-// 		    row.appendChild(row1);
-// 		    row.appendChild(row2);
-
-// 		    return row;
-// 		  });
-
-// 		  // Append the table rows to the table container
-// 		  tableRows.forEach(function (row) {
-// 		    tableContainer.appendChild(row);
-// 		  });
-
-// 		  var chartContainer = document.getElementById(chartId);
-
-// 		  chartContainer.insertAdjacentElement('afterend', tableContainer);
-
-		}
-	function make_card(){
-		console.log('참여전');
-		
 	}
 	function scroll_up(){
-			
-			
 		console.log("스크롤올리기");
 		$('html,body').animate({scrollTop:0},'fast');
 	}
 </script>
 
 <style type="text/css">
-	.box > .sub_menu{text-align: right;}
-	.title {
-      border-bottom: 8px solid #4682B4;
-    }
-	input[type="button"]{
-		text-align:center;
-		height:100px;
-		margin-top:10px;
-		margin-bottom:10px;
-		margin :30px;
-	}
-	.charts-wrapper {
-	text-align:center;
-	  overflow-x: auto;
-	  max-width: 100%;
-	}
-	.charts-container {
-	max-width: 90%;
-	width: 600px;
- 	 height: 450px;
-	  display: flex;
-	}
-	#chart3, #chart4 {
 
-	  flex: 1;
-	  margin-right: 10px; /* Adjust the margin as needed */
-	}
-	
-	.charts-container1 {
-		
-		max-width: 100%;
-		height: 600px;
-		width:800px;
-	}
-	.charts-container2 {
-		
-		max-width: 100%;
- 		width: 800px; 
-		height: 500px;
-		margin-bottom:100px;
-
-	}
-	#exp {
-		margin-bottom:100px;
-	}
-
-	
-	
-	#chart1 {
-
-	  flex: 1;
-	  margin-right: 10px; /* Adjust the margin as needed */
-	}
-	
-	
-	
- 	#up_btn{ 
- 		background-color: #000099; 
- 		color: white; 
- 		border-radius: 10px; 
-		width:200px; 
- 		height:80px; 
- 	} 
-	
-	img{
-		border: 1px solid  #000099;
-		border-radius: 10px;
-		width:400px;
-		height:250px;
-	}
-	
-	.pattern_join_btn{
-		text-align:center;
-	}
-	
 </style>
 </head>
 
 
 <body>
 <div layout:fragment="content">
-<h1>소비패턴분석</h1>
+
 
 
  <main class="mb-4">
         <div class="container px-4 px-lg-5">
+        <h2 class="title">소비패턴분석</h2>
             <div class="row gx-4 gx-lg-5 justify-content-center">
                 <div class="col-md-10 col-lg-8 col-xl-6">
-                	
-                    <p>소비패턴이 궁금하지 않으신가요?</p>
-                    <p>클릭 하시면 소비,분석,비교,예측,카드 추천해 드립니다.</p>
-					<p>참여하고 무료 기프티콘 받아가세요!!</p>
+                	<div id=pattern_content>
+                		
+                		<p>소비패턴이 궁금하지 않으신가요?</p>
+	                    <p>클릭 하시면 소비,분석,비교,예측,카드 추천해 드립니다.</p>
+						<p>참여하고 무료 기프티콘 받아가세요!!</p>
+                	</div>
+                    
 					
                 </div>
                 <div class="pattern_join_btn">
                 	
                 	<input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="patternChk" class="btn btn-dark" value="소비패턴분석하기" onclick="myPattern()" />
-                	<input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="joinbtn" class="btn btn-dark" value="카드발급하고 참여하기" onclick="make_card()" />
+                	<input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="joinbtn" class="btn btn-dark" value="카드발급하고 참여하기" onclick="card_token()" />
             	
                 </div>
                 
