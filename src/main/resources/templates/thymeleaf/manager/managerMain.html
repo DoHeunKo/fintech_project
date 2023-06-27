@@ -41,6 +41,9 @@ th {
 	function openInfo(seq) {
 		window.open("/manager/userinfo?seq=" + seq, "_blank", "width=600, height=600");
 	}
+	function createRoom(seq) {
+		window.open("/manager/createRoom?seq=" + seq, "_blank", "width=600, height=600");
+	}
 	function deleteNews(seq) {
 		let ans = confirm("삭제하시겠습니까");
 		if (ans) {

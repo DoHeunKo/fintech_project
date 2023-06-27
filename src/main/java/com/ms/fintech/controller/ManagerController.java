@@ -64,5 +64,9 @@ public class ManagerController {
 	public void deleteRoom(@RequestParam int seq) {
 		managerMapper.deleteRoom(seq);
 	}
+	@GetMapping("/createRoom")
+	public void createRoom(@RequestParam int seq) {
+		managerMapper.createRoom(seq);
+	}
 	
 }

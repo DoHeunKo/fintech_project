@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.ms.fintech.dtos.CrawlerDto;
 import com.ms.fintech.dtos.RoomDto;
@@ -42,4 +43,7 @@ public interface UserMapper {
 	
 	@Select("select * from user_info where user_seq = #{user_seq}")
 	public UserDto getUser(int userSeq);
+
+	@Update("update user_info set card_password where user_seq = #{user_seq}")
+	public int setPassword(int userSeq);
 }
