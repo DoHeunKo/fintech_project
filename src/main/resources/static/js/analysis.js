@@ -1,3 +1,4 @@
+
 function createChart2(chartId,h_data,in_v_data,ex_v_data,name) {
 		  var ctx = document.getElementById(chartId).getContext('2d');
 		  var backgroundColors = ['rgba(0, 207, 255, 0.2)', 'rgba(255, 99, 132, 0.2)'];
@@ -117,7 +118,7 @@ function createChart2(chartId,h_data,in_v_data,ex_v_data,name) {
 		  var percentages = v_data.map(value => ((value / total) * 100).toFixed(2) + '%');
 
 		  var myChart = new Chart(ctx, {
-		    type: 'pie',
+		    type: 'doughnut',
 		    data: {
 		      labels: h_data,
 		      datasets: [{
@@ -145,7 +146,14 @@ function createChart2(chartId,h_data,in_v_data,ex_v_data,name) {
 		          }
 		        }
 		      }
-		    }
+		    },
+		    datalabels: {
+          align: 'center',
+          anchor: 'center',
+          font: {
+            weight: 'bold'
+          }
+        }
 
 		  });
 		// Create the table container
@@ -186,4 +194,78 @@ function createChart2(chartId,h_data,in_v_data,ex_v_data,name) {
 
 // 		  chartContainer.insertAdjacentElement('afterend', tableContainer);
 
+		}
+		function createChart4(chartId, h_data, v_data, name) {
+		  var ctx = document.getElementById(chartId).getContext('2d');
+		 
+			  var myChart = new Chart(ctx, {
+			    type: 'bar',
+			    data: {
+			      labels: h_data,
+			      datasets: [{
+			        label: name,
+			        data: v_data,
+			        backgroundColor: ['rgba(0, 207, 255, 0.8)', 'rgba(255, 99, 132, 0.8)'],
+			      }]
+			    },
+			    options: {
+			      responsive: true,
+			      maintainAspectRatio: false,
+			      indexAxis: 'y', // Display the chart vertically
+			      plugins: {
+			        legend: {
+			          display: false,
+			        },
+			        datalabels: {
+			          anchor: 'end',
+			          align: 'start',
+			          color: 'black',
+			          font: {
+			            weight: 'bold'
+			          },
+			          formatter: function(value) {
+			            return value.toLocaleString();
+			          }
+			        }
+			      }
+			    }
+			  });
+			}
+function createChart5(chartId, h_data, v_data, name) {
+		  var ctx = document.getElementById(chartId).getContext('2d');
+		 
+		  var myChart = new Chart(ctx, {
+		    type: 'line',
+		    data: {
+		      labels: h_data,
+		      datasets: [{
+		        label: name,
+		        data: v_data,
+		        backgroundColor:'rgba(0, 207, 255, 0.3)',
+		        borderColor: 'rgba(0, 207, 255, 1)',
+		        borderWidth: 1,
+		        barPercentage: 1.0,
+		        categoryPercentage: 1.0,
+		        barSpacing: '10px'
+		      }]
+		    },
+		    options: {
+		      responsive: true,
+		      maintainAspectRatio: false,
+		      scales: {
+				x: {
+		          grid: {
+		            display: false, // Remove the x-axis grid lines
+		          },
+		        },
+		        y: {
+		          beginAtZero: true,
+		          grid: {
+		            display: false, // Remove the y-axis grid lines
+		          },
+		        },
+		        
+		      }
+		    }
+		  });
 		}

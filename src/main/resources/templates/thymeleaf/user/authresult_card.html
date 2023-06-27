@@ -27,7 +27,10 @@
     // 부모 페이지의 특정 요소에 값 할당
     opener.$("input[name='token']").val(token);
     opener.$("input[name='scope']").val(scope);
-
+    opener.$("#joinbtn").prop("disabled",true);
+	opener.$("#joinbtn").css("border","#4169E1");
+	opener.$("#joinbtn").css("background-color","#4169E1");
+	opener.$("#joinbtn").val("참여완료");
     // 팝업 닫기
     setTimeout(function() {
         window.close();
