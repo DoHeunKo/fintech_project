@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.ms.fintech.dtos.UserDto;
 import com.ms.fintech.mapper.ManagerMapper;
 import com.ms.fintech.mapper.UserMapper;
 
@@ -23,21 +20,23 @@ public class ManagerController {
 	
 	@ModelAttribute
 	public void getUserList(Model model,
-			@RequestParam(required = false, name = "page") Integer page,
-			@RequestParam(defaultValue = "0", name = "n") int n) {
+			@RequestParam(defaultValue = "0", name = "page") Integer page,
+			@RequestParam(defaultValue = "0", name = "Rpage") Integer Rpage,
+			@RequestParam(defaultValue = "0", name = "preOrNext") String preOrNext) {
 		model.addAttribute("userDtos",mapper.getUserList());
-		model.addAttribute("roomDto",mapper.getRoomList());
-		
-		int size = mapper.getNewsList().size();
-		int pageNumber = size % 6 == 0 ? size : size + 1; 
-//		int n = pageNumber % 6;
-		model.addAttribute("pageNumber", pageNumber);
-		if (page == null || page <= 0) {
-			model.addAttribute("newsDto", managerMapper.getPagedList(0));
-		} else {
-			model.addAttribute("newsDto", managerMapper.getPagedList(page * 6));
+		if (preOrNext.equals("p")) {
+			page -= 2;
+		} else if (preOrNext.equals("n")) {
+			page += 2;
 		}
-		
+		if (Rpage < 0 || page < 0) {
+			page = 0;
+			Rpage = 0;
+		}
+		model.addAttribute("page",page);
+		model.addAttribute("Rpage",page);
+		model.addAttribute("newsDto", managerMapper.getPagedList(page * 6));
+		model.addAttribute("roomDto", managerMapper.getPagedRoom(Rpage * 4));
 	}
 	
 	@GetMapping("/managerMain")
@@ -60,6 +59,10 @@ public class ManagerController {
 	@GetMapping("/deleteNews")
 	public void deleteNews(@RequestParam int seq) {
 		managerMapper.deleteNews(seq);
+	}
+	@GetMapping("/deleteRoom")
+	public void deleteRoom(@RequestParam int seq) {
+		managerMapper.deleteRoom(seq);
 	}
 	
 }
