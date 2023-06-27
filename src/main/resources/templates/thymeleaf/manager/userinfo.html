@@ -14,7 +14,7 @@
 <script type="text/javascript">
 
 	function withdraw(seq, name) {
-		let ans = confirm(`${name}님을 탈퇴 시키겠습니까 ?`);
+		let ans = confirm(`${name}님을 탈퇴하시겠습니까 ?`);
 		if (ans) {
 			location.href="/manager/withdraw?seq="+seq;
 			opener.location.reload();

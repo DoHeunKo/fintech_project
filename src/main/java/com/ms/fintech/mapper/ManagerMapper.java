@@ -3,6 +3,7 @@ package com.ms.fintech.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -23,6 +24,9 @@ public interface ManagerMapper {
 
 	@Delete("delete from mz_info where seq = #{seq}")
 	public int deleteNews(int seq);
+
+	@Insert("insert into community_info(room_title) values(#{title})")
+	public void createRoom(int seq);
 	
 	
 }

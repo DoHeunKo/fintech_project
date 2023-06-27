@@ -411,4 +411,14 @@ public class UserController {
 			return userService.withdraw(user_seq) > 0 ? "redirect:/" : "redirect:/error";
 		}
 		
+		@GetMapping("createPW")
+		public String createPW(HttpSession session, Model model) {
+//			model.addAttribute("dto",((UserDto)session.getAttribute("dto")));
+			return "thymeleaf/user/createPW";
+		}
+		@GetMapping("setPW")
+		public String setPW(HttpSession session, Model model) {
+			int user_seq = ((UserDto)session.getAttribute("dto")).getUser_seq();
+			return mapper.setPassword(user_seq) > 0 ? "thymeleaf/user/transfer" : "redirect:/error";
+		}
 }

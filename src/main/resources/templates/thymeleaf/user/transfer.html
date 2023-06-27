@@ -5,26 +5,43 @@
 <head>
 <meta charset="utf-8" />
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+$.ajax({
+	url:"/user/joinChk",
+	method:"get",
+	async:"false",
+	dataType:"json",
+	success:function(data){
+		console.log(data);
+		if(data.result=='N'){
+			alert("우선 카드를 만들어야 합니다.");
+			location.href="/user/analysis"
+		}	
+	},
+	error:function(e){
+		console.log(e);
+	}
+})
+
+function createPW() {
+	open("/user/createPW", "_blank", "width=550px,height=600px");
+}
+</script>
 <title>Insert title here</title>
 </head>
 <body>
 <div layout:fragment="content">
 
-
-
- <main class="mb-4">
-        <div class="container px-4 px-lg-5">
-			<h2>간편송금</h2>
-            <div class="row gx-4 gx-lg-5 justify-content-center">
-                <div class="col-md-10 col-lg-8 col-xl-6">
-                	<div id=pattern_content>
-                		
-                		
-                	</div>
-                </div>       
-            </div>         
-        </div>
-    </main>
+<main class="mb-4">
+     <div class="container px-4 px-lg-5">
+		<h2>간편송금</h2>
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-6">
+           		<button th:onclick="createPW()">간편 비밀번호 생성</button>
+            </div>       
+        </div>         
+     </div>
+ </main>
 </div>
 </body>
 </html>
