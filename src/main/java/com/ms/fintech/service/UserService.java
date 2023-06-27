@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
+import com.ms.fintech.apidtos.UserCardinfoDto;
 import com.ms.fintech.apidtos.UserOobDto;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
@@ -87,7 +88,7 @@ public class UserService implements IUserService{
 		boolean isS1=userMapper.pattern(user_seq);
 		
 		if(isS1) {
-			System.out.println("참가완료");
+			System.out.println("분석완료");
 		}
 		
 		UserTokenDto dto=new UserTokenDto();
@@ -102,7 +103,27 @@ public class UserService implements IUserService{
 		
 		return true;
 	}
-
+	
+	@Override
+	@Transactional
+	public boolean join(int user_seq, UserCardinfoDto cdto) {
+		boolean isS1=userMapper.join(user_seq);
+		if(isS1) {
+			System.out.println("카드등록 및 참가완료");
+		}
+		
+		UserTokenDto tdto=new UserTokenDto();
+		tdto.setUser_seq(user_seq);
+		tdto.setToken(cdto.getAccess_token());
+		tdto.setScope(cdto.getScope());
+		boolean isS2=userMapper.tokenRegist(tdto);
+		if(isS2) {
+			System.out.println("카드토큰 등록완료");
+		}
+		return true;
+	}
+	
+	
 	@Override
 	public String patternChk(int user_seq) {
 		
@@ -114,6 +135,8 @@ public class UserService implements IUserService{
 		
 		return userMapper.joinChk(user_seq);
 	}
+
+	
 
 	
 	

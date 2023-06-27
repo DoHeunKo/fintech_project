@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ms.fintech.apidtos.AccountBalanceDto;
 import com.ms.fintech.apidtos.AccountTransactionDto;
 import com.ms.fintech.apidtos.AccountTransactionListDto;
+import com.ms.fintech.apidtos.UserCardinfoDto;
 import com.ms.fintech.apidtos.UserMeAccountDto;
 import com.ms.fintech.apidtos.UserMeDto;
 import com.ms.fintech.apidtos.UserOobDto;
@@ -169,7 +170,35 @@ public class UserController {
 		
 		
 	}
-
+	
+	
+	@GetMapping("/card_token")
+	public String card_token(HttpServletRequest request,String code) {
+		System.out.println("컨트롤러: 카드토큰");
+		System.out.println(code);
+		HttpSession session=request.getSession();
+		UserDto dto=(UserDto)session.getAttribute("dto");
+		int token_count=dto.getUserTokenDto().size();
+		boolean flag=false;
+		
+		for(int i=0;i<token_count;i++) {
+			if(dto.getUserTokenDto().get(i).getScope().contains("cardinfo")) {
+				flag=true;
+			}
+		}
+		
+		UserCardinfoDto cdto=accountFeign.requestCardToken(
+				code,
+				"4987e938-f84b-4e23-b0a2-3b15b00f4ffd",
+				"3ff7570f-fdfb-4f9e-8f5a-7b549bf2adec",
+				"http://localhost:8070/user/card_token",
+				"authorization_code"
+				);
+		
+		userService.join(dto.getUser_seq(), cdto);
+		
+		return "redirect:thymeleaf/user/analysis";
+	}
 	
 	@ResponseBody
 	@GetMapping("/pattern")
@@ -351,6 +380,8 @@ public class UserController {
 		map.put("result", result);
 		return map;
 	}
+	
+	
 
 	//이용기관 부여번호 9자리 생성하는 메서드
 		public String createNum() {
