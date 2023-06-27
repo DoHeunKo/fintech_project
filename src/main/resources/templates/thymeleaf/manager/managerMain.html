@@ -14,6 +14,7 @@
 #member-list > ul > li {
 	margin: 10px;
 }
+
 ul {
 	list-style-type: none;
 }
@@ -51,6 +52,17 @@ th {
 		}
 		location.reload();
 	}
+	function deleteRoom(seq) {
+		let ans = confirm("삭제하시겠습니까");
+		if (ans) {
+			$.ajax({
+			    url: "/manager/deleteRoom?seq=" + seq, // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
+			    method: "GET",   // HTTP 요청 메소드(GET, POST 등)
+			    dataType: "json"
+			})
+		}
+		location.reload();
+	}
 
 </script>
 </head>
@@ -73,21 +85,27 @@ th {
 				<table class="table">
 					<tr>
 						<th>NO</th>
-						<th colspan="2">제목</th>
+						<th colspan="2">방 제목</th>
 					</tr>
 					<tr th:each="dto : ${roomDto}">
 						<td th:text="${dto.roomNo}"></td>
 						<td style="width: 80%; text-align: center;" th:text="${dto.roomTitle}"></td>
-						<td><button class="btn btn btn-outline-primary" type="button">삭제</button></td>
+						<td><button th:onclick="deleteRoom([[${dto.roomNo}]])" class="btn btn btn-outline-primary" type="button">삭제</button></td>
 					</tr>
+					<tr>
+						<td colspan="3" align="right">
+							<button class="btn btn btn-outline-primary" type="button" >방 생성</button>
+						</td>
+					</tr>
+					
 				</table>
 				<nav aria-label="Page navigation example">
 					<ul class="pagination" style="width: 38px;">
-						<li class="page-item"><a class="page-link" href="#">Previous</a></li>
-						<th:block>
-							<li class="page-item"><a class="page-link" href="#">1</a></li>
+<!-- 						<li class="page-item"><a class="page-link" href="#">Previous</a></li> -->
+						<th:block th:each="pageNum : ${#numbers.sequence(1,5)}">
+							<li class="page-item"><a class="page-link" th:text="${pageNum}" th:href="@{/manager/managerMain(Rpage = ${pageNum}-1)}"></a></li>
 						</th:block>
-						<li class="page-item"><a class="page-link" href="#">Next</a></li>
+<!-- 						<li class="page-item"><a class="page-link" href="#">Next</a></li> -->
 					</ul>
 				</nav>
 				
@@ -103,11 +121,11 @@ th {
 				</table>
 				<nav aria-label="Page navigation example">
 					<ul class="pagination" style="width: 38px;">
-						<li class="page-item"><a class="page-link" href="#">Previous</a></li>
-						<th:block th:each="pageNum : ${#numbers.sequence(1 , 6)}">
+<!-- 						<li class="page-item"><a class="page-link" th:href="@{/manager/managerMain(preOrNext = p, page = ${page})}">Previous</a></li> -->
+						<th:block th:each="pageNum : ${#numbers.sequence(page < 1 ? 1 : page , page + 5)}">
 							<li class="page-item"><a class="page-link" th:text="${pageNum}" th:href="@{/manager/managerMain(page = ${pageNum}-1)}"></a></li>
 						</th:block>
-						<li class="page-item"><a class="page-link" href="#">Next</a></li>
+<!-- 						<li class="page-item"><a class="page-link" th:href="@{/manager/managerMain(preOrNext = n, page = ${page})}">Next</a></li> -->
 					</ul>
 				</nav>
 			</div>
