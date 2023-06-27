@@ -197,7 +197,7 @@ public class UserController {
 		
 		userService.join(dto.getUser_seq(), cdto);
 		
-		return "redirect:thymeleaf/user/analysis";
+		return "thymeleaf/user/authresult_card";
 	}
 	
 	@ResponseBody
@@ -263,7 +263,11 @@ public class UserController {
 		return monthCommand;
 	}
 
-	
+	@GetMapping("/transfer")
+	public String transfer() {
+		
+		return "thymeleaf/user/transfer";
+	}
 	//계좌별 거래내역조회
 	public void per_account(AccountTransactionListDto accountTransactionListDto,MonthCommand monthCommand) {
 		int tran_size=accountTransactionListDto.getRes_list().size();
