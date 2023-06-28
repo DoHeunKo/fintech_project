@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,6 +41,7 @@ import com.ms.fintech.command.CategoryCommand;
 import com.ms.fintech.command.GraphData;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.MonthCommand;
+import com.ms.fintech.dtos.CardInfoDto;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
 import com.ms.fintech.dtos.UserTokenDto;
@@ -430,10 +432,22 @@ public class UserController {
 		@GetMapping("/setPW")
 		public String setPW(HttpSession session, @RequestParam(name = "pw") String pw) {
 			int userSeq = ((UserDto)session.getAttribute("dto")).getUser_seq();
-			return mapper.setPassword(userSeq, pw) > 0 ? "thymeleaf/user/transfer" : "redirect:/error";
+			mapper.setPassword(userSeq, pw);
+			return "thymeleaf/user/transfer";
 		}
 		@GetMapping("/linkAccount")
 		public String linkAccount() {
 			return "thymeleaf/user/linkAccount";
 		}
+		
+		@GetMapping("/card_info")
+		public String card_info(HttpSession session ,@RequestParam("fintech_use_num") String fintechUseNum ,@RequestParam("balance_amt") String balanceAmt) {
+			int userSeq = ((UserDto)session.getAttribute("dto")).getUser_seq();
+			var dto = CardInfoDto.builder().user_seq(userSeq).fintech_use_num(fintechUseNum).balance_amt(balanceAmt).build();
+			System.out.println(dto);
+			mapper.insertCardInfo(dto);		
+			return "thymeleaf/user/transfer";
+		}
+		
+		
 }
