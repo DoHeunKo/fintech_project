@@ -4,6 +4,60 @@
 	  layout:decorate="~{thymeleaf/layouts/default_layout}">
 <head>
     <meta charset="utf-8" />
+     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+
+<style type="text/css">
+
+.icon-list {
+	width: 60px;
+	height: 60px;
+	margin-bottom: 60px;
+}
+
+.carousel {
+	margin-bottom: 0;
+	padding: 0 40px 30px 40px;
+}
+
+.carousel-control {
+	left: -12px;
+}
+
+.carousel-control.right {
+	right: -12px;
+}
+
+.carousel-indicators {
+	right: 50%;
+	top: auto;
+	bottom: 0px;
+	margin-right: -19px;
+}
+
+.carousel-indicators li {
+	background: #c0c0c0;
+}
+
+.carousel-indicators .active {
+	background: #c0c0c0;
+}
+
+.carousel-control-prev, .carousel-control-next {
+	color: #000099; 
+}
+
+.f-content{
+	color: #666666;
+}
+#join_btn {
+	margin-top:30px;
+	background-color: #000099;
+	color: white;
+	border-radius: 10px;
+	width: 200px;
+	height: 80px;
+}
+</style>       
        
 </head>
 
@@ -11,25 +65,140 @@
 
 	
 <div layout:fragment="content">
-      <!-- Main Content-->
-    <main class="mb-4">
-        <div class="container px-4 px-lg-5">
-            <div class="row gx-4 gx-lg-5 justify-content-center">
-                <div class="col-md-10 col-lg-8 col-xl-7">
-                    <p>내용BJ 아영(본명 변아영·33)이 캄보디아에서 의문사한 것을 두고 여러 의혹이 잇따라 나오고 있다. 유명 전문가가 아영이 사고가 아닌 사건으로 숨졌을 가능성이 있다면서 부검이 필요하다고 강조하고 나섰다.
-지난 2일 캄보디아에 입국한 아영은 이틀 뒤인 지난 4일 중국인 부부가 운영하는 병원에서 피살됐고 다시 이틀 뒤인 지난 6일 프놈펜 인근 칸달주의 한 마을에서 숨진 채 발견됐다. 시신은 붉은 이불에 싸여 웅덩이에 버려져 있었다. 현지 경찰은 시신을 유기한 혐의로 병원 운영자인 30대 중국인 부부를 체포했다. 이 부부는 아영이 항체 주사를 맞고 갑자기 발작을 일으켜 숨졌다고 진술했다. 의문스러운 점은 아영 시신에 심한 구타의 흔적이 있었다는 것이다. 목이 부러져 있을 정도로 시신 상태는 심각했다.
+   <div class="container-fluid text-center">
+			<div class="row">
+				<div class="col-md-2">
+					<button type="button" class="btn" id="join_btn">참여하기</button>
+					
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/bar-chart-steps.svg">
+					<h4 class="fw-normal">패턴분석</h4>
+					<p class="f-content">나의 소비패턴을 분석 후 절약 가능 카드 발급</p>
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/coin.svg">
+					<h4 class="fw-normal">간편송금</h4>
+					<p class="f-content" >간편비밀번호 설정 후 빠르게 송금</p>
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/chat-square-dots-fill.svg">
+					<h4 class="fw-normal">커뮤니티</h4>
+					<p class="f-content">사람들과 함께 공유하는 실시간 채팅방</p>
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/123.svg">
+					<h4 class="fw-normal">순위</h4>
+					<p class="f-content">다른사람들과 비교하며 나의 소비율 확인하기</p>
+				</div>
+				<div class="col-lg-2">
+					<img class="icon-list" src="/assets/newspaper.svg">
+					<h4 class="fw-normal">MZ소식</h4>
+					<p class="f-content">MZ세대들의 트렌드를 반영한 다양한 소식,정보</p>
+				</div>
+			</div>
+<!-- 			<hr class="featurette-divider"> -->
+			
+<!-- 			<div class="row mt-4"> -->
+<!-- 				<div class="col"> -->
+<!-- 					<p style="font-size: 36px">미세小비</p> -->
+<!-- 				<div class="row"> -->
+<!-- 				<div class="col-lg-2"> -->
+<!-- 					<img class="icon-list" src="/assets/bar-chart-steps.svg"> -->
+<!-- 					<h4 class="fw-normal">패턴분석</h4> -->
+<!-- 					<p>나의 소비패턴을 분석 후 절약 가능 카드 발급</p> -->
+<!-- 				</div> -->
+<!-- 				<div class="col-lg-2"> -->
+<!-- 					<img class="icon-list" src="/assets/coin.svg"> -->
+<!-- 					<h4 class="fw-normal">간편송금</h4> -->
+<!-- 					<p>간편비밀번호 설정 후 빠르게 송금</p> -->
+<!-- 				</div> -->
+<!-- 				<div class="col-lg-2"> -->
+<!-- 					<img class="icon-list" src="/assets/chat-square-dots-fill.svg"> -->
+<!-- 					<h4 class="fw-normal">커뮤니티</h4> -->
+<!-- 					<p>사람들과 함께 공유하는 실시간 채팅방</p> -->
+<!-- 				</div> -->
+<!-- 				<div class="col-lg-2"> -->
+<!-- 					<img class="icon-list" src="/assets/123.svg"> -->
+<!-- 					<h4 class="fw-normal">순위</h4> -->
+<!-- 					<p>다른사람들과 비교하며 나의 소비율 확인하기</p> -->
+<!-- 				</div> -->
+<!-- 				<div class="col-lg-2"> -->
+<!-- 					<img class="icon-list" src="/assets/newspaper.svg"> -->
+<!-- 					<h4 class="fw-normal">MZ소식</h4> -->
+<!-- 					<p>MZ세대들의 트렌드를 반영한 다양한 소식,정보</p> -->
+<!-- 				</div> -->
+<!-- 				</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			
+			<hr class="featurette-divider">
+			<div class="row mt-4">
+				<div class="col">
+					<p style="font-size: 36px">거지방이란?</p>
+					<img src="/assets/background3.png">
+				</div>
+			</div>
 
-이와 관련해 형사법 및 형사정책 전문가인 승재현 한국형사법무정책연구원 선임연구위원이 13일 CBS 라디오 '김현정의 뉴스쇼'에 출연해 아영의 죽음엔 세 가지 의문점이 있다고 밝혔다.
+			<hr class="featurette-divider">
 
-승 연구위원은 먼저 아영이 한인 병원에 방문하지 않은 점이 이상하다고 했다. 그는 “인터넷에서 검색하면 한인 병원을 찾을 수 있는데 말도 잘 통하지 않는 외국인 병원에 왜 갔는지 모르겠다”고 말했다.
+			<div class="row mt-4">
+				<div class="col">
+					<p style="font-size: 36px">소개영상</p>
+					<div id="carouselExampleControls" class="carousel slide" 
+						data-bs-ride="carousel" >
+						<div class="carousel-inner">
+							<div class="carousel-item active">
+								<iframe width="750" height="421"
+									src="https://www.youtube.com/embed/UzMsFQcfETs"
+									title="YouTube video player" frameborder="0"
+									allow="accelerometer; autoplay; 
+    	clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+									allowfullscreen> </iframe>
+							</div>
+							<div class="carousel-item">
+								<iframe width="750" height="421"
+									src="https://www.youtube.com/embed/ZjU1PWYBubs"
+									title="YouTube video player" frameborder="0"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media;
+     gyroscope; picture-in-picture; web-share"
+									allowfullscreen></iframe>
+							</div>
+							<div class="carousel-item">
+								<iframe width="750" height="421"
+									src="https://www.youtube.com/embed/i-hPxOm30o0"
+									title="YouTube video player" frameborder="0"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+									allowfullscreen></iframe>
+							</div>
+							
+							<button class="carousel-control-prev" type="button"
+								data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+								<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								<span class="visually-hidden">Previous</span>
+							</button>
+							<button class="carousel-control-next" type="button"
+								data-bs-target="#carouselExampleControls" data-bs-slide="next" >
+								<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								<span class="visually-hidden">Next</span>
+							</button>
+					
+						</div>
+						
+					</div>
+				</div>
 
-그러자 진행자인 김현정 앵커는 현지에서 병원을 운영하는 한인 의사도 비슷한 의견을 밝혔다면서 사전 녹화한 인터뷰를 공개했다. 캄보디아에서 한인 병원을 운영하는 오성일 씨는 “그곳(병원이 있는 지역)은 관광지도 아닌데 왜 숨진 BJ가 중국인 병원에 갔는지 이해가 안 간다. 한국 의사가 운영하는 병원이 몇 군데 있는데 (왜 그곳으로 갔는지 이해가 안 돼) 참 답답하다”고 말했다.</p>
-                    
-                </div>
-            </div>
-        </div>
-    </main>
-    </div>
+			</div>
+			<hr class="featurette-divider">
+			<div class="row mt-4">
+				<div class="col">
+					<p style="font-size: 36px">이번달 참여 혜택</p>
+					<img src="/assets/event.jpg">
+					<p style="font-size:24px">네이버페이 포인트쿠폰 (5,000원)</p>
+				</div>
+			</div>
+		</div>
+</div>
 
 </body>
 </html>

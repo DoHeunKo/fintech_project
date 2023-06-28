@@ -14,97 +14,89 @@
 		}
 	}
 </script>
+<style type="text/css">
+#out,#back {
+	font-size:20px;
+	margin-top:30px;
+	background-color: #000099;
+	color: white;
+	border-radius: 10px;
+	width: 200px;
+	height: 80px;
+}
+</style>
 </head>
 
 <body>
 
-	
-<div layout:fragment="content">
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-<div class="container">
-   <div class="row">
-      <div class="col-md-12">
-         <div id="content" class="content content-full-width">
-            <!-- begin profile -->
-            <div class="profile">
-               <div class="profile-header">
-                  <!-- BEGIN profile-header-cover -->
-                  <div class="profile-header-cover"></div>
-               </div>
-            </div>
-            <!-- end profile -->
-            <!-- begin profile-content -->
-            <div class="profile-content">
-               <!-- begin tab-content -->
-               <div class="tab-content p-0">
 
-                  <!-- begin #profile-about tab -->
-                  <div class="tab-pane fade in active show" id="profile-about">
-                     <!-- begin table -->
-                     <div class="table-responsive">
-                        <table class="table table-profile">
-                           <tbody>
-                              <tr class="highlight">
-                                 <td class="field">이름</td>
-                                 <td th:text="${session.dto.name}"></td>
-                              </tr>
-                              <tr>
-                                 <td class="field">이메일</td>
-                                 <td th:text="${session.dto.email}"></td>
-                              </tr>
-                              <tr>
-                                 <td class="field">성별</td>
-<!--                                  <td><span  th:text="${session.dto.sex}">여성</span> </td> -->
-                                 <td>
-                                 <span  th:if="${session.dto.sex == 'female'}">여성</span> 
-                                 <span  th:unless="${session.dto.sex == 'female'}">남성</span> 
-                                 </td>
-                              </tr>
-                              <tr>
-                                 <td class="field">등급</td>
-                                 <td th:text="${session.dto.role}"></td>
-                              </tr>
-                              <tr>
-                                 <td class="field">핸드폰 번호</td>
-                                 <td th:text="${session.dto.phone}"></td>
-                              </tr>
-                              <tr>
-                                 <td class="field">주소</td>
-                                 <td><span th:text="${session.dto.address}" ></span></td>
-                              </tr>
-                              <tr>
-                                 <td class="field">결혼 유무</td>
-                                 <td>
-                                 <span  th:if="${session.dto.is_married == 'y'}">기혼</span> 
-                                 <span  th:unless="${session.dto.is_married == 'y'}">미혼</span> 
-                                 </td>
-                              </tr>
-                              <tr class="highlight">
-                                 <td class="field">&nbsp;</td>
-                                 <td class="p-t-10 p-b-10">
-                                    <button type="button" onclick="withdraw()" class="btn btn-primary width-150">탈퇴하기</button>
-                                    <button type="button" onclick="location.href='/user/userMain'" class="btn btn-white btn-white-without-border width-150 m-l-5">뒤로가기</button>
-                                 </td>
-                              </tr>
-                           </tbody>
-                        </table>
-                     </div>
-                     <!-- end table -->
-                  </div>
-                  <!-- end #profile-about tab -->
-               </div>
-               <!-- end tab-content -->
-            </div>
-            <!-- end profile-content -->
-         </div>
-      </div>
-   </div>
-</div>
-    	</div>
+	<div layout:fragment="content">
+
+		<main class="mb-4">
+			<div class="container px-4 px-lg-5">
+				<div class="row gx-4 gx-lg-5 justify-content-center">
+					<div class="col-md-10 col-lg-8 col-xl-6">
+						<!-- begin table -->
+						<div class="table-responsive">
+							<table class="table table-profile">
+								<tbody>
+									<tr class="highlight">
+										<td class="field">이름</td>
+										<td th:text="${session.dto.name}"></td>
+									</tr>
+									<tr>
+										<td class="field">이메일</td>
+										<td th:text="${session.dto.email}"></td>
+									</tr>
+									<tr>
+										<td class="field">성별</td>
+										<!--                                  <td><span  th:text="${session.dto.sex}">여성</span> </td> -->
+										<td><span th:if="${session.dto.sex == 'female'}">여성</span>
+											<span th:unless="${session.dto.sex == 'female'}">남성</span></td>
+									</tr>
+									<tr>
+										<td class="field">등급</td>
+										<td th:text="${session.dto.role}"></td>
+									</tr>
+									<tr>
+										<td class="field">핸드폰 번호</td>
+										<td th:text="${session.dto.phone}"></td>
+									</tr>
+									<tr>
+										<td class="field">주소</td>
+										<td><span th:text="${session.dto.address}"></span></td>
+									</tr>
+									<tr>
+										<td class="field">결혼 유무</td>
+										<td><span th:if="${session.dto.is_married == 'y'}">기혼</span>
+											<span th:unless="${session.dto.is_married == 'y'}">미혼</span>
+										</td>
+									</tr>
+<!-- 									<tr> -->
+<!-- 										<td class="field">카드발급여부</td> -->
+<!-- 										<td><span th:if="${session.dto.is_join== 'y'}">O</span> -->
+<!-- 											<span th:unless="${session.dto.is_join== 'y'}">X</span> -->
+<!-- 										</td> -->
+<!-- 									</tr> -->
+									<tr class="highlight">
+										<td colspan="2" class="field" style="text-align: right;">
+											<button type="button" onclick="withdraw()"
+												class="btn btn-primary width-150" id="out">탈퇴하기</button>
+											<button type="button"
+												onclick="location.href='/user/userMain'"
+												class="btn btn-white btn-white-without-border width-150 m-l-5"
+												id="back">뒤로가기</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
 	</div>
-</div>
-</div>
+
 </body>
 </html>
