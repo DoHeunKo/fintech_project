@@ -442,10 +442,13 @@ public class UserController {
 		
 		@GetMapping("/card_info")
 		public String card_info(HttpSession session ,@RequestParam("fintech_use_num") String fintechUseNum ,@RequestParam("balance_amt") String balanceAmt) {
-			int userSeq = ((UserDto)session.getAttribute("dto")).getUser_seq();
-			var dto = CardInfoDto.builder().user_seq(userSeq).fintech_use_num(fintechUseNum).balance_amt(balanceAmt).build();
+			var userDto= (UserDto)session.getAttribute("dto");
+			var dto = CardInfoDto.builder().user_seq(userDto.getUser_seq()).fintech_use_num(fintechUseNum).balance_amt(balanceAmt).build();
 			System.out.println(dto);
-			mapper.insertCardInfo(dto);		
+			UserMeDto userMeDto= accountFeign
+					.requestUserMe("Bearer "+userDto.getUserTokenDto().get(0).getToken(), userDto.getUser_seq_no()+"");
+			System.out.println(userMeDto);
+			mapper.insertCardInfo(dto);
 			return "thymeleaf/user/transfer";
 		}
 		
