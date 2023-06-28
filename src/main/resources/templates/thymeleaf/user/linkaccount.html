@@ -4,45 +4,25 @@
 	  layout:decorate="~{thymeleaf/layouts/user_layout}">
 <head>
 <meta charset="utf-8" />
+<style type="text/css">
+
+</style>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-</head>
 <script type="text/javascript">
-	alert('ad');
+	var response;
 	$.ajax({
 		url:"/user/info_balance",
 		method:'get',
 		async:"false",
 		dataType:'json',
 		success:function(data){
-			var response=data;
-			console.log(response);
-	//			var res_list=data['res_list'];
-	//			console.log(res_list);
-			var balance_list=response.map(row=>Number(row.balance_amt));
-	//			console.log(balance_list);
-			var balance_sum=balance_list.reduce((accumulator, current) => accumulator + current, 0);
-	//			console.log(balance_sum);
-	//			console.log("세션직업"+dto.user_seq);
-			$("#list").empty();//화면 초기화
-			$("#list").append(
-					'<br/><div class="charts-wrapper1">'+ 
-					'<h2 class="title">자산</h2>'+
-					'<p>총자산</p>'+
-					'<h2>'+balance_sum+'원</h2>'	+
-					'</div>'
-			);
-	//				급여계좌
-	// 		83764585969076959 [국민은행]
-			for(var i=0;i<response.length;i++){
-				$("#list").append(
-					
-					'<div class="box container" >'+
-	        		'		<p>'+response[i].bank_name+'</p>'+
-	        		'<h3>'+response[i].balance_amt+'원</h3>'+
-	        		'</div>'
-	        		
-				)                         
-			}                      
+			response = data;
+			for (var i = 0; i < data.length; i++) {
+				$("#banklist").append(
+						'<option value="'+i+'">' + data[i]['bank_name'] + '</option><br/>'
+				); 
+			}
+			
 		},
 		error:function(xhr, status, error){
 	//			location.reload();//페이지 새로고침
@@ -50,8 +30,42 @@
 	//				alert("통신실패");
 		}
 	});
+	function wait(sec) {
+	    let start = Date.now(), now = start;
+	    while (now - start < sec * 1000) {
+	        now = Date.now();
+	    }
+	}
+	function selectBank(selected) {
+// 		alert(response[selected]);
+		let ans = confirm(response[selected]['bank_name'] + "에 연동하시겠습니까 ?");
+		d = response[selected];
+		if (ans) {
+			$.ajax({
+				url:"/user/card_info",
+				method:'get',
+				data: {
+					fintech_use_num : d['fintech_use_num'],
+					balance_amt: d['balance_amt']
+				},
+				async:"false",
+				dataType:'json',
+				success:function(data){
+					console.log('card_info insert 성공');
+				},
+				error:function(xhr, status, error){
+					console.log(xhr.responseText);
+				}
+				
+			});
+			wait(1);
+			close();
+		}
+		
+	}
 
 </script>
+</head>
 <body>
 <div layout:fragment="content">
       <!-- Main Content-->
@@ -59,6 +73,9 @@
         <div class="container px-4 px-lg-5">
             <div class="row gx-4 gx-lg-5 justify-content-center">
                 <div class="col-md-10 col-lg-8 col-xl-7">
+                <select onchange="selectBank(this.value)" id="banklist" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+				  <option selected>-----------은행을 선택해주세요-----------</option>
+				</select>
                 </div>
             </div>
         </div>

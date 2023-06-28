@@ -3,11 +3,13 @@ package com.ms.fintech.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.ms.fintech.dtos.AccountDto;
+import com.ms.fintech.dtos.CardInfoDto;
 import com.ms.fintech.dtos.CrawlerDto;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
@@ -53,4 +55,7 @@ public interface UserMapper {
 
 	@Update("update user_info set card_password = #{pw} where user_seq = #{userSeq}")
 	public int setPassword(int userSeq, String pw);
+
+	@Insert("insert into card_info (user_seq, fintech_use_num, balance_amt) values(#{user_seq},#{fintech_use_num},#{balance_amt})")
+	public int insertCardInfo(CardInfoDto dto);
 }
