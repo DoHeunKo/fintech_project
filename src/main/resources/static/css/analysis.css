@@ -31,22 +31,31 @@
 
 .chart-info {
 text-align:center;
-  flex: 1;
-  margin-left: 10px; /* Adjust the margin as needed */
+font-size:24px;
+/*   flex: 1; */
+/*   margin-left: 10px; Adjust the margin as needed */
 }
 	
-	#chart3, #chart4 {
+/* 	#chart3, #chart4 { */
 
-	  flex: 1;
-	  margin-right: 10px; /* Adjust the margin as needed */
-	}
+/* 	  flex: 1; */
+/* 	  margin-right: 10px; Adjust the margin as needed */
+/* 	} */
 	
 	.charts-container1 {
+	
 		max-width: 90%;
-		width: 600px;
- 	 	height: 450px;
+		width: 500px;
+ 	 	height: 375px;
 	  	display: flex;
+	  	
 	}
+	
+	#comp6,#chart4,#comp7,#comp8{
+		margin-left:200px;
+		
+	}
+	
 	.charts-container2 {
 		
 		max-width: 100%;

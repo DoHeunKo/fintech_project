@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
+import com.ms.fintech.apidtos.AccountBalanceDto;
 import com.ms.fintech.apidtos.UserCardinfoDto;
 import com.ms.fintech.apidtos.UserOobDto;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.RegistCommand;
+import com.ms.fintech.dtos.AccountDto;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
 import com.ms.fintech.dtos.UserTokenDto;
@@ -135,6 +137,30 @@ public class UserService implements IUserService{
 		
 		return userMapper.joinChk(user_seq);
 	}
+
+	@Override
+	public boolean registAccount(int user_seq, AccountBalanceDto abdto) {
+		AccountDto adto=new AccountDto();
+		adto.setUser_seq(user_seq);
+		adto.setFintech_use_num(abdto.getFintech_use_num());
+		adto.setBalance_amt(abdto.getBalance_amt());
+		adto.setBank_name(abdto.getBank_name());
+		return userMapper.registAccount(adto);
+	}
+
+	@Override
+	public int accountChk(int user_seq) {
+		
+		return userMapper.accountChk(user_seq);
+	}
+
+	@Override
+	public int oobChk(int user_seq) {
+		
+		return userMapper.oobChk(user_seq);
+	}
+
+	
 
 	
 

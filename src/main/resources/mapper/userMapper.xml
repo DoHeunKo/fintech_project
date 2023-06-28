@@ -72,5 +72,16 @@
 		SELECT IS_JOIN FROM USER_INFO WHERE USER_SEQ=#{user_seq}
 	</select>
 	
+	<insert id="registAccount" parameterType="AccountDto">
+		INSERT INTO ACCOUNT_INFO VALUES (#{user_seq},#{fintech_use_num},#{balance_amt},#{bank_name})
+	</insert>
+	
+	<select id="accountChk" parameterType="int">
+		SELECT COUNT(*) FROM ACCOUNT_INFO WHERE USER_SEQ=#{user_seq};
+	</select>
+	
+	<select id="oobChk" parameterType="int">
+		SELECT COUNT(SCOPE) FROM USER_TOKEN WHERE USER_SEQ=#{user_seq} AND SCOPE='oob';
+	</select>
 	
 </mapper>

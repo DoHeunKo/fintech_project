@@ -105,7 +105,7 @@ public class UserController {
 
 	@ResponseBody
 	@GetMapping("/info_balance")
-	public List<BalanceCommand> info_balance(HttpServletRequest request){
+	public List<BalanceCommand> info_balance(HttpServletRequest request,Model model){
 		System.out.println("나의 정보조회 후 계좌별 잔액 조회하기");
 		
 		HttpSession session=request.getSession();
@@ -125,6 +125,13 @@ public class UserController {
 					,bank_tran_id
 					,adto.get(i).getFintech_use_num() 
 					, tran_dtime);
+			//눌렀을 때 계좌테이블에 있는 경우에는 db등록불가 하도록 처리
+			
+			int ret=userService.accountChk(dto.getUser_seq());
+			
+			if(ret<4) {
+				userService.registAccount(dto.getUser_seq(), abdto);
+			}
 			BalanceCommand balanceCommand=new BalanceCommand();
 			balanceCommand.setBank_name(adto.get(i).getBank_name());
 			balanceCommand.setFintech_use_num(adto.get(i).getFintech_use_num());
@@ -153,7 +160,11 @@ public class UserController {
 				flag=true;
 			}
 		}
-		if(flag) {
+		
+		int oobCnt=userService.oobChk(dto.getUser_seq());
+		
+		if(oobCnt>0) {
+			System.out.println("이미 oob등록");
 			return false;
 		}else {
 			UserOobDto odto=accountFeign.requestOobToken(
@@ -164,7 +175,7 @@ public class UserController {
 			System.out.println(odto);
 			
 			System.out.println(dto.getUser_seq());
-			boolean isS=userService.pattern(dto.getUser_seq(),odto);
+			userService.pattern(dto.getUser_seq(),odto);
 			return true;
 		}
 		
