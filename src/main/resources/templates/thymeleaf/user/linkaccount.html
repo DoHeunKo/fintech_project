@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
+	  layout:decorate="~{thymeleaf/layouts/user_layout}">
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<script type="text/javascript">
+	alert('ad');
+	$.ajax({
+		url:"/user/info_balance",
+		method:'get',
+		async:"false",
+		dataType:'json',
+		success:function(data){
+			var response=data;
+			console.log(response);
+	//			var res_list=data['res_list'];
+	//			console.log(res_list);
+			var balance_list=response.map(row=>Number(row.balance_amt));
+	//			console.log(balance_list);
+			var balance_sum=balance_list.reduce((accumulator, current) => accumulator + current, 0);
+	//			console.log(balance_sum);
+	//			console.log("세션직업"+dto.user_seq);
+			$("#list").empty();//화면 초기화
+			$("#list").append(
+					'<br/><div class="charts-wrapper1">'+ 
+					'<h2 class="title">자산</h2>'+
+					'<p>총자산</p>'+
+					'<h2>'+balance_sum+'원</h2>'	+
+					'</div>'
+			);
+	//				급여계좌
+	// 		83764585969076959 [국민은행]
+			for(var i=0;i<response.length;i++){
+				$("#list").append(
+					
+					'<div class="box container" >'+
+	        		'		<p>'+response[i].bank_name+'</p>'+
+	        		'<h3>'+response[i].balance_amt+'원</h3>'+
+	        		'</div>'
+	        		
+				)                         
+			}                      
+		},
+		error:function(xhr, status, error){
+	//			location.reload();//페이지 새로고침
+			console.log(xhr.responseText);
+	//				alert("통신실패");
+		}
+	});
+
+</script>
+<body>
+<div layout:fragment="content">
+      <!-- Main Content-->
+    <main class="mb-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                </div>
+            </div>
+        </div>
+    </main>
+    </div>
+</body>
+</html>
