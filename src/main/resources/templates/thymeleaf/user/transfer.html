@@ -26,6 +26,9 @@ $.ajax({
 function createPW() {
 	open("/user/createPW", "_blank", "width=550px,height=600px");
 }
+function linkAccount() {
+	open("/user/linkAccount", "_blank", "width=550px,height=600px");
+}
 </script>
 <title>Insert title here</title>
 </head>
@@ -38,6 +41,18 @@ function createPW() {
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-6">
            		<button th:onclick="createPW()">간편 비밀번호 생성</button>
+           		<button th:onclick="linkAccount()">계좌 연동</button>
+           		<form action="">
+           			수취인 이름<br>
+           			<input><br>
+           			수취인 은행<br>
+           			<input><br>
+           			수취인 계좌번호<br>
+           			<input><br>
+           			송금할 금액<br>
+           			<input><br>
+           			<button type="submit">송금</button>
+           		</form>
             </div>       
         </div>         
      </div>

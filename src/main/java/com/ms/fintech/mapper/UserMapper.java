@@ -44,6 +44,6 @@ public interface UserMapper {
 	@Select("select * from user_info where user_seq = #{user_seq}")
 	public UserDto getUser(int userSeq);
 
-	@Update("update user_info set card_password where user_seq = #{user_seq}")
-	public int setPassword(int userSeq);
+	@Update("update user_info set card_password = #{pw} where user_seq = #{userSeq}")
+	public int setPassword(int userSeq, String pw);
 }

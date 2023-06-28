@@ -4,6 +4,7 @@
 	  layout:decorate="~{thymeleaf/layouts/user_layout}">
 <head>
     <meta charset="utf-8" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
     <style type="text/css">
     
     .btn-group > button {
@@ -30,15 +31,26 @@
     		}
     		
     	}
+    	function wait(sec) {
+    	    let start = Date.now(), now = start;
+    	    while (now - start < sec * 1000) {
+    	        now = Date.now();
+    	    }
+    	}
     	function sendPW2(pre) {
     		let a = document.getElementById('code').value;
     		if (a === pre) {
     			alert('비밀번호를 설정하였습니다.');
     			$.ajax({
     				url:"/user/setPW",
+    				data : {
+    					pw : "" + pre
+    				},
     				method:"get",
+    				async:"false",
     				dataType:"json"
     			});
+    			wait(1);
     			close();
     		} else {
     			alert('비밀번호가 틀립니다.');
