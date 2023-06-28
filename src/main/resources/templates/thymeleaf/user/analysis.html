@@ -163,22 +163,31 @@
 	         			'<p id="avg_plus"></p>'+
 	         			'<p id="avg_cs"></p>'+
 	         			'</div>'+
-	         			
-		         		'<div class="charts-wrapper" >'+ 
-		         		'<br/><h2 class="title">카테고리별 소비</h2>'+
+	         			'</div>'+
+					
+	         			'<div class="charts-wrapper" >'+ 
+	         			'<br/><h2 class="title">카테고리별 소비(전체·이번달)</h2>'+
 		         		'<div class="charts-container1">'+
-		         			'<canvas id="chart3"></canvas>'+
-		         			'<canvas id="chart4"></canvas>'+
+		         		'<canvas id="chart3"></canvas>'+
+		         		'<canvas id="chart4"></canvas>'+
 	         			'</div>'+
-	         			
 	         			'</div>'+
+	
+	         			'<div class="charts-wrapper" >'+ 
 	         			'<br/><h2 class="title">분석</h2>'+
-
+		         		'<div class="charts-container">'+
+		         			'<canvas id="chart9"></canvas>'+
+		         		'</div>'+
+		         		'</div>'+
+		    			'<hr class="featurette-divider">'+
+		         		
 	         			'<div class="charts-wrapper" >'+ 
 		         		'<div class="charts-container1">'+
 		         			'<canvas id="chart6"></canvas>'+
 		         			'<canvas id="comp6"></canvas>'+
 	         			'</div>'+
+	         			'</div>'+
+	         			
 	         			'<div class="chart-info">'+
 	         			'<p id="age_anl"></p>'+
 	         			'</div>'+
@@ -189,24 +198,33 @@
 		         			'<canvas id="chart7"></canvas>'+
 		         			'<canvas id="comp7"></canvas>'+
 	         			'</div>'+
+	         			'</div>'+
 	         			'<div class="chart-info">'+
 	         			'<p id="job_anl"></p>'+
 	         			'</div>'+
 	         			
 	         			
-	         			'<div class="charts-container">'+
-	         			'<canvas id="chart8"></canvas>'+
+	         			'<div class="charts-wrapper" >'+ 
+		         		'<div class="charts-container1">'+
+		         			'<canvas id="chart8"></canvas>'+
+		         			'<canvas id="comp8"></canvas>'+
 	         			'</div>'+
-	         			'<div class="charts-container">'+
-	         			'<canvas id="chart9"></canvas>'+
 	         			'</div>'+
+	         			'<div class="chart-info">'+
+	         			'<p id="sex_anl"></p>'+
+	         			'</div>'+
+
+	         			'<div class="charts-wrapper" >'+ 
 	         			'<br/><h2 class="title">예측</h2>'+
 	         			'<div class="charts-container">'+
 	         			'<canvas id="chart5"></canvas>'+
+	         			
 	         			'</div>'+
-	         			'<p th:text="${session.dto.name}"></p>'+
-	         			'<p style="font-size:36px;" id="exp"></p><br/>'+
-	         			'<br/><br/><h2 class="title">추천카드</h2>'+
+	         			'<p style="font-size:36px;" id="exp"></p>'+
+	         			'</div>'+
+	         			
+	         			'<div class="charts-wrapper" >'+
+	         			'<h2 class="title">추천카드</h2>'+
 	         			'<div style="text-align:center;" id="card1">'+
 	            		'<a><img id="myImage" src="/assets/question_mark.png" onclick="swapImage()" alt="Question Mark"></a> '+
 	            		'<div>'+
@@ -281,8 +299,8 @@
 				category_latest.sort(function(a,b){
 					return b-a;
 				})
-				
-				createChart1('chart4',category_key,category_latest,'이번달 카테고리별 소비');
+				var category_kr=['유흥','교통','편의점','식비','이체','카페','취미','기타'];
+				createChart1('chart4',category_kr,category_latest,'이번달 카테고리별 소비');
 				var category_total=[];
 
 				for(var i=0;i<8;i++){
@@ -297,13 +315,13 @@
 					return b-a;
 				})
 // 				console.log(category_total);
-				createChart1('chart3',category_key,category_total,'전체 카테고리별 소비');
+				createChart1('chart3',category_kr,category_total,'전체 카테고리별 소비');
 				
 // 				console.log(total_cs);
 				
 				//분석
 				//연령별 
-				var age_list=['20','30','40','50'];
+				var age_list=[20,30,40,50];
 				var min_cs=[1270000,2300000,2680000,2230000];
 				var age_avg_cs=[1360000,2460000,2860000,2440000];
 				createChart3('chart6',age_list,min_cs,age_avg_cs,'연령별 최소·평균 소비');
@@ -322,7 +340,7 @@
 				//지역별
 				var city_list=['서울','경기','인천','강원','충북','충남','전북','전남','경북','경남'];
 				var city_avg_cs=[3000000,2900000,2600000,2300000,2400000,2300000,2000000,2200000,2400000,2300000];
-				createChart('chart9',city_list,city_avg_cs,'지역별 월평균 소비');
+				createChart6('chart9',city_list,city_avg_cs,'지역별 월평균 소비');
 				//이번달 예측 소비
 				const avg = total_cs.reduce((accumulator, current, index, array) => {
 				    if(index == array.length-1) {
@@ -356,46 +374,95 @@
 				console.log(avg_minus);
 				console.log(typeof(age_avg_cs[0]));
 				console.log(typeof(avg_minus));
-				//연령대에 따른 나이 분기
+				var _age;
 				if(age>=20 && age<30){
-					
-					if(age_avg_cs[0]>=avg_minus){
-						var res=age_avg_cs[0]-avg_minus;
-						var comp6_h=[age_list[0],'나'];
-						var comp6_v=[age_avg_cs[0],avg_minus];
-						$('#age_anl').text('동일 연령대 보다   -'+res+'원');
-						$('#age_anl').css("color","blue");
-						
-						createChart7('comp6',comp6_h,comp6_v,'나의 연령대');
-					}
+					_age=20;
+				}else if(age >=30 && age<40){
+					_age=30;
+				}else if(age >=40 && age<50){
+					_age=40;
+				}else{
+					_age=50;
 				}
-				job=job.replace(/\"/gi, "");
-				console.log(job_avg_cs.length);
+				console.log(_age);
+				for(var i=0;i<age_list.length;i++){
+					
+					if(age_list[i]==_age){
+						var res=age_avg_cs[i]-avg_minus;
+						var comp6_h=[age_list[i],'나'];
+						var comp6_v=[age_avg_cs[i],avg_minus];
+						createChart7('comp6',comp6_h,comp6_v,'나의 연령대 월평균 소비');
+		 				if(res>=0){
+		 					$('#age_anl').text('동일 연령대 보다 -'+res+'원');
+		 					$('#age_anl').css("color","blue");
+		 				}else{
+		 					$('#age_anl').text('동일 연령대 보다 +'+res+'원');
+		 					$('#age_anl').css("color","red");
+		 				}
+					}
+					
+				}
+				
+				var _job=job.replace(/\"/gi, "");
+				console.log(_job);
+				console.log(job_avg);
+				if(_job=='manage'){
+					_job='사무직';
+				}else if(_job=='tech'){
+					_job='연구·기술직';
+				}else if(_job=='edu'){
+					_job='교육·법률직';
+				}else if(_job=='medical'){
+					_job='보건·의료직';
+				}else{
+					_job='예술·스포츠';
+				}
+				
+				console.log(_job);
+// 					'보건·의료직', '사무직', '연구·기술직', '교육·법률직', '예술·스포츠'
 				for(var i=0;i<job_avg_cs.length;i++){
-					if(job_avg[i]==job){
+					if(job_avg[i]==_job){
 						var res=job_avg_cs[i]-avg_minus;				
 						var comp7_h=[job_avg[i],'나'];
 						var comp7_v=[job_avg_cs[i],avg_minus];
-						$('#job_anl').text('동일 직업군 보다 -'+res+'원');
-						$('#job_anl').css("color","blue");
-						
-						createChart7('comp7',comp7_h,comp7_v,'나의 연령대');
+						createChart7('comp7',comp7_h,comp7_v,'나의 직업군 월평균 소비');
+						if(res>=0){
+							$('#job_anl').text('동일 직업군 보다 -'+res+'원');
+							$('#job_anl').css("color","blue");
+						}else{
+							$('#job_anl').text('동일 직업군 보다 +'+res+'원');
+							$('#job_anl').css("color","red");
+						}
 					}
 				}
 				
-// 				if(job=="manage"){
-					
-// 					if(job_avg_cs[2]>=avg_minus){
-// 						var res=job_avg_cs[2]-avg_minus;				
-// 						var comp7_h=['연구·기술직','나'];
-// 						var comp7_v=[job_avg_cs[2],avg_minus];
-// 						$('#job_anl').text('동일 직업군 보다 -'+res+'원');
-// 						$('#job_anl').css("color","blue");
-						
-// 						createChart7('comp7',comp7_h,comp7_v,'나의 연령대');
-// 					}
-					
-// 				}
+				_sex=sex.replace(/\"/gi, "");
+				console.log(_sex);
+				if(_sex='female'){
+					_sex='여자';
+				}else{
+					_sex='남자';
+				}
+				for(var i=0;i<sex_list.length;i++){
+					if(sex_list[i]==_sex){
+						var res=sex_avg_cs[i]-avg_minus;				
+						var comp8_h=[sex_list[i],'나'];
+						var comp8_v=[sex_avg_cs[i],avg_minus];
+						createChart7('comp8',comp8_h,comp8_v,'나의 성별 월평균 소비');
+						if(res>=0){
+							$('#sex_anl').text('동일 성별 보다 -'+res+'원');
+							$('#sex_anl').css("color","blue");
+						}else{
+							$('#sex_anl').text('동일 성별 보다 +'+res+'원');
+							$('#sex_anl').css("color","blue");
+						}
+	
+					}
+				}
+				
+				_address=address.replace(/\"/gi, "");
+				_address=_address.substring(0,3);
+				console.log(_address);
 				
 			},
 			error:function(error){
@@ -458,12 +525,7 @@
                 	<input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="joinbtn" class="btn btn-dark" value="카드발급하고 참여하기" onclick="card_token()" />
             	
                 </div>
-                
-<!--             	<div class="card-list"> -->		
-<!--             	</div> -->
-            	
-            	
-            	
+               
             	
             	<div id="list"></div>
             	<div id="list2"></div>
