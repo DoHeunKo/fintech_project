@@ -432,4 +432,8 @@ public class UserController {
 			int userSeq = ((UserDto)session.getAttribute("dto")).getUser_seq();
 			return mapper.setPassword(userSeq, pw) > 0 ? "thymeleaf/user/transfer" : "redirect:/error";
 		}
+		@GetMapping("/linkAccount")
+		public String linkAccount() {
+			return "thymeleaf/user/linkAccount";
+		}
 }
