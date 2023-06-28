@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.ms.fintech.dtos.AccountDto;
 import com.ms.fintech.dtos.CrawlerDto;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
@@ -31,6 +32,12 @@ public interface UserMapper {
 	public boolean pattern(int user_seq);
 
 	public boolean join(int user_seq);
+	
+	public boolean registAccount(AccountDto adto);
+	
+	public int accountChk(int user_seq);
+	
+	public int oobChk(int user_seq);
 	
 	@Select("select * from mz_info")
 	public List<CrawlerDto> getNewsList();

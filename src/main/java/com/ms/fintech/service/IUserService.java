@@ -2,6 +2,7 @@ package com.ms.fintech.service;
 
 import org.springframework.ui.Model;
 
+import com.ms.fintech.apidtos.AccountBalanceDto;
 import com.ms.fintech.apidtos.UserCardinfoDto;
 import com.ms.fintech.apidtos.UserOobDto;
 import com.ms.fintech.command.LoginCommand;
@@ -26,4 +27,10 @@ public interface IUserService {
 	public boolean pattern(int user_seq,UserOobDto odto);
 	
 	public boolean join(int user_seq,UserCardinfoDto cdto);
+	
+	public boolean registAccount(int user_seq,AccountBalanceDto abdto);
+	
+	public int accountChk(int user_seq);
+	
+	public int oobChk(int user_seq);
 }

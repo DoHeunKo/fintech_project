@@ -97,7 +97,7 @@ function createChart2(chartId,h_data,in_v_data,ex_v_data,name) {
 		        borderColor: borderColors,
 		        borderWidth: 1,
 		        barPercentage: 1.0,
-		        categoryPercentage: 1.0,
+		        categoryPercentage:1.0,
 		        barSpacing: '10px'
 		      }]
 		    },
@@ -112,6 +112,38 @@ function createChart2(chartId,h_data,in_v_data,ex_v_data,name) {
 		    }
 		  });
 		}
+	function createChart6(chartId, h_data, v_data, name) {
+		  var ctx = document.getElementById(chartId).getContext('2d');
+		  var backgroundColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(0, 207, 255, 0.8)' : 'rgba(0, 207, 255, 0.2)');
+		  var borderColors = v_data.map((_, index) => index === v_data.length - 1 && chartId === 'chart5' ? 'rgba(0, 207, 255, 1)' : 'rgba(0, 207, 255, 1)');
+
+		  var myChart = new Chart(ctx, {
+		    type: 'bar',
+		    data: {
+		      labels: h_data,
+		      datasets: [{
+		        label: name,
+		        data: v_data,
+		        backgroundColor: backgroundColors,
+		        borderColor: borderColors,
+		        borderWidth: 1,
+		        barPercentage: 1.0,
+		        categoryPercentage:0.6,
+		        barSpacing: '10px'
+		      }]
+		    },
+		    options: {
+		      responsive: true,
+		      maintainAspectRatio: false,
+		      scales: {
+		        y: {
+		          beginAtZero: true
+		        }
+		      }
+		    }
+		  });
+		}
+	
 	function createChart1(chartId, h_data, v_data, name) {
 		  var ctx = document.getElementById(chartId).getContext('2d');
 		  var total = v_data.reduce((acc, value) => acc + value, 0);
@@ -265,6 +297,35 @@ function createChart5(chartId, h_data, v_data, name) {
 		          },
 		        },
 		        
+		      }
+		    }
+		  });
+		}
+		function createChart7(chartId, h_data, v_data, name) {
+		  var ctx = document.getElementById(chartId).getContext('2d');
+		  
+		  var myChart = new Chart(ctx, {
+		    type: 'bar',
+		    data: {
+		      labels: h_data,
+		      datasets: [{
+		        label: name,
+		        data: v_data,
+		        backgroundColor: ['rgba(255, 205, 86, 0.8)','rgba(54, 162, 235, 0.8)',],
+		       
+		        borderWidth: 1,
+		        barPercentage: 1.0,
+		        categoryPercentage:0.4,
+		        barSpacing: '10px'
+		      }]
+		    },
+		    options: {
+		      responsive: true,
+		      maintainAspectRatio: false,
+		      scales: {
+		        y: {
+		          beginAtZero: true
+		        }
 		      }
 		    }
 		  });
