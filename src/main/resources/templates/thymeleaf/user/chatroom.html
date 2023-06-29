@@ -32,9 +32,9 @@
 			var msg = data.data;
 			var json = JSON.parse(msg);
 			if (json.type == "wellcom") {
-				$("#chatting").append("<p class='text-warning'> System : " + json.msg + "</p>");	
+				$("#chatting").append("<span id='ent_chat'> System : " + json.msg + "</span>");	
 			} else {
-				$("#chatting").append("<p>" + json.userId + " : " + json.msg + "</p>");	
+				$("#chatting").append("<div id='id_content'><p>" + json.userId + "</p><span id='content'>" + json.msg + "</span></div>");	
 			}
 			var chatting = $('#card');
 	 		chatting.scrollTop(chatting.prop('scrollHeight'));
@@ -65,28 +65,64 @@
 </script>
 <style type="text/css">
 #chatting {
-	background-color: gray;
+	background-color:#9bbbd4;
+
+}
+
+#content{
+	background-color:white;
+	color:black;
+	margin:10px;
+	padding:5px;
+	border-radius:10px;
+	font-size:15px;
+}
+#ent_chat{
+
+	background-color:#E0E0E0;
+	color:#606060;
+	margin:20px;
+	padding:10px;
+	border-radius:10px;
+	font-size:15px;
 }
 .card{
-	width: 900px;
-	height: 400px;
+	width: 750px;
+	height: 500px;
 	border: none;
 	border-radius: 15px;
-	background-color: gray;
+	background-color:#9bbbd4;
 	overflow: auto;
+	color:black;
+	font-size:17px;
+	
 }
 .input-group{
-	width: 950px;
+	width: 750px;
 	border: none;
-	border-radius: 15px;
+	border-radius: 10px;
 	align-content: flex-end;
+	padding:5px;
 }
 #chat {
-	border-radius: 15px;
+	border-radius: 10px;
+	padding:5px;
 }
-#chatting > p{
+#chatting >div> p,#chatting>p{
 	padding: 0px;
 	margin: 5px;
+	color:black;
+}
+
+#id_content{
+	margin:10px;
+}
+
+#send-btn{
+	background-color:#fef01b;
+	border:#fef01b;
+	color:black;
+	margin-left:5px;
 }
 </style>
 <meta charset="utf-8" />
@@ -97,8 +133,11 @@
       <!-- Main Content-->
    	<input type="hidden" id="roomNo" th:value="${roomNo}">
   	<input type="hidden" id="userId" th:value="${userId}">
-    <main class="mb-4">
+<main class="mb-3">
+
+   <div class="container-fluid">
 <!--    		<div class="row gx-4 gx-lg-5 d-flex justify-content-center"> -->
+	    	<div class="col-md-4 offset-md-1">
 	    	<div id="card" class="card mt-10">
     			<div id="chatting" class="text-white">
     			
@@ -107,10 +146,11 @@
     		<div class="input-group mb-3">
 				<input id="chat" type="text" class="form-control" placeholder="메세지를 입력하세요" aria-label="Recipient's username" aria-describedby="basic-addon2">
 				<div class="input-group-append">
-				 <button style="border-radius: 10px;" class="btn btn-outline-secondary" onclick="send()" type="button">전송</button>
+				 <button style="border-radius: 10px;" id="send-btn" class="btn btn-outline-secondary" onclick="send()" type="button">전송</button>
 				</div>
 			</div>
-<!--     	</div> -->
+		</div>
+		</div>
     </main>
 </div>
 
