@@ -26,7 +26,7 @@ public class WebChatHandler extends TextWebSocketHandler {
 
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		 String msg = message.getPayload();
+//		 String msg = message.getPayload();
 //		 JSONObject json = (JSONObject)new JSONParser().parse(msg);
 		 HashMap<String, WebSocketSession> room = map.get(roomNo);
 		 for (var v : room.values()) {
