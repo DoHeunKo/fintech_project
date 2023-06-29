@@ -37,6 +37,7 @@ import com.ms.fintech.apidtos.UserMeAccountDto;
 import com.ms.fintech.apidtos.UserMeCardDto;
 import com.ms.fintech.apidtos.UserMeDto;
 import com.ms.fintech.apidtos.UserOobDto;
+import com.ms.fintech.apidtos.WithdrawDto;
 import com.ms.fintech.command.BalanceCommand;
 import com.ms.fintech.command.CategoryCommand;
 import com.ms.fintech.command.GraphData;
@@ -436,6 +437,80 @@ public class UserController {
 			mapper.setPassword(userSeq, pw);
 			return "thymeleaf/user/transfer";
 		}
+		
+		@GetMapping("/AuthPW")
+		public String AuthPW() {
+			return "thymeleaf/user/authPW";
+		}
+		
+		@GetMapping("/cardPWChk")
+		@ResponseBody
+		public boolean cardPWChk(HttpSession session) {
+			int user_seq = ((UserDto)session.getAttribute("dto")).getUser_seq();
+			String ret=mapper.cardPWChk(user_seq);
+			if(ret==null) {
+				System.out.println("비밀번호 설정 안함");
+				return false;
+			}else {
+				return true;
+			}
+			
+		}
+		
+		@PostMapping("/withdraw_deposit")
+		public String withdraw_deposit(
+				@RequestParam("dps_name")String dps_name,
+				@RequestParam("dps_bank")String dps_bank,
+				@RequestParam("dps_fintech_use_num")String dps_fintech_use_num,
+				@RequestParam("dps_tran_amt")String dps_tran_amt,HttpServletRequest request) {
+			
+			
+			HttpSession session=request.getSession();
+			UserDto dto=(UserDto)session.getAttribute("dto");
+			
+			CardInfoDto cdto=mapper.getCardInfo(dto.getUser_seq());
+			System.out.println(cdto);
+			String bank_tran_id=dto.getClient_use_code()+'U'+createNum();
+			System.out.println(bank_tran_id);
+			System.out.println(getDateTime());
+			System.out.println(dps_name);
+			List<UserTokenDto> userTokenList = dto.getUserTokenDto();
+			System.out.println(userTokenList.size());
+			String getInitialScope="inquiry";
+			String token = null;
+			
+			for (UserTokenDto userToken : userTokenList) {
+				System.out.println(userToken);
+			    if (userToken.getScope().contains(getInitialScope)) {
+			    	System.out.println("inquiry 찾음");
+			    	
+			        token = userToken.getToken();
+			        System.out.println(token);
+			        
+			        break;
+			    }
+			}
+			WithdrawDto wdto=accountFeign.requestWithdraw(
+					"Bearer "+token,
+					bank_tran_id, 
+					"N", 
+					"100000000003", 
+					"환불 ", 
+					cdto.getFintech_use_num(), 
+					"1000", 
+					getDateTime(), 
+					"아무거나", 
+					"HONGGILDONG1234", 
+					"TR", 
+					cdto.getFintech_use_num(), 
+					dps_name,
+					"004",
+					"2314213324213333"
+					);
+			System.out.println(wdto);
+			return "redirect:/user/transfer";
+		}
+		
 		@GetMapping("/linkAccount")
 		public String linkAccount() {
 			return "thymeleaf/user/linkAccount";

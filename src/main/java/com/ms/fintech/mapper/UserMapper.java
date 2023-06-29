@@ -41,6 +41,8 @@ public interface UserMapper {
 	
 	public int oobChk(int user_seq);
 	
+	public String cardPWChk(int user_seq);
+	
 	@Select("select * from mz_info")
 	public List<CrawlerDto> getNewsList();
 	
@@ -58,4 +60,7 @@ public interface UserMapper {
 
 	@Insert("insert into card_info values(#{user_seq},#{fintech_use_num},#{balance_amt},#{bank_code_std},#{member_bank_code},#{charge_month},#{settlement_seq_no})")
 	public int insertCardInfo(CardInfoDto dto);
+	
+	@Select("select * from card_info where user_seq=#{user_seq}")
+	public CardInfoDto getCardInfo(int user_seq);
 }

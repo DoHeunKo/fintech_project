@@ -12,6 +12,7 @@ import com.ms.fintech.apidtos.AccountTransactionListDto;
 import com.ms.fintech.apidtos.UserCardinfoDto;
 import com.ms.fintech.apidtos.UserMeDto;
 import com.ms.fintech.apidtos.UserOobDto;
+import com.ms.fintech.apidtos.WithdrawDto;
 
 @FeignClient(name="feign", url="https://testapi.openbanking.or.kr")
 public interface AccountFeign {
@@ -57,5 +58,22 @@ public interface AccountFeign {
 			@RequestParam("redirect_uri") String redirect_uri,
 			@RequestParam("grant_type") String grant_type
 			);
-	
+	@PostMapping(path="/v2.0/transfer/withdraw/fin_num")
+	public WithdrawDto requestWithdraw(
+			@RequestHeader("Authorization") String access_token,
+			@RequestParam("bank_tran_id") String bank_tran_id, 
+			@RequestParam("cntr_account_type") String cntr_account_type, 
+			@RequestParam("cntr_account_num") String cntr_account_num,
+			@RequestParam("dps_print_content") String dps_print_content,
+			@RequestParam("fintech_use_num") String fintech_use_num,
+			@RequestParam("tran_amt") String tran_amt,
+			@RequestParam("tran_dtime")String tran_dtime,
+			@RequestParam("req_client_name")String req_client_name,
+			@RequestParam("req_client_num")String req_client_num,
+			@RequestParam("transfer_purpose")String transfer_purpose,
+			@RequestParam("req_client_fintech_use_num")String req_client_fintech_use_num,
+			@RequestParam("recv_client_name")String recv_client_name,
+			@RequestParam("recv_client_bank_code")String recv_client_bank_code,
+			@RequestParam("recv_client_account_num")String recv_client_account_num
+			);
 }

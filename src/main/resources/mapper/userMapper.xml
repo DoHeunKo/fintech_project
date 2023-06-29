@@ -80,6 +80,10 @@
 		SELECT COUNT(*) FROM ACCOUNT_INFO WHERE USER_SEQ=#{user_seq};
 	</select>
 	
+	<select id="cardPWChk" parameterType="int">
+		SELECT CARD_PASSWORD FROM USER_INFO WHERE USER_SEQ=#{user_seq};
+	</select>
+	
 	<select id="oobChk" parameterType="int">
 		SELECT COUNT(SCOPE) FROM USER_TOKEN WHERE USER_SEQ=#{user_seq} AND SCOPE='oob';
 	</select>
