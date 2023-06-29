@@ -25,7 +25,8 @@
 //나의 정보조회
 // function myInfo(){
 	$(function(){
-
+		// IDs of elements to make invisible initially
+		  
 		$.ajax({
 			url:"/user/patternChk",
 			method:"get",
@@ -68,6 +69,8 @@
 				console.log(e);
 			}
 		})
+		
+		
 		
 })
 	function swapImage() {
@@ -235,6 +238,7 @@
  			            	'<div>'+
  			            		'<button id="up_btn" class="btn" onclick="scroll_up()">올라가서 카드발급</button>'+
 			            	'</div>'+
+			            	
 		            	'</div>'+
 	            		'</div>'+
 	      			'</div>'
@@ -357,14 +361,14 @@
 				$("#exp").text('이번달 예상 지출액은'+avg+'원 입니다');
 				
 				
-				var joinBtnOffset = $('#joinbtn').offset().top;
-				$('html, body').animate({ scrollTop: joinBtnOffset }, 100, function() {
-				  // Scroll animation completed
-				// Show loading indicator and apply blur effect
+// 				var joinBtnOffset = $('#joinbtn').offset().top;
+// 				$('html, body').animate({ scrollTop: joinBtnOffset }, 100, function() {
+// 				  // Scroll animation completed
+// 				// Show loading indicator and apply blur effect
 				
-				// Slowly scroll to the bottom
-			    $('html, body').animate({ scrollTop: $(document).height() }, 100);
-				});
+// 				// Slowly scroll to the bottom
+// 			    $('html, body').animate({ scrollTop: $(document).height() }, 100);
+// 				});
 				console.log(name.replace(/\"/gi, ""));
 				console.log(job);
 				console.log(age);
@@ -470,6 +474,48 @@
 			}
 		})
 		
+		var invisibleElementIds = ['list', 'list2'];
+
+		  // Make elements invisible on page load
+		makeElementsInvisible(invisibleElementIds);
+		var flag=false;
+		$('#openanl').click(function() {
+			
+			if(flag){
+				makeElementsInvisible(invisibleElementIds);
+				flag=false;
+				$('#openanl').text('펼쳐보기');
+				scroll_up();
+			}else{
+				makeElementsVisible(invisibleElementIds);
+				flag=true;
+				$('#openanl').text('접어두기');
+			    var joinBtnOffset = $('#joinbtn').offset().top;
+				$('html, body').animate({ scrollTop: joinBtnOffset }, 100, function() {
+				
+			    $('html, body').animate({ scrollTop: $(document).height() }, 100);
+				});
+			}
+
+		  });
+		
+		
+	  // Function to make elements invisible
+	  function makeElementsInvisible(ids) {
+	    ids.forEach(function(id) {
+	      $('#' + id).hide();
+	    });
+	  }
+
+	  // Function to make elements visible
+	  function makeElementsVisible(ids) {
+	    ids.forEach(function(id) {
+	      $('#' + id).show();
+	    });
+	  }
+		 
+			
+		
 		
 }
 	
@@ -495,7 +541,22 @@
 </script>
 
 <style type="text/css">
+#openanl,#closeanl{
+	width:650px;
+	height:50px;
+	border: #000;
+	border-radius:10px;
+	color:black;
+	background-color:#e1e8ef;
+}
 
+#closeanl{
+	margin-top:20px;
+}
+
+.show_hide_div{
+	text-align:center;
+	}
 </style>
 </head>
 
@@ -525,7 +586,9 @@
                 	<input style="border-radius: 10px;background-color: #000099; width:300px;" type="button" id="joinbtn" class="btn btn-dark" value="카드발급하고 참여하기" onclick="card_token()" />
             	
                 </div>
-               
+               <div class="show_hide_div">
+               	<button id="openanl">펼쳐보기</button>
+	               </div>
             	
             	<div id="list"></div>
             	<div id="list2"></div>
