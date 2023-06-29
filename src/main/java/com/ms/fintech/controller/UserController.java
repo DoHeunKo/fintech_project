@@ -34,6 +34,7 @@ import com.ms.fintech.apidtos.AccountTransactionDto;
 import com.ms.fintech.apidtos.AccountTransactionListDto;
 import com.ms.fintech.apidtos.UserCardinfoDto;
 import com.ms.fintech.apidtos.UserMeAccountDto;
+import com.ms.fintech.apidtos.UserMeCardDto;
 import com.ms.fintech.apidtos.UserMeDto;
 import com.ms.fintech.apidtos.UserOobDto;
 import com.ms.fintech.command.BalanceCommand;
@@ -441,12 +442,23 @@ public class UserController {
 		}
 		
 		@GetMapping("/card_info")
-		public String card_info(HttpSession session ,@RequestParam("fintech_use_num") String fintechUseNum ,@RequestParam("balance_amt") String balanceAmt) {
+		public String card_info(HttpSession session ,@RequestParam("fintech_use_num") String fintechUseNum ,@RequestParam("balance_amt") String balanceAmt, @RequestParam("selected") int selected) {
 			var userDto= (UserDto)session.getAttribute("dto");
-			var dto = CardInfoDto.builder().user_seq(userDto.getUser_seq()).fintech_use_num(fintechUseNum).balance_amt(balanceAmt).build();
-			System.out.println(dto);
 			UserMeDto userMeDto= accountFeign
-					.requestUserMe("Bearer "+userDto.getUserTokenDto().get(0).getToken(), userDto.getUser_seq_no()+"");
+					.requestUserMe("Bearer "+userDto.getUserTokenDto()
+					.get(0).getToken(), userDto.getUser_seq_no()+"");
+			
+//			var cardDto = new UserMeCardDto();
+//			cardDto.setBank_code_std("090");
+//			cardDto.setMember_bank_code("090");
+//			userMeDto.getInquiry_card_list().add(cardDto);
+			var dto = CardInfoDto.builder().user_seq(userDto.getUser_seq()).
+											fintech_use_num(fintechUseNum).
+											balance_amt(balanceAmt).
+											charge_month("202301").
+											settlement_seq_no("1").
+											member_bank_code(userMeDto.getInquiry_card_list().get(0).getMember_bank_code()).
+											bank_code_std(userMeDto.getInquiry_card_list().get(0).getBank_code_std()).build();
 			System.out.println(userMeDto);
 			mapper.insertCardInfo(dto);
 			return "thymeleaf/user/transfer";

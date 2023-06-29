@@ -19,4 +19,6 @@ public class UserMeDto {
 	private String user_email;
 	private String res_cnt;
 	private List<UserMeAccountDto> res_list;
+	private String inquiry_card_cnt;
+	private List<UserMeCardDto> inquiry_card_list;
 }

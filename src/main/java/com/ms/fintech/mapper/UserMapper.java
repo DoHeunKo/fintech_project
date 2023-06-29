@@ -56,6 +56,6 @@ public interface UserMapper {
 	@Update("update user_info set card_password = #{pw} where user_seq = #{userSeq}")
 	public int setPassword(int userSeq, String pw);
 
-	@Insert("insert into card_info (user_seq, fintech_use_num, balance_amt) values(#{user_seq},#{fintech_use_num},#{balance_amt})")
+	@Insert("insert into card_info values(#{user_seq},#{fintech_use_num},#{balance_amt},#{bank_code_std},#{member_bank_code},#{charge_month},#{settlement_seq_no})")
 	public int insertCardInfo(CardInfoDto dto);
 }
