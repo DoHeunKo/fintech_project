@@ -54,7 +54,7 @@ function AuthPW(event) {
             <div class="col-md-10 col-lg-8 col-xl-6">
            		<button onclick="createPW()">간편 비밀번호 생성</button>
            		<button onclick="linkAccount()">계좌 연동</button>
-           		<form th:action="@{/user/withdraw_deposit}" method="post" id="transferForm" onsubmit="return AuthPW(event)">
+           		<form th:action="@{/user/withdraw_deposit}" method="get" id="transferForm" onsubmit="return AuthPW(event)">
            			수취인 이름<br>
            			<input id="dps_name" name="dps_name"><br>
            			수취인 은행<br>

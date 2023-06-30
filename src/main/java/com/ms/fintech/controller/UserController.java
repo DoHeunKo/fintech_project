@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,12 +33,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ms.fintech.apidtos.AccountBalanceDto;
 import com.ms.fintech.apidtos.AccountTransactionDto;
 import com.ms.fintech.apidtos.AccountTransactionListDto;
+import com.ms.fintech.apidtos.DepositReqDto;
+import com.ms.fintech.apidtos.DepositReqListDto;
+import com.ms.fintech.apidtos.DepositResDto;
 import com.ms.fintech.apidtos.UserCardinfoDto;
 import com.ms.fintech.apidtos.UserMeAccountDto;
 import com.ms.fintech.apidtos.UserMeCardDto;
 import com.ms.fintech.apidtos.UserMeDto;
 import com.ms.fintech.apidtos.UserOobDto;
-import com.ms.fintech.apidtos.WithdrawDto;
+import com.ms.fintech.apidtos.WithdrawResDto;
+import com.ms.fintech.apidtos.WithdrawReqDto;
 import com.ms.fintech.command.BalanceCommand;
 import com.ms.fintech.command.CategoryCommand;
 import com.ms.fintech.command.GraphData;
@@ -457,7 +462,10 @@ public class UserController {
 			
 		}
 		
-		@PostMapping("/withdraw_deposit")
+		
+		
+		
+		@GetMapping("/withdraw_deposit")
 		public String withdraw_deposit(
 				@RequestParam("dps_name")String dps_name,
 				@RequestParam("dps_bank")String dps_bank,
@@ -469,48 +477,81 @@ public class UserController {
 			UserDto dto=(UserDto)session.getAttribute("dto");
 			
 			CardInfoDto cdto=mapper.getCardInfo(dto.getUser_seq());
-			System.out.println(cdto);
-			String bank_tran_id=dto.getClient_use_code()+'U'+createNum();
-			System.out.println(bank_tran_id);
-			System.out.println(getDateTime());
-			System.out.println(dps_name);
-			List<UserTokenDto> userTokenList = dto.getUserTokenDto();
-			System.out.println(userTokenList.size());
-			String getInitialScope="inquiry";
-			String token = null;
 			
+			String bank_tran_id1=dto.getClient_use_code()+'U'+createNum();
+			
+			List<UserTokenDto> userTokenList = dto.getUserTokenDto();
+			String getInitialScope1="inquiry";
+			String getInitialScope2="oob";
+			String wtoken = null;
+			String dtoken=null;
 			for (UserTokenDto userToken : userTokenList) {
 				System.out.println(userToken);
-			    if (userToken.getScope().contains(getInitialScope)) {
-			    	System.out.println("inquiry 찾음");
-			    	
-			        token = userToken.getToken();
-			        System.out.println(token);
-			        
+			    if (userToken.getScope().contains(getInitialScope1)) {	    	
+			        wtoken = userToken.getToken();
 			        break;
 			    }
+			    if(userToken.getScope().contains(getInitialScope2)) {
+			    	dtoken=userToken.getToken();
+			    	break;
+			    }
 			}
-			WithdrawDto wdto=accountFeign.requestWithdraw(
-					"Bearer "+token,
-					bank_tran_id, 
-					"N", 
-					"100000000003", 
-					"환불", 
-					cdto.getFintech_use_num(), 
-					"1000", 
-					getDateTime(), 
-					"dfdszc", 
-					"HONGGILDONG1234", 
-					"WD", 
-					cdto.getFintech_use_num()
+			
+			WithdrawReqDto wrdto=new WithdrawReqDto();
+			wrdto.setBank_tran_id(bank_tran_id1);
+			wrdto.setCntr_account_type("N");
+			wrdto.setCntr_account_num("100000000003");
+			wrdto.setDps_print_content("환불");
+			wrdto.setFintech_use_num(cdto.getFintech_use_num());
+			wrdto.setTran_amt("1000");
+			wrdto.setTran_dtime(getDateTime());
+			wrdto.setReq_client_name("dkjdkfj");
+			wrdto.setReq_client_num("HONGGILDONG1234");
+			wrdto.setTransfer_purpose("WD");
+			wrdto.setReq_client_fintech_use_num(cdto.getFintech_use_num());
+			
+			WithdrawResDto wdto=accountFeign.requestWithdraw(
+					"Bearer "+wtoken,
+					wrdto);
 //					dps_name,
 //					"004",
 //					"2314213324213333"
-					);
-			System.out.println("Bearer "+token);
-			System.out.println(bank_tran_id);
-			System.out.println(cdto.getFintech_use_num());
+					
+
 			System.out.println(wdto);
+			
+			String bank_tran_id2=dto.getClient_use_code()+'U'+createNum();
+
+			//입금 -> 위에서 보냈을 때 받은 사람의 계좌(페이지에서 받는 계좌를 적어야함),홈페이지에 등록 필수
+			DepositReqDto drdto=new DepositReqDto();
+			drdto.setCntr_account_type("N");
+			drdto.setCntr_account_num("200000000003");
+			drdto.setWd_pass_phrase("NONE");
+			drdto.setWd_print_content("송금");
+			drdto.setName_check_option("off");
+			drdto.setTran_dtime(getDateTime());
+			drdto.setReq_cnt("1");
+			
+			DepositReqListDto drldto=new DepositReqListDto();
+			drldto.setTran_no("1");
+			drldto.setBank_tran_id(bank_tran_id2);
+			drldto.setFintech_use_num(dps_fintech_use_num);
+			drldto.setPrint_content("송금");
+			drldto.setTran_amt("10000");
+			drldto.setReq_client_fintech_use_num(dps_fintech_use_num);
+			drldto.setReq_client_name(dps_name);
+			drldto.setReq_client_num("HONGGILDONG1234");
+			drldto.setTransfer_purpose("TR");
+			
+			List<DepositReqListDto> drldtos=new ArrayList<>();
+			drldtos.add(drldto);
+			
+			drdto.setReq_list(drldtos);
+			
+			DepositResDto ddto=accountFeign.requestDeposit(
+					"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJNMjAyMjAxODg2Iiwic2NvcGUiOlsib29iIl0sImlzcyI6Imh0dHBzOi8vd3d3Lm9wZW5iYW5raW5nLm9yLmtyIiwiZXhwIjoxNjk1MjU2MjA4LCJqdGkiOiIyMmFiMmY2OS1hNDhiLTRkOWItOTlhYS03NzA2MWQ4MjY1NmEifQ.TxYQA1EhGBYnOYoHpp4TyyCjg1UKat6c4kepIcgJGPI",
+					drdto);
+			System.out.println(ddto);
 			return "redirect:/user/transfer";
 		}
 		
