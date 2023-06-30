@@ -71,9 +71,9 @@ public interface AccountFeign {
 			@RequestParam("req_client_name")String req_client_name,
 			@RequestParam("req_client_num")String req_client_num,
 			@RequestParam("transfer_purpose")String transfer_purpose,
-			@RequestParam("req_client_fintech_use_num")String req_client_fintech_use_num,
-			@RequestParam("recv_client_name")String recv_client_name,
-			@RequestParam("recv_client_bank_code")String recv_client_bank_code,
-			@RequestParam("recv_client_account_num")String recv_client_account_num
+			@RequestParam("req_client_fintech_use_num")String req_client_fintech_use_num
+//			@RequestParam("recv_client_name")String recv_client_name,
+//			@RequestParam("recv_client_bank_code")String recv_client_bank_code,
+//			@RequestParam("recv_client_account_num")String recv_client_account_num
 			);
 }
