@@ -495,18 +495,21 @@ public class UserController {
 					bank_tran_id, 
 					"N", 
 					"100000000003", 
-					"환불 ", 
+					"환불", 
 					cdto.getFintech_use_num(), 
 					"1000", 
 					getDateTime(), 
-					"아무거나", 
+					"dfdszc", 
 					"HONGGILDONG1234", 
-					"TR", 
-					cdto.getFintech_use_num(), 
-					dps_name,
-					"004",
-					"2314213324213333"
+					"WD", 
+					cdto.getFintech_use_num()
+//					dps_name,
+//					"004",
+//					"2314213324213333"
 					);
+			System.out.println("Bearer "+token);
+			System.out.println(bank_tran_id);
+			System.out.println(cdto.getFintech_use_num());
 			System.out.println(wdto);
 			return "redirect:/user/transfer";
 		}
