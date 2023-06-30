@@ -215,7 +215,21 @@
 			color: rgba(255, 255, 255, 0.5);
 			font-size: 10px;
 		}
-
+		.other_nickname {
+			position: absolute;
+			left: 0;
+			bottom: 45px;
+			color: black;
+			font-size: 15px;
+		}
+		.me_nickname {
+			position: absolute;
+			right: 0;
+			bottom: 45px;
+			color: black;
+			font-size: 15px;
+		}
+		
 		.msg_time_send {
 			position: absolute;
 			right: 0;
@@ -300,12 +314,11 @@
 							<li class="active">
 								<div class="d-flex bd-highlight">
 									<div class="img_cont">
-										<img src="/assets/frog.png" class="rounded-circle user_img">
+										<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiLuW2xcJlrbLdQDiw-wTCsElgoQIvbaXRZ40pCZX9vxYuLh1W3njnzZ_SZddy3nVpXeTDZqdKX6rI-MQBECmDwL80RPHDA4d5_lBe89Z8YTbBw9LSlnkTYFbKFmLvObN6tMyyCx7kPVQiMVILHoqH-ze4DDH1n6tf6PIo06l_6w95xdmZ40m7X7Bzx9g/s400/rennai_kaeruka.png" class="rounded-circle user_img">
 										<span class="online_icon"></span>
 									</div>
 									<div class="user_info">
 										<span>Khalid</span>
-										<p>Kalid is online</p>
 									</div>
 								</div>
 							</li>
@@ -325,21 +338,21 @@
 					</div>
 					<div class="card-body msg_card_body">
 						<div class="d-flex justify-content-start mb-4">
-							<div class="img_cont_msg">
-								<img src="" class="rounded-circle user_img_msg">
-							</div>
 							<div class="msg_cotainer">
-								Hi, how are you samim?
+								<span class="other_nickname">
+									asdf
+								</span>
+								Hi, how are you samim
 								<span class="msg_time">8:40 AM, Today</span>
 							</div>
 						</div>
 						<div class="d-flex justify-content-end mb-4">
 							<div class="msg_cotainer_send">
-								Hi Khalid i am good tnx how about you?
+								<span class="me_nickname">
+									asdf
+								</span>
+							Hi Khalid i am good tnx how about you?
 								<span class="msg_time_send">8:55 AM, Today</span>
-							</div>
-							<div class="img_cont_msg">
-								<img src="" class="rounded-circle user_img_msg">
 							</div>
 						</div>
 					</div>
