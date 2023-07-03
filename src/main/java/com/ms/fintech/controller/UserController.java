@@ -90,22 +90,38 @@ public class UserController {
 	}
 	
 	@GetMapping("/community")
-	public String comunity(Model model) {
+	public String comunity(Model model, @RequestParam(defaultValue = "1", name="roomno") int roomNo,
+			HttpSession session) {
+		model.addAttribute("roomTitle", mapper.getRoomTitle(roomNo));
 		model.addAttribute("roomDtos", mapper.getRoomList());
-		System.out.println(mapper.getRoomList().get(0).getRoomTitle());
-		return "thymeleaf/user/community";
-	}
-	@GetMapping("/community/chatroom")
-	public String chatRoom(HttpSession session, Model model, @RequestParam("roomno") int roomNo) {
 		model.addAttribute("roomNo", roomNo);
+		System.out.println(mapper.getRoomList().get(0).getRoomTitle());
 		UserDto dto = (UserDto)session.getAttribute("dto");
 		if (dto == null) {
 			model.addAttribute("userId", "unknown");
 		} else {
 			model.addAttribute("userId", dto.getEmail().split("@")[0]);
 		}
-		return "thymeleaf/user/chatroom";
+		return "thymeleaf/user/community";
 	}
+	
+//	@GetMapping("/community")
+//	public String comunity(Model model) {
+//		model.addAttribute("roomDtos", mapper.getRoomList());
+//		System.out.println(mapper.getRoomList().get(0).getRoomTitle());
+//		return "thymeleaf/user/community";
+//	}
+//	@GetMapping("/community/chatroom")
+//	public String chatRoom(HttpSession session, Model model, @RequestParam("roomno") int roomNo) {
+//		model.addAttribute("roomNo", roomNo);
+//		UserDto dto = (UserDto)session.getAttribute("dto");
+//		if (dto == null) {
+//			model.addAttribute("userId", "unknown");
+//		} else {
+//			model.addAttribute("userId", dto.getEmail().split("@")[0]);
+//		}
+//		return "thymeleaf/user/chatroom";
+//	}
 	
 	@GetMapping("/analysis")
 	public String analysis() {

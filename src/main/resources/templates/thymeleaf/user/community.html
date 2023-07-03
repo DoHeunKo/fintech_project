@@ -1,32 +1,430 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts" layout:decorate="~{thymeleaf/layouts/user_layout}">
-  <head>
-    <meta charset="utf-8" />
-  </head>
-  <body>
-    <div layout:fragment="content">
-      <!-- Main Content-->
-      <main class="mb-4">
-        <div th:unless="${#lists.isEmpty(dtos)}">
-        	<p class="text-center">There is no chat</p>
-        </div>
-		<div th:if="${#lists.isEmpty(dtos)}">
-		<table id="chatTable" class="table">
-			<tr>
-				<th>방 번호</th>
-				<th>방 이름</th>
-			</tr>
-			<tr th:each="dto : ${roomDtos}">
-				<td th:text="${dto.roomNo}"></td>
-				<td th:text="${dto.roomTitle}"></td>
-				<td>
-					<button type="button" class="btn btn-outline-primary" 
-             th:onclick="|location.href='@{/user/community/chatroom(roomno=${dto.roomNo})}'|">방 참여</button>
-				</td>
-			</tr>
-		</table>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
+	layout:decorate="~{thymeleaf/layouts/user_layout}">
+<head>
+<meta charset="utf-8" />
+	<title>Chat</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css"
+		href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+	<style>
+		body,
+		html {
+			height: 100%;
+			margin: 0;
+			background: #BACEE0;
+			/* background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+	        background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5); */
+		}
+
+		.chat {
+			margin-top: auto;
+			margin-bottom: auto;
+
+		}
+
+		.card {
+			height: 500px;
+			border-radius: 15px !important;
+			background-color: rgba(0, 0, 0, 0.4) !important;
+		}
+
+		.contacts_body {
+			padding: 0.75rem 0 !important;
+			overflow-y: auto;
+			white-space: nowrap;
+		}
+
+		.msg_card_body {
+			overflow-y: auto;
+		}
+
+		.card-header {
+			border-radius: 15px 15px 0 0 !important;
+			border-bottom: 0 !important;
+		}
+
+		.card-footer {
+			border-radius: 0 0 15px 15px !important;
+			border-top: 0 !important;
+		}
+
+		.container {
+			align-content: center;
+		}
+
+		.search {
+			border-radius: 15px 0 0 15px !important;
+			background-color: rgba(0, 0, 0, 0.3) !important;
+			border: 0 !important;
+			color: white !important;
+		}
+
+		.search:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
+
+		.type_msg {
+			background-color: rgba(0, 0, 0, 0.3) !important;
+			border: 0 !important;
+			color: white !important;
+			height: 60px !important;
+			overflow-y: auto;
+		}
+
+		.type_msg:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
+
+		.attach_btn {
+			border-radius: 15px 0 0 15px !important;
+			background-color: rgba(0, 0, 0, 0.3) !important;
+			border: 0 !important;
+			color: white !important;
+			cursor: pointer;
+		}
+
+		.send_btn {
+			border-radius: 0 15px 15px 0 !important;
+			background-color: rgba(0, 0, 0, 0.3) !important;
+			border: 0 !important;
+			color: white !important;
+			cursor: pointer;
+		}
+
+		.search_btn {
+			border-radius: 0 15px 15px 0 !important;
+			background-color: rgba(0, 0, 0, 0.3) !important;
+			border: 0 !important;
+			color: white !important;
+			cursor: pointer;
+		}
+
+		.contacts {
+			list-style: none;
+			padding: 0;
+		}
+
+		.contacts li {
+			width: 100% !important;
+			padding: 5px 10px;
+			margin-bottom: 15px !important;
+		}
+
+		.active {
+			background-color: rgba(0, 0, 0, 0.3);
+		}
+
+		.user_img {
+			height: 70px;
+			width: 70px;
+			border: 1.5px solid #f5f6fa;
+
+		}
+
+		.user_img_msg {
+			height: 40px;
+			width: 40px;
+			border: 1.5px solid #f5f6fa;
+
+		}
+
+		.img_cont {
+			position: relative;
+			height: 70px;
+			width: 70px;
+		}
+
+		.img_cont_msg {
+			height: 40px;
+			width: 40px;
+		}
+
+		.online_icon {
+			position: absolute;
+			height: 15px;
+			width: 15px;
+			background-color: #4cd137;
+			border-radius: 50%;
+			bottom: 0.2em;
+			right: 0.4em;
+			border: 1.5px solid white;
+		}
+
+		.offline {
+			background-color: #c23616 !important;
+		}
+
+		.user_info {
+			margin-top: auto;
+			margin-bottom: auto;
+			margin-left: 15px;
+		}
+
+		.user_info span {
+			font-size: 20px;
+			color: white;
+		}
+
+		.user_info p {
+			font-size: 10px;
+			color: rgba(255, 255, 255, 0.6);
+		}
+
+		.video_cam {
+			margin-left: 50px;
+			margin-top: 5px;
+		}
+
+		.video_cam span {
+			color: white;
+			font-size: 20px;
+			cursor: pointer;
+			margin-right: 20px;
+		}
+
+		.msg_cotainer {
+			margin-top: auto;
+			margin-bottom: auto;
+			margin-left: 10px;
+			border-radius: 25px;
+			background-color: #82ccdd;
+			padding: 10px;
+			position: relative;
+		}
+
+		.msg_cotainer_send {
+			margin-top: auto;
+			margin-bottom: auto;
+			margin-right: 10px;
+			border-radius: 25px;
+			background-color: #78e08f;
+			padding: 10px;
+			position: relative;
+		}
+
+		.msg_time {
+			position: absolute;
+			left: 0;
+			bottom: -15px;
+			color: rgba(255, 255, 255, 0.5);
+			font-size: 10px;
+		}
+		.other_nickname {
+			position: absolute;
+			left: 0;
+			bottom: 45px;
+			color: black;
+			font-size: 15px;
+		}
+		.me_nickname {
+			position: absolute;
+			right: 0;
+			bottom: 45px;
+			color: black;
+			font-size: 15px;
+		}
+		
+		.msg_time_send {
+			position: absolute;
+			right: 0;
+			bottom: -15px;
+			color: rgba(255, 255, 255, 0.5);
+			font-size: 10px;
+		}
+
+		.msg_head {
+			position: relative;
+		}
+
+		#room {
+			cursor: pointer;
+		}
+		#card-body {
+			position: relative;
+		}
+
+		@media(max-width: 576px) {
+			.contacts_card {
+				margin-bottom: 15px !important;
+			}
+		}
+	</style>
+	<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+	<script type="text/javascript">
+	var ws;
+	window.addEventListener("load", (event) => {
+		if ($("#userId").val() == "unknown") {
+			alert("권한이 없습니다.");
+			location.href="/loginform";
+		}
+		ws = new WebSocket("ws://" + location.host + "/chatting/" + $("#roomNo").val());
+		wsEvt();
+		
+// 		$("#chating").append("<p>" + $("#userid").val() + "님 환영합니다. </p>");	
+	});
+	function wsEvt() {
+		ws.onopen = function(data){
+			var option ={
+				type : "wellcom",
+	 			userId: $("#userId").val(),
+	 			roomNo : $("#roomNo").val(),
+	 			msg : $("#userId").val() + "님이 입장하셨습니다."
+		 	}
+			ws.send(JSON.stringify(option));
+		}
+		
+		ws.onmessage = function(data) {
+			//메시지를 받으면 동작
+			var msg = data.data;
+			var json = JSON.parse(msg);
+			if (json.type == "wellcom") {
+				$("#chatting").append("<span id='ent_chat'> System : " + json.msg + "<br/><br/></span>");	
+			} else if (json.userId == $("#userId").val()){
+// 				$("#chatting").append("<div id='id_content'><p>" + json.userId + "</p><span id='content'>" + json.msg + "</span></div>");	
+				
+				$("#chatting").append(`<div class="d-flex justify-content-end mb-4">
+											<div class="msg_cotainer_send">
+											<span class="me_nickname">
+													${json.userId}
+											</span>
+													${json.msg}
+										</div>
+									</div>`);
+			} else {
+				$("#chatting").append(`<div class="d-flex justify-content-start mb-4">
+											<div class="msg_cotainer">
+												<span class="other_nickname">
+													${json.userId}
+												</span>
+													${json.msg}
+											</div>
+										</div>`);
+			}
+			var chatting = $('#card-body');
+// 			alert(chatting.prop('scrollHeight'));
+	 		chatting.scrollTop(chatting.prop('scrollHeight'));
+		}
+
+		document.addEventListener("keypress", function(e){
+			if(e.keyCode == 13 && $("#chat").val().trim() != ""){//enter press
+				send();
+			}
+		});
+	}
+
+	function send() {
+		var option ={
+			type : "msg",
+			userId: $("#userId").val(),
+ 			roomNo : $("#roomNo").val(),
+ 			msg : $("#chat").val()
+		}
+		ws.send(JSON.stringify(option));
+		var chat = $('#chat'); 
+		chat.val("");
+// 		alert(chatting.prop('scrollHeight'));
+	}
+// 	function activate(li) {
+// 		li.className="active";
+// 	}
+	
+		
+	
+</script>
+<style type="text/css">
+#chat {
+	border-radius: 10px;
+	padding:5px;
+}
+#chatting >div> p,#chatting>p{
+	padding: 0px;
+	margin: 5px;
+	color:black;
+}
+
+#id_content{
+	margin:10px;
+}
+
+#send-btn{
+	background-color:#fef01b;
+	border:#fef01b;
+	color:black;
+	margin-left:5px;
+}
+</style>
+</head>
+<body>
+	<div layout:fragment="content">
+	<input type="hidden" id="roomNo" th:value="${roomNo}">
+  	<input type="hidden" id="userId" th:value="${userId}">
+	<div class="container-fluid h-100">
+		<div class="row justify-content-center h-100">
+			<div class="col-md-4 col-xl-3 chat">
+				<div class="card mb-sm-3 mb-md-0 contacts_card">
+					<div class="card-header">
+<!-- 						<div class="input-group"> -->
+<!-- 							<input type="text" placeholder="Search..." name="" class="form-control search"> -->
+<!-- 							<div class="input-group-prepend"> -->
+<!-- 								<span class="input-group-text search_btn"><i class="fas fa-search"></i></span> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+					</div>
+					<div class="card-body contacts_body">
+						<ul class="contacts"  id="roomlist">
+							<th:block th:each="dto : ${roomDtos}">
+<!-- 							<li class="active"> -->
+							<li th:class="${dto.roomTitle} == ${roomTitle} ? 'active' : '' ">
+								<div class="d-flex bd-highlight" id="room" th:onclick="|location.href='@{/user/community(roomno=${dto.roomNo})}'|">
+									<div class="img_cont">
+										<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiLuW2xcJlrbLdQDiw-wTCsElgoQIvbaXRZ40pCZX9vxYuLh1W3njnzZ_SZddy3nVpXeTDZqdKX6rI-MQBECmDwL80RPHDA4d5_lBe89Z8YTbBw9LSlnkTYFbKFmLvObN6tMyyCx7kPVQiMVILHoqH-ze4DDH1n6tf6PIo06l_6w95xdmZ40m7X7Bzx9g/s400/rennai_kaeruka.png" class="rounded-circle user_img">
+<!-- 										<span class="online_icon"></span> -->
+									</div>
+									<div class="user_info">
+										<span th:text="${dto.roomTitle}"></span>
+									</div>
+								</div>
+							</li>
+							</th:block>
+						</ul>
+					</div>
+						<div class="card-footer"></div>
+				</div>
+				</div>
+				<div class="col-md-8 col-xl-6 chat">
+				<div class="card">
+					<div class="card-header msg_head">
+						<div class="bd-highlight">
+							<div class="user_info text-center">
+								<span th:text="${roomTitle}"></span>
+							</div>
+						</div>
+					</div>
+					<div id="card-body" class="card-body msg_card_body">
+						<div id="chatting">
+						
+						</div>
+					</div>
+					<div class="card-footer">
+						<div class="input-group">
+							<input id="chat" type="text" class="form-control type_msg"
+								placeholder="Type your message...">
+							<div class="input-group-append">
+								<span class="input-group-text send_btn"><i class="fas fa-location-arrow" onclick="send()"></i></span>
+							</div>
+						</div>
+					</div>
+			</div>
+			</div>
 		</div>
-			</main>
 	</div>
-	</body>
+	</div>
+</body>
 </html>

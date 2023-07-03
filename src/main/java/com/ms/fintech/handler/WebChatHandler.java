@@ -14,7 +14,8 @@ public class WebChatHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		String path = session.getUri().getPath();
-		roomNo = Integer.parseInt(path.charAt(path.length()-1) + "") - 1;
+		System.out.println(path);
+		roomNo = Integer.parseInt(path.charAt(path.length()-1) + "");
 		if (map.get(roomNo) == null) {
 			var room = new HashMap<String, WebSocketSession>();
 			room.put(session.getId(), session);
