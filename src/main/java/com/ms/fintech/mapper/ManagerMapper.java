@@ -26,7 +26,7 @@ public interface ManagerMapper {
 	public int deleteNews(int seq);
 
 	@Insert("insert into community_info(room_title) values(#{title})")
-	public void createRoom(int seq);
+	public void createRoom(String title);
 	
 	
 }

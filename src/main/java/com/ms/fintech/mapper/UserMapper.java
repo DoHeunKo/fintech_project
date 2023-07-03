@@ -76,5 +76,9 @@ public interface UserMapper {
 	@Insert("insert into withdraw_deposit values(#{user_seq},#{fintech_use_num},'out',#{tran_amt},NOW())")
 	public boolean insertWithdraw(int user_seq,String fintech_use_num,String tran_amt);
 	
+	@Select("select room_title from community_info where room_no =#{title}")
+	public String getRoomTitle(int title);
+	
 	
 }
+

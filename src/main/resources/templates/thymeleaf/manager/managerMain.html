@@ -41,8 +41,8 @@ th {
 	function openInfo(seq) {
 		window.open("/manager/userinfo?seq=" + seq, "_blank", "width=600, height=600");
 	}
-	function createRoom(seq) {
-		window.open("/manager/createRoom?seq=" + seq, "_blank", "width=600, height=600");
+	function createRoom() {
+		window.open("/manager/createform", "_blank", "width=600, height=600");
 	}
 	function deleteNews(seq) {
 		let ans = confirm("삭제하시겠습니까");
@@ -97,7 +97,7 @@ th {
 					</tr>
 					<tr>
 						<td colspan="3" align="right">
-							<button class="btn btn btn-outline-primary" type="button" >방 생성</button>
+							<button class="btn btn btn-outline-primary" type="button" onclick="createRoom()">방 생성</button>
 						</td>
 					</tr>
 					

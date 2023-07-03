@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.ms.fintech.mapper.ManagerMapper;
@@ -52,21 +54,29 @@ public class ManagerController {
 	}
 	
 	@GetMapping("/withdraw")
-	public void withdraw(@RequestParam int seq) {
+	public String withdraw(@RequestParam int seq) {
 		mapper.withdraw(seq);
+		return "redirect:/";
 	}
 
 	@GetMapping("/deleteNews")
-	public void deleteNews(@RequestParam int seq) {
+	public String deleteNews(@RequestParam int seq) {
 		managerMapper.deleteNews(seq);
+		return "redirect:/";
 	}
 	@GetMapping("/deleteRoom")
-	public void deleteRoom(@RequestParam int seq) {
+	public String deleteRoom(@RequestParam int seq) {
 		managerMapper.deleteRoom(seq);
+		return "redirect:/";
 	}
-	@GetMapping("/createRoom")
-	public void createRoom(@RequestParam int seq) {
-		managerMapper.createRoom(seq);
+	@PostMapping("/createRoom")
+	public String createRoom(@RequestBody String title) {
+		managerMapper.createRoom(title);
+		return "redirect:/";
+	}
+	@GetMapping("/createForm")
+	public String createForm() {
+		return "createform";
 	}
 	
 }
