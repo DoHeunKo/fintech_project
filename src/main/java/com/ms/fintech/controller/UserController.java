@@ -48,6 +48,7 @@ import com.ms.fintech.command.CategoryCommand;
 import com.ms.fintech.command.GraphData;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.MonthCommand;
+import com.ms.fintech.command.TransferCompCommand;
 import com.ms.fintech.dtos.CardInfoDto;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
@@ -470,8 +471,11 @@ public class UserController {
 				@RequestParam("dps_name")String dps_name,
 				@RequestParam("dps_bank")String dps_bank,
 				@RequestParam("dps_fintech_use_num")String dps_fintech_use_num,
-				@RequestParam("dps_tran_amt")String dps_tran_amt,HttpServletRequest request) {
-			
+				@RequestParam("dps_tran_amt")String dps_tran_amt,HttpServletRequest request,
+				Model model) {
+			//약정 입금,출금계좌 고정
+			String contracted_withdraw_account="100000000003";
+			String contracted_deposit_account="200000000003";
 			
 			HttpSession session=request.getSession();
 			UserDto dto=(UserDto)session.getAttribute("dto");
@@ -480,27 +484,22 @@ public class UserController {
 			
 			String bank_tran_id1=dto.getClient_use_code()+'U'+createNum();
 			
-			List<UserTokenDto> userTokenList = dto.getUserTokenDto();
+			List<UserTokenDto> wd_userTokenList = dto.getUserTokenDto();
 			String getInitialScope1="inquiry";
-			String getInitialScope2="oob";
 			String wtoken = null;
 			String dtoken=null;
-			for (UserTokenDto userToken : userTokenList) {
+			for (UserTokenDto userToken : wd_userTokenList) {
 				System.out.println(userToken);
 			    if (userToken.getScope().contains(getInitialScope1)) {	    	
 			        wtoken = userToken.getToken();
 			        break;
-			    }
-			    if(userToken.getScope().contains(getInitialScope2)) {
-			    	dtoken=userToken.getToken();
-			    	break;
 			    }
 			}
 			
 			WithdrawReqDto wrdto=new WithdrawReqDto();
 			wrdto.setBank_tran_id(bank_tran_id1);
 			wrdto.setCntr_account_type("N");
-			wrdto.setCntr_account_num("100000000003");
+			wrdto.setCntr_account_num(contracted_withdraw_account);
 			wrdto.setDps_print_content("환불");
 			wrdto.setFintech_use_num(cdto.getFintech_use_num());
 			wrdto.setTran_amt("1000");
@@ -509,14 +508,10 @@ public class UserController {
 			wrdto.setReq_client_num("HONGGILDONG1234");
 			wrdto.setTransfer_purpose("WD");
 			wrdto.setReq_client_fintech_use_num(cdto.getFintech_use_num());
-			
+			//출금이체
 			WithdrawResDto wdto=accountFeign.requestWithdraw(
 					"Bearer "+wtoken,
 					wrdto);
-//					dps_name,
-//					"004",
-//					"2314213324213333"
-					
 
 			System.out.println(wdto);
 			
@@ -525,19 +520,18 @@ public class UserController {
 			//입금 -> 위에서 보냈을 때 받은 사람의 계좌(페이지에서 받는 계좌를 적어야함),홈페이지에 등록 필수
 			DepositReqDto drdto=new DepositReqDto();
 			drdto.setCntr_account_type("N");
-			drdto.setCntr_account_num("200000000003");
+			drdto.setCntr_account_num(contracted_deposit_account);
 			drdto.setWd_pass_phrase("NONE");
 			drdto.setWd_print_content("송금");
 			drdto.setName_check_option("off");
 			drdto.setTran_dtime(getDateTime());
 			drdto.setReq_cnt("1");
-			
 			DepositReqListDto drldto=new DepositReqListDto();
 			drldto.setTran_no("1");
 			drldto.setBank_tran_id(bank_tran_id2);
 			drldto.setFintech_use_num(dps_fintech_use_num);
 			drldto.setPrint_content("송금");
-			drldto.setTran_amt("10000");
+			drldto.setTran_amt("1000");
 			drldto.setReq_client_fintech_use_num(dps_fintech_use_num);
 			drldto.setReq_client_name(dps_name);
 			drldto.setReq_client_num("HONGGILDONG1234");
@@ -547,12 +541,41 @@ public class UserController {
 			drldtos.add(drldto);
 			
 			drdto.setReq_list(drldtos);
+			//돈 받는사람의 이름을 통해서 oob token가져오기
+	
+			UserDto dp_user=mapper.dp_info(dps_name);
+			System.out.println(dp_user);
 			
+			UserTokenDto dp_oob_token=mapper.dp_token(dp_user.getUser_seq());
+			
+			dtoken=dp_oob_token.getToken();
+			//입금이체
 			DepositResDto ddto=accountFeign.requestDeposit(
-					"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJNMjAyMjAxODg2Iiwic2NvcGUiOlsib29iIl0sImlzcyI6Imh0dHBzOi8vd3d3Lm9wZW5iYW5raW5nLm9yLmtyIiwiZXhwIjoxNjk1MjU2MjA4LCJqdGkiOiIyMmFiMmY2OS1hNDhiLTRkOWItOTlhYS03NzA2MWQ4MjY1NmEifQ.TxYQA1EhGBYnOYoHpp4TyyCjg1UKat6c4kepIcgJGPI",
+					"Bearer "+dtoken, 
 					drdto);
 			System.out.println(ddto);
-			return "redirect:/user/transfer";
+			
+			boolean isS=userService.withdraw_deposit(
+					cdto.getUser_seq(),
+					cdto.getFintech_use_num(),
+					dps_tran_amt,
+					dp_user.getUser_seq(),
+					dps_fintech_use_num);
+			//이체완료에 전달(수취인 성명,계좌번호,이체금액);
+			
+			TransferCompCommand tdto=new TransferCompCommand();
+			tdto.setDp_name(dps_name);
+			tdto.setDp_fintech_use_num(dps_fintech_use_num);
+			tdto.setTran_amt(dps_tran_amt);
+			
+			model.addAttribute("tdto", tdto);
+			
+			return "thymeleaf/user/transfer_complete";
+		}
+		
+		@GetMapping("/transfer_comp")
+		public String transfer_comp() {
+			return "redirect:/user/userMain";
 		}
 		
 		@GetMapping("/linkAccount")

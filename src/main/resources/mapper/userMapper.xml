@@ -88,4 +88,12 @@
 		SELECT COUNT(SCOPE) FROM USER_TOKEN WHERE USER_SEQ=#{user_seq} AND SCOPE='oob';
 	</select>
 	
+	<select id="dp_info" parameterType="String">
+		SELECT * FROM USER_INFO WHERE NAME=#{name};
+	</select>
+	<select id="dp_token" parameterType="int">
+		SELECT * FROM USER_TOKEN WHERE USER_SEQ=#{user_seq} AND SCOPE='oob';
+	</select>
+	
+	
 </mapper>
