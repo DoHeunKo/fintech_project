@@ -160,6 +160,30 @@ public class UserService implements IUserService{
 		return userMapper.oobChk(user_seq);
 	}
 
+	@Override
+	@Transactional
+	public boolean withdraw_deposit(
+			int wd_user_seq,
+			String wd_fintech_use_num,
+			String tran_amt,
+			int dp_user_seq,
+			String dp_fintech_use_num) {
+		//이체후 DB 갱신
+		boolean addWithdraw=userMapper.insertWithdraw(
+				wd_user_seq,wd_fintech_use_num,tran_amt);
+		
+		boolean addDeposit=userMapper.insertDeposit(
+				dp_user_seq,dp_fintech_use_num,tran_amt);
+		
+		if(addWithdraw && addDeposit) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	
+
 	
 
 	

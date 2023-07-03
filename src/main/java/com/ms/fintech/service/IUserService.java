@@ -33,4 +33,13 @@ public interface IUserService {
 	public int accountChk(int user_seq);
 	
 	public int oobChk(int user_seq);
+	
+//	public boolean insertDeposit(int user_seq,String fintech_use_num,String tran_amt); 
+//	public boolean insertWithdraw(int user_seq,String fintech_use_num,String tran_amt); 
+	
+	public boolean withdraw_deposit(int wd_user_seq,
+			String wd_fintech_use_num,
+			String tran_amt,
+			int dp_user_seq,
+			String dp_fintech_use_num);
 }

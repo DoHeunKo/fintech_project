@@ -1,5 +1,6 @@
 package com.ms.fintech.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
@@ -14,6 +15,7 @@ import com.ms.fintech.dtos.CrawlerDto;
 import com.ms.fintech.dtos.RoomDto;
 import com.ms.fintech.dtos.UserDto;
 import com.ms.fintech.dtos.UserTokenDto;
+import com.ms.fintech.dtos.WithdrawDepositDto;
 
 @Mapper
 public interface UserMapper {
@@ -63,4 +65,16 @@ public interface UserMapper {
 	
 	@Select("select * from card_info where user_seq=#{user_seq}")
 	public CardInfoDto getCardInfo(int user_seq);
+	
+	public UserDto dp_info(String name);
+	
+	public UserTokenDto dp_token(int user_seq);
+	
+	@Insert("insert into withdraw_deposit values(#{user_seq},#{fintech_use_num},'in',#{tran_amt},NOW())")
+	public boolean insertDeposit(int user_seq,String fintech_use_num,String tran_amt);
+	
+	@Insert("insert into withdraw_deposit values(#{user_seq},#{fintech_use_num},'out',#{tran_amt},NOW())")
+	public boolean insertWithdraw(int user_seq,String fintech_use_num,String tran_amt);
+	
+	
 }
