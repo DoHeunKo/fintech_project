@@ -70,13 +70,14 @@ public class ManagerController {
 		return "redirect:/";
 	}
 	@PostMapping("/createRoom")
-	public String createRoom(@RequestBody String title) {
+	public String createRoom(String title) {
 		managerMapper.createRoom(title);
-		return "redirect:/";
+		System.out.println(title);
+		return "thymeleaf/manager/createform";
 	}
-	@GetMapping("/createForm")
+	@GetMapping("/createform")
 	public String createForm() {
-		return "createform";
+		return "thymeleaf/manager/createform";
 	}
 	
 }
