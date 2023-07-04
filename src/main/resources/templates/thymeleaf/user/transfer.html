@@ -6,6 +6,11 @@
 <meta charset="utf-8" />
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript">
+
+$(function(){
+	//두개 버튼 모두 true일 때 활성화
+	flag1=false;
+	flag2=false;
 $.ajax({
 	url:"/user/joinChk",
 	method:"get",
@@ -23,25 +28,143 @@ $.ajax({
 	}
 })
 
+$.ajax({
+	url:"/user/cardPWChk",
+	method:"get",
+	async:false,
+	dataType:"json",
+	success:function(data){
+		console.log(data);
+		if(data){
+			
+			$("#simplePW").prop("disabled",true);
+			$("#simplePW").css("border","#4169E1");
+			$("#simplePW").css("background-color","#4169E1");
+			$("#simplePW").val("간편 비밀번호 설정완료");
+			flag1=true;
+		}
+	},
+	error:function(e){
+		console.log(e);
+	}
+})
+//계좌 연동여부
+$.ajax({
+	url:"/user/linkChk",
+	method:"get",
+	async:false,
+	dataType:"json",
+	success:function(data){
+		console.log(data);
+		if(data){
+			
+			$("#conn").prop("disabled",true);
+			$("#conn").css("border","#4169E1");
+			$("#conn").css("background-color","#4169E1");
+			$("#conn").val("계좌 연동 완료");
+			flag2=true;
+		}
+	},
+	error:function(e){
+		console.log(e);
+	}
+})
+
+
+	var cont1 = $("#cont1");
+    var inputs = $("#cont1 input");
+    var transferButton = $("#transfer");
+
+    if (flag1 && flag2) {
+        cont1.css("opacity","1");
+        inputs.prop("disabled", false);
+		inputs.css("pointer-events","auto");
+		transferButton.prop("disabled",false);
+    } 
+
+})
 function createPW() {
 	open("/user/createPW", "_blank", "width=600px,height=650px");
+	
 }
 function linkAccount() {
 	open("/user/linkAccount", "_blank", "width=600px,height=650px");
+	
 }
 function AuthPW(event) {
 	event.preventDefault();
-	let popupWindow=open("/user/AuthPW", "_blank", "width=600px,height=650px");
+	console.log($('#inputs').val());
+	let popupWindow=open("/user/AuthPW", "_blank", "width=600px,height=900px");
 	let popupInterval = setInterval(function() {
         if (popupWindow.closed) {
+        	//닫혔을 때는 무조건 오류 처리
             clearInterval(popupInterval);
-
-            // Submit the form
-            document.getElementById("transferForm").submit();
+            
+			if($('#inputs').val()=="ff"){
+	            document.getElementById("transferForm").submit();
+			}else{
+				
+	            alert("인증 오류");
+			}
         }
+			
     }, 1000);
+	
+	
 }
+
 </script>
+<style type="text/css">
+.cont {
+	display: flex;
+	align-items: center;
+	margin: 20px;
+}
+
+.title {
+	flex: 1;
+}
+
+.content {
+	flex: 1;
+	text-align: right;
+}
+.charts-wrapper {
+	color: #ffffff;
+	height: 200px;
+	text-align: center;
+	background-color: #194aa6;
+	margin-bottom: 20px;
+	border-radius:10px;
+}
+#transfer,#simplePW,#conn {
+	width: 100%;
+	font-size: 18px;
+	display: inline-block;
+	border-radius: 10px;
+	background-color: #194aa6;
+	color: #ffffff;
+ 	margin-bottom:30px; 
+	height:50px;
+}
+
+input {
+	border: none;
+    border-bottom: 1px solid #194aa6;
+    outline: none;
+}
+#cont1 {
+    opacity: 0.5; 
+  }
+  
+  #cont1 input {
+    pointer-events:none;
+    
+  }
+  #desc{
+  	text-align:center;
+  }
+</style>
 <title>Insert title here</title>
 </head>
 <body>
@@ -49,23 +172,50 @@ function AuthPW(event) {
 
 <main class="mb-4">
      <div class="container px-4 px-lg-5">
-		<h2>간편송금</h2>
+		
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-6">
-           		<button onclick="createPW()">간편 비밀번호 생성</button>
-           		<button onclick="linkAccount()">계좌 연동</button>
-           		<form th:action="@{/user/withdraw_deposit}" method="get" id="transferForm" onsubmit="return AuthPW(event)">
-           			수취인 이름<br>
-           			<input id="dps_name" name="dps_name"><br>
-           			수취인 은행<br>
-           			<input id="dps_bank" name="dps_bank"><br>
-           			수취인 계좌번호<br>
-           			<input id="dps_fintech_use_num" name="dps_fintech_use_num"><br>
-           			송금할 금액<br>
-           			<input id="dps_tran_amt" name="dps_tran_amt" placeholder="1000원 고정값"><br>
-           			
-           			<button type="submit">송금</button>
-           		</form>
+<!--             	<button class="transfer" onclick="createPW()">간편 비밀번호 생성</button> -->
+<!--            		<button class="transfer" onclick="linkAccount()">계좌 연동</button> -->
+            	
+                	<button class="btn" id="simplePW" onclick="createPW()">간편 비밀번호 생성</button>
+                	<button class="btn" id="conn" onclick="linkAccount()">계좌 연동</button>
+            		<div id="desc">
+            			<p>간편비밀번호 생성, 계좌연동을 먼저 해주세요</p>
+            		</div>
+            		
+<!--             	<div class="charts-wrapper"> -->
+<!--            			<h2>간편송금</h2> -->
+<!--            		</div> -->
+				
+				<div id="cont1">
+				
+					<h3>간편송금</h3>
+	                <hr class="featurette-divider">
+	
+	           		<form th:action="@{/user/withdraw_deposit}" method="get" id="transferForm" onsubmit="return AuthPW(event)">
+	           			<div class="cont">
+							  <div class="title">받는 분</div>
+							  <input id="dps_name" name="dps_name" required>
+						</div>
+	
+	           			<div class="cont">
+							  <div class="title">은행</div>
+							  <input id="dps_bank" name="dps_bank" required>
+						</div>
+	           			<div class="cont">
+							  <div class="title">계좌번호</div>
+							  <input id="dps_fintech_use_num" name="dps_fintech_use_num" required>
+						</div>
+	           			<div class="cont">
+							  <div class="title">금액</div>
+							  <input id="dps_tran_amt" name="dps_tran_amt" placeholder="1000원 고정값" required>
+						</div>
+	           			
+						<input type="hidden" value="tt" id="inputs">
+	           			<button type="submit" class="btn" id="transfer" disabled="disabled">송금</button>
+	           		</form>
+				</div>
             </div>       
         </div>         
      </div>

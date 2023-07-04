@@ -12,6 +12,11 @@
     }
     </style>
     <script type="text/javascript">
+    
+    $(function(){
+    	
+    })
+    
     	function keypad(key) {
     		let a = document.getElementById('code').value.length;
     		if (a < 6) {
@@ -27,18 +32,19 @@
     		if(a.length==6){
     			
     			$.ajax({
-    				url:"/user/cardPWChk",
+    				url:"/user/isPWcorrect",
     				method:"get",
     				async:"false",
+    				data:{"pw":a},
     				dataType:"json",
     				success:function(data){
-    					if(data==true){
+    					if(data==a){
     						alert("인증완료");
+    						opener.$('#inputs').val("ff");
     						close();
-
-    	                  
     					  } else {
     					    // If the password is incorrect, display an error message
+    					  
     					    alert("Incorrect password. Please try again.");
     					  }
     				},
@@ -46,8 +52,7 @@
     					console.log(e);
     				}
     			});
-//     			wait(1);
-//     			close();
+
     		}
     		
     	}
@@ -57,26 +62,7 @@
     	        now = Date.now();
     	    }
     	}
-    	function sendPW2(pre) {
-    		let a = document.getElementById('code').value;
-    		if (a === pre) {
-    			alert('비밀번호를 설정하였습니다.');
-    			$.ajax({
-    				url:"/user/setPW",
-    				data : {
-    					pw : "" + pre
-    				},
-    				method:"get",
-    				async:"false",
-    				dataType:"json"
-    			});
-    			wait(1);
-    			close();
-    		} else {
-    			alert('비밀번호가 틀립니다.');
-    			document.getElementById('code').value = '';
-    		}
-    	}
+    	
     </script>
 </head>
 
