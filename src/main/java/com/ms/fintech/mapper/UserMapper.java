@@ -45,6 +45,9 @@ public interface UserMapper {
 	
 	public String cardPWChk(int user_seq);
 	
+	@Select("SELECT COUNT(*) FROM card_info WHERE user_seq=#{user_seq}")
+	public int linkChk(int user_seq);
+	
 	@Select("select * from mz_info")
 	public List<CrawlerDto> getNewsList();
 	
@@ -79,6 +82,7 @@ public interface UserMapper {
 	@Select("select room_title from community_info where room_no =#{title}")
 	public String getRoomTitle(int title);
 	
-	
+	@Select("select card_password from user_info where user_seq=#{user_seq}")
+	public String isPWcorrect(int user_seq);
 }
 

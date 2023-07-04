@@ -470,7 +470,7 @@ public class UserController {
 		public boolean cardPWChk(HttpSession session) {
 			int user_seq = ((UserDto)session.getAttribute("dto")).getUser_seq();
 			String ret=mapper.cardPWChk(user_seq);
-			if(ret==null) {
+			if(ret==null || ret=="") {
 				System.out.println("비밀번호 설정 안함");
 				return false;
 			}else {
@@ -479,7 +479,15 @@ public class UserController {
 			
 		}
 		
-		
+		@GetMapping("/isPWcorrect")
+		@ResponseBody
+		public String isPWcorrect(HttpSession session,String pw) {
+			int user_seq = ((UserDto)session.getAttribute("dto")).getUser_seq();
+			String ret=mapper.cardPWChk(user_seq);
+			System.out.println(pw);
+			System.out.println(ret);
+			return ret;
+		}
 		
 		
 		@GetMapping("/withdraw_deposit")
@@ -594,6 +602,7 @@ public class UserController {
 			return "redirect:/user/userMain";
 		}
 		
+
 		@GetMapping("/linkAccount")
 		public String linkAccount() {
 			return "thymeleaf/user/linkAccount";
@@ -622,5 +631,18 @@ public class UserController {
 			return "thymeleaf/user/transfer";
 		}
 		
+		@GetMapping("/linkChk")
+		@ResponseBody
+		public boolean linkChk(HttpSession session) {
+			int user_seq = ((UserDto)session.getAttribute("dto")).getUser_seq();
+			int ret=mapper.linkChk(user_seq);
+			if(ret==0) {
+				System.out.println("연동안함");
+				return false;
+			}else {
+				return true;
+			}
+			
+		}
 		
 }

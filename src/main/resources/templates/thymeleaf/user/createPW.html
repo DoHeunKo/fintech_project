@@ -51,6 +51,11 @@
     				dataType:"json"
     			});
     			wait(1);
+//     			opener.$("#simplePW").prop("disabled",true);
+// 				opener.$("#simplePW").css("border","#4169E1");
+// 				opener.$("#simplePW").css("background-color","#4169E1");
+// 				opener.$("#simplePW").val("간편 비밀번호 설정완료");
+				opener.parent.location.reload();
     			close();
     		} else {
     			alert('비밀번호가 틀립니다.');
