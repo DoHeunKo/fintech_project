@@ -13,9 +13,6 @@
     </style>
     <script type="text/javascript">
     
-    $(function(){
-    	
-    })
     
     	function keypad(key) {
     		let a = document.getElementById('code').value.length;
@@ -25,7 +22,7 @@
     	}
     	function sendPW() {
     		let a = document.getElementById('code').value;
-    		if (a.length < 6) {
+    		if (a.length != 6) {
     			alert('6자리를 입력해주세요.');
     			return;
     		}
@@ -78,7 +75,7 @@
 	<h3 id="notice">송금시 간편 비밀번호를 입력해 주세요.</h3>                
 <div class="btn-group-vertical ml-4 mt-4" role="group" aria-label="Basic example">
     <div class="btn-group">
-        <input class="text-center form-control-lg mb-2" id="code">
+        <input class="text-center form-control-lg mb-2" readonly="readonly" id="code">
     </div>
     <div class="btn-group">
         <button type="button" class="btn btn-outline-secondary py-3" onclick="keypad(1)">1</button>
