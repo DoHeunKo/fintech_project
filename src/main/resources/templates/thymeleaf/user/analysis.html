@@ -73,7 +73,6 @@
 		
 		
 })
-
 	function swapImage() {
       var image = document.getElementById('myImage');
       if (image.src.includes('question_mark.png')) {
@@ -127,7 +126,7 @@
 						'<br/><div class="charts-wrapper1">'+ 
 						'<h2 class="title">자산</h2>'+
 						'<p>총자산</p>'+
-						'<h2>'+balance_sum.toLocaleString()+'원</h2>'	+
+						'<h2>'+balance_sum+'원</h2>'	+
 						'</div>'
 				);
 //	 				급여계좌
@@ -137,7 +136,7 @@
 						
 						'<div class="box container" >'+
 	            		'		<p>'+response[i].bank_name+'</p>'+
-	            		'<h3>'+Number(response[i].balance_amt).toLocaleString()+'원</h3>'+
+	            		'<h3>'+response[i].balance_amt+'원</h3>'+
 	            		'</div>'
 	            		
 					)                         
@@ -250,8 +249,12 @@
 				var total_cs=[];
 				var total_plus=[];
 				var per_month=[];
+				var last_cs=[];
+				var last_month=[];
 				for(var i=0;i<size;i++){
 					per_month.push(i+1+"월");
+					last_month.push(i+1+"월");
+					last_cs.push(data.categoryCommand[i].total);	
 					total_cs.push(data.categoryCommand[i].total);	
 					total_plus.push(data.categoryCommand[i].plus);
 				}
@@ -267,9 +270,9 @@
 				$("#percent_plus_minus").text("현재 당신의 수입에 대한 소비는"+percent_plus_minus+"%입니다.");
 				
 				var five_percent=Math.round(sum_total_plus*5/100);
-				$("#five_percent").text('이 카드를 사용할 경우 전달 대비'+five_percent.toLocaleString()+'원(5%)을 줄일수있습니다.');
+				$("#five_percent").text('이 카드를 사용할 경우 전달 대비'+five_percent+'원(5%)을 줄일수있습니다.');
                 //전체소비합
-				createChart2('chart1',per_month,total_plus,total_cs,'전체 소비·수입');
+				createChart2('chart1',last_month,total_plus,last_cs,'전체 소비·수입');
 				
                 //평균수입
 				const avg_plus =total_plus.reduce((accumulator, current, index, array) => {
@@ -289,8 +292,10 @@
 				
 // 				console.log("평균수입   "+avg_plus);
 // 				console.log("평균소비   "+avg_minus);
+
 				$("#avg_plus").text('평균 수입    : ' +Math.round(avg_plus).toLocaleString()+'원');
 				$("#avg_cs").text('평균 소비    : '+Math.round(avg_minus).toLocaleString()+'원');
+
 				
 				//카테고리별 소비(전체,5월)
 				var category_key=Object.keys(data.categoryCommand[0]);
@@ -355,11 +360,14 @@
 				}, 0);
 // 				console.log(avg);
 				var exp_cs=per_month;
+				var exp_cs_value=total_cs;
+				exp_cs_value.push(avg);
 				exp_cs.push("이번달")
-				total_cs.push(avg);
 				
+
 				createChart5('chart5',exp_cs,total_cs,'이번달 예상 소비 금액');
 				$("#exp").text('이번달 예상 지출액은'+Math.round(avg).toLocaleString()+'원 입니다');
+
 				
 				
 // 				var joinBtnOffset = $('#joinbtn').offset().top;
@@ -370,6 +378,15 @@
 // 				// Slowly scroll to the bottom
 // 			    $('html, body').animate({ scrollTop: $(document).height() }, 100);
 // 				});
+				console.log(name.replace(/\"/gi, ""));
+				console.log(job);
+				console.log(age);
+				console.log(sex);
+				console.log(address);
+				console.log(age_avg_cs[0]);
+				console.log(avg_minus);
+				console.log(typeof(age_avg_cs[0]));
+				console.log(typeof(avg_minus));
 				var _age;
 				if(age>=20 && age<30){
 					_age=20;
@@ -385,15 +402,14 @@
 					
 					if(age_list[i]==_age){
 						var res=age_avg_cs[i]-avg_minus;
-						res_c = parseInt(res).toLocaleString();
 						var comp6_h=[age_list[i],'나'];
 						var comp6_v=[age_avg_cs[i],avg_minus];
 						createChart7('comp6',comp6_h,comp6_v,'나의 연령대 월평균 소비');
 		 				if(res>=0){
-		 					$('#age_anl').text('동일 연령대 보다 -'+res_c+'원');
+		 					$('#age_anl').text('동일 연령대 보다 -'+res+'원');
 		 					$('#age_anl').css("color","blue");
 		 				}else{
-		 					$('#age_anl').text('동일 연령대 보다 +'+res_c+'원');
+		 					$('#age_anl').text('동일 연령대 보다 +'+res+'원');
 		 					$('#age_anl').css("color","red");
 		 				}
 					}
@@ -401,6 +417,8 @@
 				}
 				
 				var _job=job.replace(/\"/gi, "");
+				console.log(_job);
+				console.log(job_avg);
 				if(_job=='manage'){
 					_job='사무직';
 				}else if(_job=='tech'){
@@ -413,27 +431,26 @@
 					_job='예술·스포츠';
 				}
 				
-// 				console.log(_job);
+				console.log(_job);
 // 					'보건·의료직', '사무직', '연구·기술직', '교육·법률직', '예술·스포츠'
 				for(var i=0;i<job_avg_cs.length;i++){
 					if(job_avg[i]==_job){
-						var res=job_avg_cs[i]-avg_minus;		
-						res_c = parseInt(res).toLocaleString();
+						var res=job_avg_cs[i]-avg_minus;				
 						var comp7_h=[job_avg[i],'나'];
 						var comp7_v=[job_avg_cs[i],avg_minus];
 						createChart7('comp7',comp7_h,comp7_v,'나의 직업군 월평균 소비');
 						if(res>=0){
-							$('#job_anl').text('동일 직업군 보다 -'+res_c+'원');
+							$('#job_anl').text('동일 직업군 보다 -'+res+'원');
 							$('#job_anl').css("color","blue");
 						}else{
-							$('#job_anl').text('동일 직업군 보다 +'+res_c+'원');
+							$('#job_anl').text('동일 직업군 보다 +'+res+'원');
 							$('#job_anl').css("color","red");
 						}
 					}
 				}
 				
 				_sex=sex.replace(/\"/gi, "");
-// 				console.log(_sex);
+				console.log(_sex);
 				if(_sex='female'){
 					_sex='여자';
 				}else{
@@ -445,12 +462,11 @@
 						var comp8_h=[sex_list[i],'나'];
 						var comp8_v=[sex_avg_cs[i],avg_minus];
 						createChart7('comp8',comp8_h,comp8_v,'나의 성별 월평균 소비');
-						res_c = parseInt(res).toLocaleString();
 						if(res>=0){
-							$('#sex_anl').text('동일 성별 보다 -'+res_c+'원');
+							$('#sex_anl').text('동일 성별 보다 -'+res+'원');
 							$('#sex_anl').css("color","blue");
 						}else{
-							$('#sex_anl').text('동일 성별 보다 +'+res_c+'원');
+							$('#sex_anl').text('동일 성별 보다 +'+res+'원');
 							$('#sex_anl').css("color","blue");
 						}
 	
@@ -459,7 +475,7 @@
 				
 				_address=address.replace(/\"/gi, "");
 				_address=_address.substring(0,3);
-// 				console.log(_address);
+				console.log(_address);
 				
 			},
 			error:function(error){
@@ -507,7 +523,7 @@
 	    });
 	  }
 		 
-			
+// 	  location.reload();	
 		
 		
 }

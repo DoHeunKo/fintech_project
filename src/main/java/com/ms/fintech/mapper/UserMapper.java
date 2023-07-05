@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.ms.fintech.command.UserRankingCommand;
 import com.ms.fintech.dtos.AccountDto;
 import com.ms.fintech.dtos.CardInfoDto;
 import com.ms.fintech.dtos.CrawlerDto;
@@ -84,5 +85,7 @@ public interface UserMapper {
 	
 	@Select("select card_password from user_info where user_seq=#{user_seq}")
 	public String isPWcorrect(int user_seq);
+	
+	public List<UserDto> rankingUserInfo();
 }
 
