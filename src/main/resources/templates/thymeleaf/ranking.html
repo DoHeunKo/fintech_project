@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
+  layout:decorate="~{thymeleaf/layouts/default_layout}">
+
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript"
+	src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+	$(function() {
+		let today = new Date();
+		let year = today.getFullYear(); // 년도
+		let month = today.getMonth() + 1; // 월
+		let date = today.getDate(); // 날짜
+		let day = today.getDay(); // 요일
+		console.log(month);
+		
+		$("#this_month").text(month+'월');
+	})
+</script>
+<style type="text/css">
+#title {
+	border-bottom: 1px solid #4682B4;
+	margin:50px;
+}
+#this_month{
+	font-size:36px;
+	font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+	<div layout:fragment="content">
+	<h2 id="title">순위</h2>
+		<div class="container-fluid text-center">
+			<p id="this_month"></p>
+			<div class="row">
+				<div class="col-md-2">
+					
+				</div>
+				
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
