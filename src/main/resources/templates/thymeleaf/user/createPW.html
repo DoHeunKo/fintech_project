@@ -40,7 +40,6 @@
     	function sendPW2(pre) {
     		let a = document.getElementById('code').value;
     		if (a === pre) {
-    			alert('비밀번호를 설정하였습니다.');
     			$.ajax({
     				url:"/user/setPW",
     				data : {
@@ -48,15 +47,18 @@
     				},
     				method:"get",
     				async:"false",
-    				dataType:"json"
+    				dataType:"json",
+    				success: function () {
+					}
     			});
-    			wait(1);
+    			alert('비밀번호를 설정하였습니다.');
+				opener.parent.location.reload();
+    			close();
+//     			wait(1);
 //     			opener.$("#simplePW").prop("disabled",true);
 // 				opener.$("#simplePW").css("border","#4169E1");
 // 				opener.$("#simplePW").css("background-color","#4169E1");
 // 				opener.$("#simplePW").val("간편 비밀번호 설정완료");
-				opener.parent.location.reload();
-    			close();
     		} else {
     			alert('비밀번호가 틀립니다.');
     			document.getElementById('code').value = '';

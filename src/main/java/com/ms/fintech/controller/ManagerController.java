@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.ms.fintech.mapper.ManagerMapper;
 import com.ms.fintech.mapper.UserMapper;
 
@@ -69,11 +71,12 @@ public class ManagerController {
 		managerMapper.deleteRoom(seq);
 		return "redirect:/";
 	}
-	@PostMapping("/createRoom")
-	public String createRoom(String title) {
+	@GetMapping("/createRoom")
+	@ResponseBody
+	public String createRoom(@RequestParam String title) {
 		managerMapper.createRoom(title);
 		System.out.println(title);
-		return "thymeleaf/manager/createform";
+		return title;
 	}
 	@GetMapping("/createform")
 	public String createForm() {
