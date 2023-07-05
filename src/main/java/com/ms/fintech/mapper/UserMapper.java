@@ -87,5 +87,8 @@ public interface UserMapper {
 	public String isPWcorrect(int user_seq);
 	
 	public List<UserDto> rankingUserInfo();
+	
+	@Select("select * from card_info where user_seq=#{user_seq}")
+	public CardInfoDto rankingCardInfo(int user_seq);
 }
 

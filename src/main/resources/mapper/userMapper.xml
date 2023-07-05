@@ -37,7 +37,7 @@
 	<select id="rankingUserInfo" resultMap="UserDtoMap">
 		SELECT UI.USER_SEQ,USER_SEQ_NO,EMAIL,SCOPE,TOKEN FROM USER_INFO UI INNER JOIN USER_TOKEN UT
 		ON UI.USER_SEQ=UT.USER_SEQ
-		WHERE SCOPE='INQUIRY LOGIN TRANSFER' AND IS_JOIN='Y';
+		WHERE  IS_JOIN='Y';
 	</select>
     <insert id="userRegist" parameterType="UserDto" useGeneratedKeys="true"
     						keyProperty="user_seq">
