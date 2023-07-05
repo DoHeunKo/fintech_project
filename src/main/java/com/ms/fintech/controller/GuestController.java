@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +25,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ms.fintech.apidtos.AccountTransactionDto;
+import com.ms.fintech.apidtos.AccountTransactionListDto;
+import com.ms.fintech.apidtos.UserMeAccountDto;
+import com.ms.fintech.apidtos.UserMeDto;
+import com.ms.fintech.command.CategoryCommand;
 import com.ms.fintech.command.LoginCommand;
+import com.ms.fintech.command.MonthCommand;
 import com.ms.fintech.command.RegistCommand;
+import com.ms.fintech.command.UserRankingCommand;
 import com.ms.fintech.dtos.CrawlerDto;
+import com.ms.fintech.dtos.UserDto;
+import com.ms.fintech.feign.AccountFeign;
 import com.ms.fintech.mapper.UserMapper;
 import com.ms.fintech.service.IUserService;
 
@@ -36,9 +48,12 @@ public class GuestController {
 	
 	@Autowired 
 	private IUserService userService;
-
+	@Autowired
+	private AccountFeign accountFeign;
+	
 	@Autowired
 	private UserMapper mapper;
+	
 	
 	@GetMapping("/")
 	public String main() {
@@ -177,8 +192,120 @@ public class GuestController {
 		return "thymeleaf/mznews";
 	}
 	
+	@GetMapping("/ranking")
+	public String ranking() {
+		List<List<Integer>> month_total=new ArrayList<>();
+		List<UserDto> ulist=mapper.rankingUserInfo();
+		System.out.println(ulist);
+		String client_use_code="M202201886";
+		int user_cnt=ulist.size();
+		for(int i=0;i<user_cnt;i++) {
+			UserMeDto userMeDto=accountFeign.requestUserMe(
+					"Bearer "+ ulist.get(i).getUserTokenDto().get(0).getToken(),
+					ulist.get(i).getUser_seq_no());
+			
+			List<UserMeAccountDto> adto=userMeDto.getRes_list();
+
+			String tran_dtime=getDateTime();
+			int plus=0;
+			int minus=0;
+			for(int j=0;j<adto.size();j++) {
+				String bank_tran_id=client_use_code+'U'+createNum();
+				AccountTransactionListDto atdto=accountFeign.requestAccountTransactionList(
+						"Bearer "+ ulist.get(i).getUserTokenDto().get(0).getToken(), 
+						bank_tran_id, 
+						adto.get(i).getFintech_use_num(), 
+						"A", 
+						"D", 
+						"20230101", 
+						"20230610", 
+						"D", 
+						getDateTime());
+				System.out.println(atdto);
+				per_account(atdto,month_total,plus,minus);
+				
+			}
+			System.out.println(i+"번쨰 유저 수입 :"+plus+" 소비 : "+minus);
+			
+			
+		}
+		System.out.println(month_total);
+		return "thymeleaf/ranking";
+	}
+	
+	public void per_account(AccountTransactionListDto accountTransactionListDto,List<List<Integer>> month_total
+			,int plus,int minus) {
+		int tran_size=accountTransactionListDto.getRes_list().size();
+		//한 계좌의 거래내역
+		for(int i=0;i<tran_size;i++) {
+			AccountTransactionDto accountTransactionDto=accountTransactionListDto.getRes_list().get(i);
+			//거래일자
+			String tran_date_y=accountTransactionDto.getTran_date().substring(0,4);
+			String tran_date_m=accountTransactionDto.getTran_date().substring(4,6);
+			//월별 구분
+//			per_month(accountTransactionDto,month_total);
+			
+    		String input_type=accountTransactionDto.getInout_type();
+    		int money=Integer.parseInt(accountTransactionDto.getTran_amt());
+    		if(input_type.equals("입금")) {
+    			plus+=money;
+    		}else {
+    			minus+=money;
+    		}
+		}
+		
+	}
+	
+	//해당 월과 배열의 인덱스가 일치하는지
+	public void per_month(AccountTransactionDto accountTransactionDto,List<List<Integer>> month_total) {
+		int tran_date_y=Integer.parseInt(accountTransactionDto.getTran_date().substring(0,4)) ;
+		int tran_date_m=Integer.parseInt(accountTransactionDto.getTran_date().substring(4,6));
+		if (tran_date_y == 2023) {
+	        int monthIndex = tran_date_m - 1;
+
+	        if (monthIndex >= 0 && monthIndex < 12) {
+	           
+	        	if (monthIndex >= 0 && monthIndex < 12) {
+	                List<Integer> monthData = null;
+
+	                if (month_total.size() > monthIndex) {
+	                    monthData = month_total.get(monthIndex);
+	                } else {
+	                    monthData = new ArrayList<>();
+	                    month_total.add(monthIndex, monthData);
+	                }
+	                	
+	                String tran_type=accountTransactionDto.getTran_type();
+	        		String input_type=accountTransactionDto.getInout_type();
+	        		int money=Integer.parseInt(accountTransactionDto.getTran_amt());
+	        		monthData.add(money);
+	        }
+	        }
+	    }
+		
+		
+	}
+		
 	@GetMapping("/error")
 	public String error() {
 		return "thymeleaf/error";
 	}
+	//이용기관 부여번호 9자리 생성하는 메서드
+			public String createNum() {
+				String createNum="";// "468345554"
+				for (int i = 0; i < 9; i++) {
+					createNum+=((int)(Math.random()*10))+"";
+				}
+				System.out.println("이용기관부여번호9자리생성:"+createNum);
+				return createNum;
+			}
+			
+			//현재시간 구하는 메서드
+			public String getDateTime() {
+				LocalDateTime now = LocalDateTime.now();
+				
+				String formatNow = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+				
+				return formatNow;
+			}
 }
