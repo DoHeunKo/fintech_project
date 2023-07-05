@@ -289,8 +289,8 @@
 				
 // 				console.log("평균수입   "+avg_plus);
 // 				console.log("평균소비   "+avg_minus);
-				$("#avg_plus").text('평균 수입    : ' +avg_plus.toLocaleString()+'원');
-				$("#avg_cs").text('평균 소비    : '+avg_minus.toLocaleString()+'원');
+				$("#avg_plus").text('평균 수입    : ' +Math.round(avg_plus).toLocaleString()+'원');
+				$("#avg_cs").text('평균 소비    : '+Math.round(avg_minus).toLocaleString()+'원');
 				
 				//카테고리별 소비(전체,5월)
 				var category_key=Object.keys(data.categoryCommand[0]);
@@ -359,7 +359,7 @@
 				total_cs.push(avg);
 				
 				createChart5('chart5',exp_cs,total_cs,'이번달 예상 소비 금액');
-				$("#exp").text('이번달 예상 지출액은'+avg.toLocaleString()+'원 입니다');
+				$("#exp").text('이번달 예상 지출액은'+Math.round(avg).toLocaleString()+'원 입니다');
 				
 				
 // 				var joinBtnOffset = $('#joinbtn').offset().top;
