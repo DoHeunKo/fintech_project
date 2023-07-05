@@ -8,6 +8,9 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +30,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ms.fintech.apidtos.AccountTransactionDto;
 import com.ms.fintech.apidtos.AccountTransactionListDto;
+import com.ms.fintech.apidtos.CardDetailListDto;
 import com.ms.fintech.apidtos.UserMeAccountDto;
 import com.ms.fintech.apidtos.UserMeDto;
 import com.ms.fintech.command.CategoryCommand;
 import com.ms.fintech.command.LoginCommand;
 import com.ms.fintech.command.MonthCommand;
+import com.ms.fintech.command.RankingCommand;
 import com.ms.fintech.command.RegistCommand;
 import com.ms.fintech.command.UserRankingCommand;
+import com.ms.fintech.dtos.CardInfoDto;
 import com.ms.fintech.dtos.CrawlerDto;
 import com.ms.fintech.dtos.UserDto;
+import com.ms.fintech.dtos.UserTokenDto;
 import com.ms.fintech.feign.AccountFeign;
 import com.ms.fintech.mapper.UserMapper;
 import com.ms.fintech.service.IUserService;
@@ -193,65 +200,172 @@ public class GuestController {
 	}
 	
 	@GetMapping("/ranking")
-	public String ranking() {
-		List<List<Integer>> month_total=new ArrayList<>();
+	public String ranking(HttpSession session,Model model) {
+//		List<List<Integer>> month_total=new ArrayList<>();
 		List<UserDto> ulist=mapper.rankingUserInfo();
-		System.out.println(ulist);
+		List<RankingCommand> rankInfo=new ArrayList<>();
+//		System.out.println(ulist);
 		String client_use_code="M202201886";
 		int user_cnt=ulist.size();
 		for(int i=0;i<user_cnt;i++) {
+			String inq_token=null;
+			String card_token=null;
+			String getInitialScope1="inquiry";
+			String getInitialScope2="cardinfo";
+			
+			
+			List<UserTokenDto> wd_userTokenList = ulist.get(i).getUserTokenDto();
+//			System.out.println(wd_userTokenList);
+			for (UserTokenDto userToken : wd_userTokenList) {
+//				System.out.println(userToken);
+			    if (userToken.getScope().contains(getInitialScope1)) {	    	
+			        inq_token = userToken.getToken();
+			        
+			    }
+			    else if(userToken.getScope().contains(getInitialScope2)) {
+			    	card_token=userToken.getToken();	
+			    }
+			}    
+//			System.out.println(inq_token);
+//			System.out.println(card_token);
 			UserMeDto userMeDto=accountFeign.requestUserMe(
-					"Bearer "+ ulist.get(i).getUserTokenDto().get(0).getToken(),
+					"Bearer "+ inq_token,
 					ulist.get(i).getUser_seq_no());
 			
 			List<UserMeAccountDto> adto=userMeDto.getRes_list();
-
-			String tran_dtime=getDateTime();
-			int plus=0;
-			int minus=0;
+//			System.out.println(adto);
+//			System.out.println(adto.size());
+//			String tran_dtime=getDateTime();
+//			int plus=0;
+//			int minus=0;
+			int [] month_plus=new int[12];
+			int [] month_minus=new int[12];
+			
 			for(int j=0;j<adto.size();j++) {
 				String bank_tran_id=client_use_code+'U'+createNum();
 				AccountTransactionListDto atdto=accountFeign.requestAccountTransactionList(
-						"Bearer "+ ulist.get(i).getUserTokenDto().get(0).getToken(), 
+						"Bearer "+ inq_token, 
 						bank_tran_id, 
-						adto.get(i).getFintech_use_num(), 
+						adto.get(j).getFintech_use_num(), 
 						"A", 
 						"D", 
 						"20230101", 
 						"20230610", 
 						"D", 
 						getDateTime());
-				System.out.println(atdto);
-				per_account(atdto,month_total,plus,minus);
+//				System.out.println(atdto);
+				per_account(atdto,month_plus,month_minus);
 				
+		
 			}
-			System.out.println(i+"번쨰 유저 수입 :"+plus+" 소비 : "+minus);
+				
+//			System.out.println(Arrays.toString(month_plus));
+//			System.out.println(Arrays.toString(month_minus));
+			int plus_sum=0;
+			int minus_sum=0;
+			int current_month=Integer.parseInt(getDateTime().substring(4,6));
+			//총 수입,소비 합
+			//최소소비 %
+			double min_cur=100.0;
+			for(int j=0;j<current_month-2;j++) {
+				plus_sum+=month_plus[j];
+				minus_sum+=month_minus[j];
+				double min_percent=(Math.round((double)month_minus[j]/month_plus[j]*100*10))/10.0;
+//				System.out.println(min_percent);
+				if(min_cur>min_percent && min_percent!=0.0) {
+					min_cur=min_percent;
+				}
+			}
+//			System.out.println("최소 소비 % : "+min_cur);
+			//평균
+			int plus_avg=plus_sum/current_month-1;
+			int minus_avg=minus_sum/current_month-1;
+			//메일
+			String email=ulist.get(i).getEmail();
 			
+			//전체소비퍼센트
+			double total_cs_percent=(Math.round((double)minus_avg/plus_avg*100*10))/10.0;
+//			double total_cs_percent=(Math.round(total_cs_percent1*10))/10.0;
+			//전달소비퍼센트 (일단 5월로)
+			double last_cs_percent=(Math.round((double)month_minus[current_month-2]/month_plus[current_month-2]*100*10))/10.0;
 			
+			//카드토큰을 이용해서 카드 상세 청구조회해서 이번달 소비% 수입은 평균수입으로 고정
+			CardInfoDto cdto=mapper.rankingCardInfo(ulist.get(i).getUser_seq());
+			
+			String bank_tran_id=client_use_code+'U'+createNum();
+			CardDetailListDto cardDetaildto=accountFeign.requestCardList(
+					"Bearer "+card_token, 
+					bank_tran_id ,
+					ulist.get(i).getUser_seq_no(), 
+					cdto.getBank_code_std(), 
+					cdto.getMember_bank_code(), 
+					cdto.getCharge_month(), 
+					cdto.getSettlement_seq_no());
+			
+			int cardDetail_size=cardDetaildto.getBill_detail_list().size();
+			//이번달 사용금액
+			int this_month=0;
+			for(int j=0;j<cardDetail_size;j++) {
+				this_month+=Integer.parseInt(cardDetaildto.getBill_detail_list().get(i).getPaid_amt());
+			}
+//			System.out.println(this_month);
+			//이번달 퍼센트
+			double this_month_percent=(Math.round(((double)this_month/plus_avg*100*10)))/10.0;
+			//남은 금액 (전체평균소비%-5%- 이번달 사용금액)
+			double this_month_balance1=Math.ceil((minus_avg - (minus_avg * 0.05) - this_month) / 100) * 100;
+			int this_month_balance=(int) this_month_balance1;
+//			System.out.println(this_month_balance);
+			RankingCommand rc=new RankingCommand();
+			rc.setEmail(email);
+			rc.setTotal_cs_percent(total_cs_percent);
+			rc.setLast_cs_percent(last_cs_percent);
+			rc.setThis_month_percent(this_month_percent);
+			rc.setThis_month_balance(this_month_balance);
+			rc.setMin_cur(min_cur);
+			rankInfo.add(rc);
+			System.out.println(rc);
 		}
-		System.out.println(month_total);
+			
+		
+		Collections.sort(rankInfo, Comparator.comparingDouble(RankingCommand::getThis_month_percent));
+
+        // Print the sorted list
+        for (RankingCommand command : rankInfo) {
+            System.out.println(command.getEmail()+" : "+command.getThis_month_percent());
+        }
+        
+        model.addAttribute("rankinfo", rankInfo);
 		return "thymeleaf/ranking";
 	}
 	
-	public void per_account(AccountTransactionListDto accountTransactionListDto,List<List<Integer>> month_total
-			,int plus,int minus) {
+	public void per_account(AccountTransactionListDto accountTransactionListDto
+			,int [] month_plus
+			,int [] month_minus) {
 		int tran_size=accountTransactionListDto.getRes_list().size();
 		//한 계좌의 거래내역
 		for(int i=0;i<tran_size;i++) {
 			AccountTransactionDto accountTransactionDto=accountTransactionListDto.getRes_list().get(i);
 			//거래일자
-			String tran_date_y=accountTransactionDto.getTran_date().substring(0,4);
-			String tran_date_m=accountTransactionDto.getTran_date().substring(4,6);
+			int tran_date_y=Integer.parseInt(accountTransactionDto.getTran_date().substring(0,4)) ;
+			int tran_date_m=Integer.parseInt(accountTransactionDto.getTran_date().substring(4,6));
 			//월별 구분
-//			per_month(accountTransactionDto,month_total);
+			String tran_type=accountTransactionDto.getTran_type();
+			String input_type=accountTransactionDto.getInout_type();
+			int money=Integer.parseInt(accountTransactionDto.getTran_amt());
 			
-    		String input_type=accountTransactionDto.getInout_type();
-    		int money=Integer.parseInt(accountTransactionDto.getTran_amt());
-    		if(input_type.equals("입금")) {
-    			plus+=money;
-    		}else {
-    			minus+=money;
-    		}
+			if(tran_date_y==2023) {
+				
+				int monthIndex=tran_date_m-1;
+//				if (monthIndex >= 0 && monthIndex < 12) {
+					if(input_type.equals("입금")) {
+						month_plus[monthIndex]+=money;
+					}
+					else {
+						month_minus[monthIndex]+=money;
+					}
+//				}
+			}
+ 
 		}
 		
 	}
@@ -296,7 +410,7 @@ public class GuestController {
 				for (int i = 0; i < 9; i++) {
 					createNum+=((int)(Math.random()*10))+"";
 				}
-				System.out.println("이용기관부여번호9자리생성:"+createNum);
+//				System.out.println("이용기관부여번호9자리생성:"+createNum);
 				return createNum;
 			}
 			

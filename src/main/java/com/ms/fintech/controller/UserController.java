@@ -571,7 +571,7 @@ public class UserController {
 			System.out.println(dp_user);
 			
 			UserTokenDto dp_oob_token=mapper.dp_token(dp_user.getUser_seq());
-			
+			System.out.println("oob토큰 받는위치");
 			dtoken=dp_oob_token.getToken();
 			//입금이체
 			DepositResDto ddto=accountFeign.requestDeposit(

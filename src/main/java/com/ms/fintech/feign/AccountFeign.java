@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ms.fintech.apidtos.AccountBalanceDto;
 import com.ms.fintech.apidtos.AccountTransactionListDto;
+import com.ms.fintech.apidtos.CardDetailListDto;
 import com.ms.fintech.apidtos.DepositReqDto;
 import com.ms.fintech.apidtos.DepositResDto;
 import com.ms.fintech.apidtos.UserCardinfoDto;
@@ -92,5 +93,14 @@ public interface AccountFeign {
 			@RequestParam("redirect_uri") String redirect_uri,
 			@RequestParam("grant_type") String grant_type
 			);
-	
+	@GetMapping(path="/v2.0/cards/bills/detail")
+	public CardDetailListDto requestCardList(
+			@RequestHeader("Authorization") String access_token,
+			@RequestParam("bank_tran_id") String bank_tran_id, 
+			 @RequestParam("user_seq_no") String user_seq_no,
+			 @RequestParam("bank_code_std")String bank_code_std,
+			 @RequestParam("member_bank_code")String member_bank_code,
+			 @RequestParam("charge_month")String charge_month,
+			 @RequestParam("settlement_seq_no")String settlement_seq_no
+			);
 }
