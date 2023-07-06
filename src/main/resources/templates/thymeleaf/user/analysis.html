@@ -261,8 +261,8 @@
 					total_cs.push(data.categoryCommand[i].total);	
 					total_plus.push(data.categoryCommand[i].plus);
 				}
-				console.log("전체수입리스트"+total_plus);
-				console.log("전체소비리스트"+total_cs);
+// 				console.log("전체수입리스트"+total_plus);
+// 				console.log("전체소비리스트"+total_cs);
 				
 				//전체수입합
 				var sum_total_plus=total_plus.reduce((accumulator, current) => accumulator + current, 0);
@@ -378,15 +378,15 @@
 // 				// Slowly scroll to the bottom
 // 			    $('html, body').animate({ scrollTop: $(document).height() }, 100);
 // 				});
-				console.log(name.replace(/\"/gi, ""));
-				console.log(job);
-				console.log(age);
-				console.log(sex);
-				console.log(address);
-				console.log(age_avg_cs[0]);
-				console.log(avg_minus);
-				console.log(typeof(age_avg_cs[0]));
-				console.log(typeof(avg_minus));
+// 				console.log(name.replace(/\"/gi, ""));
+// 				console.log(job);
+// 				console.log(age);
+// 				console.log(sex);
+// 				console.log(address);
+// 				console.log(age_avg_cs[0]);
+// 				console.log(avg_minus);
+// 				console.log(typeof(age_avg_cs[0]));
+// 				console.log(typeof(avg_minus));
 				var _age;
 				if(age>=20 && age<30){
 					_age=20;
@@ -397,13 +397,18 @@
 				}else{
 					_age=50;
 				}
-				console.log(_age);
+// 				console.log(_age);
+// 				console.log(typeof(avg_minus));
+				var new_avg_minus=(Math.round(avg_minus/100))*100;
+// 				console.log(typeof(formattingAmt(Math.round(parseInt(avg_minus)))));
+// 				console.log(typeof(parseInt(formattingAmt(Math.round(parseInt(avg_minus))))));
+				console.log(formattingAmt(Math.round(avg_minus)));
 				for(var i=0;i<age_list.length;i++){
 					
 					if(age_list[i]==_age){
 						var res=age_avg_cs[i]-avg_minus;
 						var comp6_h=[age_list[i],'나'];
-						var comp6_v=[age_avg_cs[i],avg_minus];
+						var comp6_v=[age_avg_cs[i],new_avg_minus];
 						createChart7('comp6',comp6_h,comp6_v,'나의 연령대 월평균 소비');
 		 				if(res>=0){
 		 					$('#age_anl').text('동일 연령대 보다 -'+formattingAmt(res)+'원');
@@ -417,8 +422,8 @@
 				}
 				
 				var _job=job.replace(/\"/gi, "");
-				console.log(_job);
-				console.log(job_avg);
+// 				console.log(_job);
+// 				console.log(job_avg);
 				if(_job=='manage'){
 					_job='사무직';
 				}else if(_job=='tech'){
@@ -431,13 +436,13 @@
 					_job='예술·스포츠';
 				}
 				
-				console.log(_job);
+// 				console.log(_job);
 // 					'보건·의료직', '사무직', '연구·기술직', '교육·법률직', '예술·스포츠'
 				for(var i=0;i<job_avg_cs.length;i++){
 					if(job_avg[i]==_job){
 						var res=job_avg_cs[i]-avg_minus;				
 						var comp7_h=[job_avg[i],'나'];
-						var comp7_v=[job_avg_cs[i],avg_minus];
+						var comp7_v=[job_avg_cs[i],new_avg_minus];
 						createChart7('comp7',comp7_h,comp7_v,'나의 직업군 월평균 소비');
 						if(res>=0){
 							$('#job_anl').text('동일 직업군 보다 -'+formattingAmt(res)+'원');
@@ -450,7 +455,7 @@
 				}
 				
 				_sex=sex.replace(/\"/gi, "");
-				console.log(_sex);
+// 				console.log(_sex);
 				if(_sex =='female'){
 					_sex='여자';
 				}else{
@@ -460,7 +465,7 @@
 					if(sex_list[i]==_sex){
 						var res=sex_avg_cs[i]-avg_minus;				
 						var comp8_h=[sex_list[i],'나'];
-						var comp8_v=[sex_avg_cs[i],avg_minus];
+						var comp8_v=[sex_avg_cs[i],new_avg_minus];
 						createChart7('comp8',comp8_h,comp8_v,'나의 성별 월평균 소비');
 						if(res>=0){
 							$('#sex_anl').text('동일 성별 보다 -'+formattingAmt(res)+'원');
