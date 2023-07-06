@@ -276,7 +276,7 @@ public class GuestController {
 					min_cur=min_percent;
 				}
 			}
-//			System.out.println("최소 소비 % : "+min_cur);
+			System.out.println("최소 소비 % : "+min_cur);
 			//평균
 			int plus_avg=plus_sum/current_month-1;
 			int minus_avg=minus_sum/current_month-1;
