@@ -5,8 +5,8 @@
 <head>
 <meta charset="utf-8" />
 	<title>Chat</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<!-- 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" -->
+<!-- 		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<link rel="stylesheet" type="text/css"
 		href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
@@ -54,18 +54,6 @@
 
 		.container {
 			align-content: center;
-		}
-
-		.search {
-			border-radius: 15px 0 0 15px !important;
-			background-color: rgba(0, 0, 0, 0.3) !important;
-			border: 0 !important;
-			color: white !important;
-		}
-
-		.search:focus {
-			box-shadow: none !important;
-			outline: 0px !important;
 		}
 
 		.type_msg {
@@ -419,7 +407,7 @@
 							<input id="chat" type="text" class="form-control type_msg"
 								placeholder="Type your message...">
 							<div class="input-group-append">
-								<span class="input-group-text send_btn" onclick="send()"><i class="fas fa-location-arrow"></i></span>
+								<span class="input-group-text send_btn" style="height: 100%;" onclick="send()"><i class="fas fa-location-arrow" ></i></span>
 							</div>
 						</div>
 					</div>
