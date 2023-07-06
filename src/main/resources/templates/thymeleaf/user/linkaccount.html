@@ -38,36 +38,43 @@
 	}
 	function selectBank(selected) {
 // 		alert(response[selected]);
-		let ans = confirm(response[selected]['bank_name'] + "에 연동하시겠습니까 ?");
-		d = response[selected];
-		if (ans) {
-			$.ajax({
-				url:"/user/card_info",
-				method:'get',
-				data: {
-					fintech_use_num : d['fintech_use_num'],
-					balance_amt: d['balance_amt'],
-					selected : selected + ""
-				},
-				async:"false",
-				dataType:'json',
-				success:function(data){
-					console.log('card_info insert 성공');
-				},
-				error:function(xhr, status, error){
-					console.log(xhr.responseText);
-				}
-				
-			});
-			wait(1);
-// 			opener.$("#conn").prop("disabled",true);
-// 			opener.$("#conn").css("border","#4169E1");
-// 			opener.$("#conn").css("background-color","#4169E1");
-// 			opener.$("#conn").val("계좌 연동 완료");
-			opener.parent.location.reload();
-			
-			close();
+		if(parseInt(response[selected].balance_amt)<=0){
+			alert('송금을 위한 계좌 잔액이 부족합니다');
 		}
+		else{
+			let ans = confirm(response[selected]['bank_name'] + "에 연동하시겠습니까 ?");
+			d = response[selected];
+			if (ans) {
+				$.ajax({
+					url:"/user/card_info",
+					method:'get',
+					data: {
+						fintech_use_num : d['fintech_use_num'],
+						balance_amt: d['balance_amt'],
+						selected : selected + ""
+					},
+					async:"false",
+					dataType:'json',
+					success:function(data){
+						console.log('card_info insert 성공');
+					},
+					error:function(xhr, status, error){
+						console.log(xhr.responseText);
+					}
+					
+				});
+				wait(1);
+//	 			opener.$("#conn").prop("disabled",true);
+//	 			opener.$("#conn").css("border","#4169E1");
+//	 			opener.$("#conn").css("background-color","#4169E1");
+//	 			opener.$("#conn").val("계좌 연동 완료");
+				opener.parent.location.reload();
+				
+				close();
+			}
+		}
+	
+		
 		
 	}
 

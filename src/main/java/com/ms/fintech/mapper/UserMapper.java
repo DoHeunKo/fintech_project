@@ -90,5 +90,8 @@ public interface UserMapper {
 	
 	@Select("select * from card_info where user_seq=#{user_seq}")
 	public CardInfoDto rankingCardInfo(int user_seq);
+
+	@Select("select balance_amt from card_info where user_seq=#{user_seq}")
+	public String balanceChk(int user_seq);
 }
 

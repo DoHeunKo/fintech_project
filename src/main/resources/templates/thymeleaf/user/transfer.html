@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layouts"
-	  layout:decorate="~{thymeleaf/layouts/user_layout}">
+	  layout:decorate="~{thymeleaf/layouts/popup_layout}">
 <head>
 <meta charset="utf-8" />
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
@@ -92,24 +92,49 @@ function linkAccount() {
 	
 }
 function AuthPW(event) {
-	event.preventDefault();
-	console.log($('#inputs').val());
-	let popupWindow=open("/user/AuthPW", "_blank", "width=600px,height=900px");
-	let popupInterval = setInterval(function() {
-        if (popupWindow.closed) {
-        	//닫혔을 때는 무조건 오류 처리
-            clearInterval(popupInterval);
-            
-			if($('#inputs').val()=="ff"){
-	            document.getElementById("transferForm").submit();
+	var amt=$('#dps_tran_amt').val();
+	var flag=true;
+	console.log(amt);
+	$.ajax({
+		url:"/user/balanceChk",
+		method:"get",
+		async:"false",
+		dataType:"json",
+		success:function(data){
+			if(parseInt(amt)>parseInt(data.ret)){
+				event.preventDefault();
+				alert('계좌의 잔액이 부족합니다');
+// 				location.href="/user/transfer";
+				return false;
 			}else{
-				
-	            alert("인증 오류");
+				event.preventDefault();
+				console.log($('#inputs').val());
+				let popupWindow=open("/user/AuthPW", "_blank", "width=600px,height=900px");
+				let popupInterval = setInterval(function() {
+			        if (popupWindow.closed) {
+			        	//닫혔을 때는 무조건 오류 처리
+			            clearInterval(popupInterval);
+			            
+						if($('#inputs').val()=="ff"){
+				            document.getElementById("transferForm").submit();
+						}else{
+							
+				            alert("인증 오류");
+						}
+			        }
+						
+			    }, 1000);
 			}
-        }
-			
-    }, 1000);
+
+		},
+		error:function(e){
+			console.log(e);
+		}
+	});
 	
+		
+	return false;		
+
 	
 }
 
