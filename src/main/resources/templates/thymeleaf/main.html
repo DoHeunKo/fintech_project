@@ -68,7 +68,7 @@
    <div class="container-fluid text-center">
 			<div class="row">
 				<div class="col-md-2">
-					<button type="button" class="btn" id="join_btn">참여하기</button>
+					<button type="button" class="btn" id="join_btn" onclick="var a = confirm('먼저 로그인을 해야 합니다.'); a ? location.href='/loginform' : locaiton.href='/'">참여하기</button>
 					
 				</div>
 				<div class="col-lg-2">

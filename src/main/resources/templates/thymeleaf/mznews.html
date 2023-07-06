@@ -19,7 +19,7 @@
       <span><b style="font-size: 25px;">MZ세대 최근 소식</b><br></br></span>
       <th:block th:each="dto : ${crawlerDto}">
         <div class="card">
-          <img class="card-img-top" th:src="${dto.src}" alt="Card image cap">
+          <img class="card-img-top" style="cursor: pointer;" th:onclick="|location.href='@{${dto.href}}'|" th:src="${dto.src}" alt="Card image cap">
           <div class="card-body">
             <a th:href="${dto.href}" class="card-text" target="_blank" th:text="${dto.title}"></a>
           </div>
