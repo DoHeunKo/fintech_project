@@ -13,10 +13,10 @@ import com.ms.fintech.dtos.RoomDto;
 @Mapper
 public interface ManagerMapper {
 
-	@Select("select * from mz_info limit #{page}, 6")
+	@Select("select * from mz_info limit #{page}, 5")
 	public List<CrawlerDto> getPagedList(int page);
 	
-	@Select("select * from community_info limit #{page}, 4")
+	@Select("select * from community_info limit #{page}, 5")
 	public List<RoomDto> getPagedRoom(int page);
 	
 	@Delete("delete from community_info where room_no = #{seq}")

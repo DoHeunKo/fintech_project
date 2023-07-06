@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -203,10 +204,22 @@ public class GuestController {
 	public String ranking(HttpSession session,Model model) {
 //		List<List<Integer>> month_total=new ArrayList<>();
 		List<UserDto> ulist=mapper.rankingUserInfo();
+		int user_cnt=ulist.size();
+//		System.out.println(ulist);
+		List<String> ids=new ArrayList();
+		for(int i=0;i<user_cnt;i++) {
+			String user_email=ulist.get(i).getEmail();
+			int atIndex =user_email.indexOf('@');
+			System.out.println(user_email.substring(0, atIndex));
+			ids.add(user_email.substring(0, atIndex));
+		}
+		
+		model.addAttribute("ids",ids);
+		
 		List<RankingCommand> rankInfo=new ArrayList<>();
 //		System.out.println(ulist);
 		String client_use_code="M202201886";
-		int user_cnt=ulist.size();
+		
 		for(int i=0;i<user_cnt;i++) {
 			String inq_token=null;
 			String card_token=null;
@@ -276,7 +289,7 @@ public class GuestController {
 					min_cur=min_percent;
 				}
 			}
-			System.out.println("최소 소비 % : "+min_cur);
+//			System.out.println("최소 소비 % : "+min_cur);
 			//평균
 			int plus_avg=plus_sum/current_month-1;
 			int minus_avg=minus_sum/current_month-1;
@@ -315,15 +328,19 @@ public class GuestController {
 			double this_month_balance1=Math.ceil((minus_avg - (minus_avg * 0.05) - this_month) / 100) * 100;
 			int this_month_balance=(int) this_month_balance1;
 //			System.out.println(this_month_balance);
+			
+			DecimalFormat formatter = new DecimalFormat("#,###");
+	        String formattedNumber = formatter.format(this_month_balance);
+			
 			RankingCommand rc=new RankingCommand();
 			rc.setEmail(email);
 			rc.setTotal_cs_percent(total_cs_percent);
 			rc.setLast_cs_percent(last_cs_percent);
 			rc.setThis_month_percent(this_month_percent);
-			rc.setThis_month_balance(this_month_balance);
+			rc.setThis_month_balance(formattedNumber);
 			rc.setMin_cur(min_cur);
 			rankInfo.add(rc);
-			System.out.println(rc);
+//			System.out.println(rc);
 		}
 			
 		
@@ -331,7 +348,7 @@ public class GuestController {
 
         // Print the sorted list
         for (RankingCommand command : rankInfo) {
-            System.out.println(command.getEmail()+" : "+command.getThis_month_percent());
+//            System.out.println(command.getEmail()+" : "+command.getThis_month_percent());
         }
         
         model.addAttribute("rankinfo", rankInfo);
