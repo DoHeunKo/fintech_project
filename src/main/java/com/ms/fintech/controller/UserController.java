@@ -597,6 +597,18 @@ public class UserController {
 			return "thymeleaf/user/transfer_complete";
 		}
 		
+		@GetMapping("/balanceChk")
+		@ResponseBody
+		public Map<String,String> balanceChk(HttpSession session) {
+			int user_seq = ((UserDto)session.getAttribute("dto")).getUser_seq();
+			String balance_amt=mapper.balanceChk(user_seq);
+			System.out.println(balance_amt);
+//			System.out.println(dps_tran_amt);
+			Map<String, String> ret=new HashMap<>();
+			ret.put("ret", balance_amt);
+			return ret;
+		}
+		
 		@GetMapping("/transfer_comp")
 		public String transfer_comp() {
 			return "redirect:/user/userMain";
