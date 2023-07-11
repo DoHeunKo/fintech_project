@@ -417,7 +417,7 @@ public class GuestController {
 		
 	}
 		
-	@GetMapping("/error")
+	@GetMapping("/errorpage")
 	public String error() {
 		return "thymeleaf/error";
 	}

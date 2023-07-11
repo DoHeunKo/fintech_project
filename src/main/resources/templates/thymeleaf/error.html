@@ -4,7 +4,16 @@
 	  layout:decorate="~{thymeleaf/layouts/user_layout}">
 <head>
     <meta charset="utf-8" />
-       
+     <style type="text/css">
+     input {
+		margin-top:30px;
+		background-color: #000099;
+		color: white;
+		border-radius: 10px;
+		width: 200px;
+		height: 80px;
+		}
+	</style>
 </head>
 
 <body>
@@ -14,11 +23,12 @@
       <!-- Main Content-->
     <main class="mb-4">
         <div class="container px-4 px-lg-5">
-            <div class="row gx-4 gx-lg-5 justify-content-center">
-                <div class="col-md-10 col-lg-8 col-xl-7">
-                    <h1>error 관리자에게 문의하세요.</h1>
-                </div>
-            </div>
+           <div class="container">
+  <h1><span class="label label-default">에러가 발생하였습니다.</span></h1>
+
+  <p>관리자에게 문의해 주세요.</p>
+      <input type="button" onclick="location.href='/'" value="main으로 이동">
+  </div>
         </div>
     </main>
     </div>
